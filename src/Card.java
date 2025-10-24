@@ -17,8 +17,14 @@ public class Card {
      * @param t CardType enum used to construct Card
      */
     public Card(CardColor c, CardType t){
+        if (t == CardType.WILD || t == CardType.WILD_DRAW_TWO) {
+            if (c != CardColor.WILD) {
+                throw new IllegalArgumentException("Wild cards can only be given the color: wild");
+            }
+        }
         color = c;
         type = t;
+
     }
 
     /**
@@ -48,4 +54,8 @@ public class Card {
     public String toString() {
         return color + " " + type;
     }
+
+
+
+
 }
