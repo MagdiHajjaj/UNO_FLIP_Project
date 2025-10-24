@@ -15,9 +15,9 @@ class CardTest {
         assertEquals(CardColor.YELLOW, c2.getColor());
         assertEquals(CardType.FOUR, c2.getType());
         assertEquals(CardColor.BLUE, c3.getColor());
-        assertEquals(CardType.SIX, c3.getType());
+        assertEquals(CardType.THREE, c3.getType());
         assertEquals(CardColor.GREEN, c4.getColor());
-        assertEquals(CardType.THREE, c4.getType());
+        assertEquals(CardType.SIX, c4.getType());
 
         Card c5 = new Card(CardColor.WILD, CardType.WILD);
     }
