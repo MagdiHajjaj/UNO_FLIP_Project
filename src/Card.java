@@ -21,6 +21,10 @@ public class Card {
             if (c != CardColor.WILD) {
                 throw new IllegalArgumentException("Wild cards can only be given the color: wild");
             }
+        } else {
+            if (c == CardColor.WILD){
+                throw new IllegalArgumentException("Wild cards can only be given the color: wild");
+            }
         }
         color = c;
         type = t;

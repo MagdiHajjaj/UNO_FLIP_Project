@@ -19,6 +19,11 @@ class CardTest {
         assertEquals(CardColor.GREEN, c4.getColor());
         assertEquals(CardType.SIX, c4.getType());
 
-        Card c5 = new Card(CardColor.WILD, CardType.WILD);
+        assertThrows(IllegalArgumentException.class, () -> new Card(CardColor.RED, CardType.WILD));
+        assertThrows(IllegalArgumentException.class, () -> new Card(CardColor.YELLOW, CardType.WILD_DRAW_TWO));
+        assertDoesNotThrow(() -> new Card(CardColor.RED, CardType.FIVE));
+        assertDoesNotThrow(() -> new Card(CardColor.WILD, CardType.WILD));
+        assertThrows(IllegalArgumentException.class, () -> new Card(CardColor.WILD, CardType.FIVE));
+        assertThrows(IllegalArgumentException.class, () -> new Card(CardColor.WILD, CardType.SKIP));
     }
 }
