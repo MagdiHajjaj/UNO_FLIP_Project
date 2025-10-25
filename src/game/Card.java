@@ -12,6 +12,37 @@ public class Card {
     private final CardColor color; //game.Card has a Color
     private final CardType type; //game.Card has a Type
 
+    //Point System
+    private static final Map<CardType, Integer> Point_System = new HashMap<>();
+    static {
+        Point_System.put(CardType.ONE, 1);
+        Point_System.put(CardType.TWO, 2);
+        Point_System.put(CardType.THREE, 3);
+        Point_System.put(CardType.FOUR, 4);
+        Point_System.put(CardType.FIVE, 5);
+        Point_System.put(CardType.SIX, 6);
+        Point_System.put(CardType.SEVEN, 7);
+        Point_System.put(CardType.EIGHT, 8);
+        Point_System.put(CardType.NINE, 9);
+
+        Point_System.put(CardType.DRAW_ONE, 10);
+
+        Point_System.put(CardType.SKIP, 20);
+        Point_System.put(CardType.REVERSE, 20);
+
+        Point_System.put(CardType.WILD, 40);
+        Point_System.put(CardType.WILD_DRAW_TWO, 50);
+    }
+
+    /**
+     * getter for points associated to card
+     *
+     * @return integer of Cards point value
+     */
+    public int getPoint() {
+        return Point_System.get(this.type);
+    }
+
     /**
      * Constructor for game.Card takes a Color and Type
      *
