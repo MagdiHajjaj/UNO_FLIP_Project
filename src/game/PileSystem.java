@@ -1,5 +1,5 @@
-/**
- * PileSystem class for the game of UNO
+package game; /**
+ * game.PileSystem class for the game of UNO
  *
  * @author Magdi Hajjaj
  * @version M1
@@ -11,7 +11,7 @@ public class PileSystem {
     private Stack<Card> discardPile;
 
     /**
-     * Constructor for Card takes a Color and Type
+     * Constructor for game.Card takes a Color and Type
      *
      * @paramc
      */
@@ -23,8 +23,9 @@ public class PileSystem {
     }
 
     /**
-     * 
-     * @paramc
+     * Creates and initializes the draw pile with all the cards needed for the game.
+     *
+     * The resulting draw pile represents a complete deck ready to be shuffled and used in the game.
      */
     private void createDrawPile(){
         for(CardColor color: CardColor.values()){
@@ -45,29 +46,37 @@ public class PileSystem {
         }
     }
     /**
+     * Shuffles the draw pile to randomize the order of the cards.
      *
-     *
-     * @paramc
+     * This method ensures that the cards in the draw pile are in a random sequence
+     * before the game begins or when the pile needs to be reshuffled.
      */
     public void shuffleDrawPile(){
         Collections.shuffle(drawPile);
     }
 
     /**
+     * Draws a card from the top of the draw pile.
      *
-     * @paramc
+     * If the draw pile is empty, it restores the pile before drawing a card.
+     *
+     * @return the card drawn from the top of the draw pile
      */
     public Card drawCard(){
-        if(drawPile.isEmpty()){
+        if(isDrawPileEmpty()){
             restoreDrawPile();
         }
         return drawPile.pop();
     }
 
     /**
+     * Restores the draw pile by transferring cards from the discard pile.
      *
+     * The top card of the discard pile is kept on the discard pile, while all other cards
+     * are moved to the draw pile and shuffled. This method ensures that the game can
+     * continue when the draw pile becomes empty.
      *
-     * @paramc
+     * @throws IllegalStateException if the discard pile is empty and the draw pile cannot be restored
      */
     public void restoreDrawPile(){
         if (discardPile.isEmpty()) {
@@ -83,24 +92,44 @@ public class PileSystem {
     }
 
     /**
+     * Adds a card to the top of the discard pile.
      *
-     *
-     * @paramc
+     * @param c the card to be added to the discard pile
      */
     public void addToDiscardPile(Card c){
         discardPile.push(c);
     }
 
     /**
+     * Returns the top card of the discard pile without removing it.
      *
+     * If the discard pile is empty, this method returns {@code null}.
      *
-     * @paramc
+     * @return the top card of the discard pile, or {@code null} if the discard pile is empty
      */
     public Card peekTopDiscard(){
         if (discardPile.isEmpty()) {
             return null;
         }
         return discardPile.peek();
+    }
+
+    /**
+     * Returns the number of cards currently in the draw pile.
+     *
+     * @return the size of the draw pile
+     */
+    public int getDrawPileSize(){
+        return drawPile.size();
+    }
+
+    /**
+     * Checks whether the draw pile is empty.
+     *
+     * @return true if the draw pile is empty, false otherwise
+     */
+    public boolean isDrawPileEmpty(){
+        return drawPile.isEmpty();
     }
 }
 
