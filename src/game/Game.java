@@ -1,5 +1,7 @@
 package game;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.Scanner;
+import java.util.ListIterator;
 
 /**
  * game.Game class for the game of UNO
@@ -15,15 +17,18 @@ public class Game {
     private Scanner scanner;
     private final int numberOfPlayers = 0;
     private final LinkedList<Player> players;
+    private ListIterator<Player> playerIterator;
     private Player currentPlayer;
     private PileSystem pile;
-    private boolean drawTwo = false;
+    private boolean drawOne = false;
     private boolean wildDrawTwo = false;
+    private boolean reverse = false;
 
     public Game() {
         PileSystem pile = new PileSystem(); // creates and shuffles draw pile. Also creates discard pile;
         pile.addToDiscardPile(pile.drawCard()); // adds the first card to the discard pile
         players = new LinkedList<Player>();
+        playerIterator = players.listIterator();
         currentPlayer = null;
         Scanner scanner = new Scanner(System.in);
 
@@ -32,12 +37,10 @@ public class Game {
             System.out.println("Enter number of players (2-4)");
             int numberOfPlayers = parseUserIntInput();
             currentPlayer = createPlayers(numberOfPlayers);
-            for (Player player : players) {
-                displayTurn(player);
+            if (!reverse) {
+                
             }
         }
-
-
     }
 
     /**
@@ -54,11 +57,15 @@ public class Game {
     public void displayTurn(Player currentPlayer) {
 
         System.out.println("--------"+currentPlayer.getName() + "'s turn"+"----------");
-        if (drawTwo) {
+        if (drawOne) {
             System.out.println(currentPlayer.getName()+" has to draw two cards due to the DRAW_TWO card.");
-            currentPlayer.addCard(pile.drawCard());
-            currentPlayer.addCard(pile.drawCard());
-            drawTwo = false;
+            Card card1 = pile.drawCard();
+            Card card2 = pile.drawCard();
+            currentPlayer.addCard(card1);
+            currentPlayer.addCard(card2);
+            System.out.println(currentPlayer.getName()+"drew " + card1 + " and " + card2);
+
+            drawOne = false;
         } else if (wildDrawTwo) {
 
             System.out.println("Wild draw two!");
@@ -103,12 +110,17 @@ public class Game {
         switch (placedCardFromHand.getType()) {
             case CardType.ONE, CardType.TWO, CardType.THREE, CardType.FOUR, CardType.FIVE, CardType.SIX, CardType.SEVEN, CardType.EIGHT, CardType.NINE:
                 pile.addToDiscardPile(currentPlayer.getHand().get(cardNumber - 1));
-                System.out.println("Card removed from hand and added to discard pile!");
+                System.out.println(currentPlayer.getName() + " placed a " + placedCardFromHand);
                 break;
             case CardType.DRAW_ONE:
-
+                pile.addToDiscardPile(currentPlayer.getHand().get(cardNumber - 1));
+                System.out.println(currentPlayer.getName() + " placed a " + placedCardFromHand);
+                drawOne = true;
                 break;
             case CardType.REVERSE:
+                System.out.println("Reverse card is played, direction is reversed. ");
+                pile.addToDiscardPile(currentPlayer.getHand().get(cardNumber - 1));
+                reverse = true;
                 break;
             case CardType.SKIP:
                 break;
@@ -127,7 +139,11 @@ public class Game {
 
 
     public boolean validatePlacedCard(Card placedCardFromHand, Card topCardOfDiscardPile) {
-        if (placedCardFromHand.getColor() == topCardOfDiscardPile.getColor() || placedCardFromHand.getType() == topCardOfDiscardPile.getType()) {
+        if (placedCardFromHand.getColor() == topCardOfDiscardPile.getColor() ||
+                placedCardFromHand.getType() == topCardOfDiscardPile.getType() ||
+                placedCardFromHand.getType() == CardType.WILD ||
+                placedCardFromHand.getType() == CardType.WILD_DRAW_TWO ||
+                placedCardFromHand ==  topCardOfDiscardPile) {
             return true;
         }
         return false;
