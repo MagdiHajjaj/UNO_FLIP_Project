@@ -94,6 +94,25 @@ public class Card {
     }
 
 
+    /**
+     * Compares this {@code Card} to the specified object for equality.
+     * Two cards are considered equal if:
+     *   They are the same instance (i.e., refer to the same object)
+     *   The specified object is also a Card, and both have the same color and type.
+     *
+     *
+     * @param o the object to compare this card against
+     * @return {@code true} if the specified object is equal to this card;
+     *         {@code false} otherwise
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        Card card = (Card) o;
+        return this.color == card.color && this.type == card.type;
+    }
+
 
 
 }

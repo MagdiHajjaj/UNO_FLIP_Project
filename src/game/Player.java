@@ -2,6 +2,7 @@ package game;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 
 /**
  * Represents a single player.
@@ -16,7 +17,7 @@ public class Player {
     private final String name;
 
     //Cards currently in players hand
-    private final List<Card> hand = new ArrayList<>();
+    private List<Card> hand = new ArrayList<>();
 
     //Cumulative score
     private int totalScore = 0;
@@ -78,7 +79,7 @@ public class Player {
      *
      * @param  points to add; ignored if points is less than or equal to zero
      */
-    public void addScore(int pointd) {
+    public void addScore(int points) {
         if (points > 0)
             totalScore += points;
     }
