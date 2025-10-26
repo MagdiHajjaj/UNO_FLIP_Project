@@ -21,14 +21,16 @@ public class Game {
     private boolean wildDrawTwo = false;
 
     public Game() {
-        PileSystem pile = new PileSystem(); // creates and shuffles draw pile. Also creates discard pile
+        pile = new PileSystem(); // creates and shuffles draw pile. Also creates discard pile
+        Card x = pile.drawCard();
+        pile.addToDiscardPile(x);
         players = new LinkedList<Player>();
         currentPlayer = null;
-        Scanner scanner = new Scanner(System.in);
+        scanner = new Scanner(System.in);
 
         while (true) {
             welcomeMenu();
-            System.out.println("Enter number of players (2-4");
+            System.out.println("Enter number of players (2-4)");
             int numberOfPlayers = parseUserIntInput();
             currentPlayer = createPlayers(numberOfPlayers);
             for (Player player : players) {
@@ -131,7 +133,7 @@ public class Game {
             numberOfPlayers = parseUserIntInput();
         }
         for (int i = 0; i < numberOfPlayers; i++) {
-            System.out.println("Enter name of player " + i);
+            System.out.println("Enter name of player " + (i+1));
             String name = parseUserStringInput();
             players.add(new Player(name));
             generatePlayerHand(players.get(i)); // o(1)
@@ -147,6 +149,7 @@ public class Game {
 
     public int parseUserIntInput() {
         int integer =  scanner.nextInt();
+        scanner.nextLine();
         return integer;
     }
     public String parseUserStringInput() {
