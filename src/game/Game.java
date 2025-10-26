@@ -101,9 +101,9 @@ public class Game {
             case CardType.DRAW_ONE:
 
                 break;
-            case CardType.REVERSE:
+            case CardType.REVERSE: // use reverse pointer from the iterator class
                 break;
-            case CardType.SKIP:
+            case CardType.SKIP: // use has.next() from the iterator class
                 break;
             case CardType.WILD:
                 break;
