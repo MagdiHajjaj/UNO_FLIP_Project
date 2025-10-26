@@ -39,10 +39,16 @@ public class Game {
 
     }
 
+    /**
+     * Displays the welcome message and introductory menu header
+     * for the UNO Flip game.
+     * This method prints a formatted welcome message to the console,
+     * including the game title and a separator line. It does not
+     * take any input or return any value.
+     */
     public void welcomeMenu() {
         System.out.println("Welcome to UNO Flip!\n");
         System.out.println("------------------------------------");
-
     }
     public void displayTurn(Player currentPlayer) {
 
