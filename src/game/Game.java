@@ -21,10 +21,10 @@ public class Game {
     private boolean wildDrawTwo = false;
 
     public Game() {
-        PileSystem pile = new PileSystem(); // creates and shuffles draw pile. Also creates discard pile
+        pile = new PileSystem(); // creates and shuffles draw pile. Also creates discard pile
         players = new LinkedList<Player>();
         currentPlayer = null;
-        Scanner scanner = new Scanner(System.in);
+        scanner = new Scanner(System.in);
 
         while (true) {
             welcomeMenu();
