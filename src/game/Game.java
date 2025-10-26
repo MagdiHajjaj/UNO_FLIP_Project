@@ -1,5 +1,4 @@
 package game;
-import java.sql.SQLOutput;
 import java.util.*;
 
 /**
@@ -8,14 +7,6 @@ import java.util.*;
  * @author Mohammed Osman
  * @id 101311022
  * @version M1
- *
- *
- *
- * things to do:
- * - create players
- * - parse user input
- * - game loop
- * - check for winner
  *
  */
 
@@ -26,6 +17,8 @@ public class Game {
     private final LinkedList<Player> players;
     private Player currentPlayer;
     private PileSystem pile;
+    private boolean drawTwo = false;
+    private boolean wildDrawTwo = false;
 
     public Game() {
         PileSystem pile = new PileSystem(); // creates and shuffles draw pile. Also creates discard pile
@@ -54,6 +47,15 @@ public class Game {
     public void displayTurn(Player currentPlayer) {
 
         System.out.println("--------"+currentPlayer.getName() + "'s turn"+"----------");
+        if (drawTwo) {
+            System.out.println(currentPlayer.getName()+" has to draw two cards due to the DRAW_TWO card.");
+            currentPlayer.addCard(pile.drawCard());
+            currentPlayer.addCard(pile.drawCard());
+            drawTwo = false;
+        } else if (wildDrawTwo) {
+
+            System.out.println("Wild draw two!");
+        }
         for (Card card : currentPlayer.getHand()) {
             System.out.println(currentPlayer.getHand().indexOf(card)+1 + ". " + card);
         }
@@ -61,16 +63,67 @@ public class Game {
         System.out.println("top card of discard pile: " + pile.peekTopDiscard());
         System.out.println("draw pile size: " + pile.getDrawPileSize());
         System.out.println("------------------------------------");
-        System.out.println("Enter number of card to play or enter 0 to draw a card from the draw pile");
-        int cardNumber = parseUserIntInput();
-        if (cardNumber > 0) {
-            boolean valid = validatePlacedCard(currentPlayer.getHand().get(cardNumber-1), pile.peekTopDiscard());
+        while (true) {
+            System.out.println("Enter number of card to play or enter 0 to draw a card from the draw pile");
+            int cardNumber = parseUserIntInput();
+            if (cardNumber > 0 && cardNumber <= currentPlayer.handSize()) {
+                boolean valid = validatePlacedCard(currentPlayer.getHand().get(cardNumber - 1), pile.peekTopDiscard());
+                if (valid) {
+                    currentPlayer.removeCardAt(cardNumber - 1);
+                    proccessCard(currentPlayer.getHand().get(cardNumber-1), cardNumber);
+                    System.out.println("---------------------------------------------");
+                    break;
+                } else {
+                    System.out.println("Invalid card. Please try again.");
+                    continue;
+                }
+            } else if (cardNumber == 0) {
+                Card drawnCard = pile.drawCard();
+                currentPlayer.addCard(drawnCard);
+                System.out.println("Player " + currentPlayer.getName() + " drew a " + drawnCard + " !") ;
+                System.out.println("---------------------------------------------");
+                break;
+            } else {
+                System.out.println("Invalid input. Please try again.");
+            }
         }
 
 
     }
-    public boolean validatePlacedCard(Card placedCardFromHand, Card topCardOfDiscardPile) {
 
+
+    public void proccessCard(Card placedCardFromHand, int cardNumber) {
+        switch (placedCardFromHand.getType()) {
+            case CardType.ONE, CardType.TWO, CardType.THREE, CardType.FOUR, CardType.FIVE, CardType.SIX, CardType.SEVEN, CardType.EIGHT, CardType.NINE:
+                pile.addToDiscardPile(currentPlayer.getHand().get(cardNumber - 1));
+                System.out.println("Card removed from hand and added to discard pile!");
+                break;
+            case CardType.DRAW_ONE:
+
+                break;
+            case CardType.REVERSE:
+                break;
+            case CardType.SKIP:
+                break;
+            case CardType.WILD:
+                break;
+            case CardType.WILD_DRAW_TWO:
+                break;
+        }
+    }
+
+    public void calculateScore() {
+
+    }
+
+
+
+
+    public boolean validatePlacedCard(Card placedCardFromHand, Card topCardOfDiscardPile) {
+        if (placedCardFromHand.getColor() == topCardOfDiscardPile.getColor() || placedCardFromHand.getType() == topCardOfDiscardPile.getType()) {
+            return true;
+        }
+        return false;
     }
     public Player createPlayers(int numberOfPlayers) {
         while (numberOfPlayers > 4 || numberOfPlayers < 2) {
