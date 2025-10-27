@@ -69,14 +69,12 @@ public class Game {
                     }
                 }
                 if (skip) {
+                    System.out.println(players.get(i).getName() + "'s turn is skipped");
                     if (direction > 0) {
                         i = (i == players.size() - 1) ? 0 : i + 1;
                     } else {
                         i = (i == 0) ? players.size() - 1 : i - 1;
                     }
-
-                    System.out.println(currentPlayer.getName() + "'s turn is skipped");
-
                     skip = false;
                     continue;
                 }
