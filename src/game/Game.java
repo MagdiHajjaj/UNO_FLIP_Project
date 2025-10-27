@@ -25,8 +25,7 @@ public class Game {
     private boolean exitGame;
 
     public Game() {
-        pile = new PileSystem(); // creates and shuffles draw pile. Also creates discard pile;
-
+        pile = new PileSystem();
         scanner = new Scanner(System.in);
         players = new ArrayList<Player>();
         drawOne = false;
@@ -75,7 +74,7 @@ public class Game {
                     } else {
                         i = (i == 0) ? players.size() - 1 : i - 1;
                     }
-                    System.out.println(players.get(i).getName() + "'s turn is skipped");
+                    System.out.println(currentPlayer.getName() + "'s turn is skipped");
                     skip = false;
                     continue;
                 }
@@ -143,6 +142,10 @@ public class Game {
         currentPlayer = null;
         pile = new PileSystem();
         exitGame = false;
+        pile.addToDiscardPile(pile.drawCard());
+        while(pile.peekTopDiscard().getColor() == CardColor.WILD){
+            pile.addToDiscardPile(pile.drawCard());
+        }
         for (Player player : players) {
             player.clearHand();
             this.generatePlayerHand(player);
@@ -164,6 +167,10 @@ public class Game {
         currentPlayer = null;
         pile = new PileSystem();
         exitGame = false;
+        pile.addToDiscardPile(pile.drawCard());
+        while(pile.peekTopDiscard().getColor() == CardColor.WILD){
+            pile.addToDiscardPile(pile.drawCard());
+        }
         for (Player player : players) {
             player.clearHand();
             this.generatePlayerHand(player);
@@ -427,7 +434,7 @@ public class Game {
      * @return the parsed string value
      */
     public String parseUserStringInput() {
-        String string =  scanner.nextLine();
-        return string;
+        return scanner.nextLine();
+
     }
 }
