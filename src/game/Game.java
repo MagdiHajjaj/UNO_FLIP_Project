@@ -3,15 +3,12 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * game.Game class for the game of UNO
- * @author Mohammed Osman
- * @id 101311022
- * @version M1
- */
-/**
  * Constructs a new UNO Flip game instance.
  * Initializes piles, scanner, player list and round control flags,
  * then enters the main menu/setup loop to start or continue play.
+ * @author Mohammed Osman
+ * @id 101311022
+ * @version M1
  */
 public class Game {
     private Scanner scanner;
@@ -29,7 +26,7 @@ public class Game {
 
     public Game() {
         pile = new PileSystem(); // creates and shuffles draw pile. Also creates discard pile;
-        pile.addToDiscardPile(pile.drawCard()); // adds the first card to the discard pile
+
         scanner = new Scanner(System.in);
         players = new ArrayList<Player>();
         drawOne = false;
@@ -42,9 +39,16 @@ public class Game {
         i = 0;
         exitGame = false;
 
+
+        // adds the first card to the discard pile
+        pile.addToDiscardPile(pile.drawCard());
+        while(pile.peekTopDiscard().getColor() == CardColor.WILD){
+            pile.addToDiscardPile(pile.drawCard());
+        }
+
         while (!exitGame) {
             welcomeMenu();
-            System.out.println("Enter number of players (2-4)");
+            System.out.println("Enter number of players (2-4):");
             int numberOfPlayers = parseUserIntInput();
             currentPlayer = createPlayers(numberOfPlayers);
 
@@ -59,7 +63,7 @@ public class Game {
                         restartGame();
                         break;
                     } else {
-                        System.out.println(currentPlayer.getName() + "has 0 cards left! they win this round.");
+                        System.out.println(currentPlayer.getName() + " has 0 cards left! they win this round.");
                         System.out.println(currentPlayer.getName() + " has earned " + currentPlayer.getScore() + " points.");
                         displayScores();
                         newRound();
@@ -215,11 +219,12 @@ public class Game {
     public void displayTurn(Player currentPlayer) {
         this.currentPlayer = currentPlayer;
         System.out.println("--------"+currentPlayer.getName() + "'s turn"+"----------");
+        System.out.println("Top card: " + pile.peekTopDiscard() + "\n");
         if (drawOne) {
             System.out.println(currentPlayer.getName()+" has to draw one card due to the DRAW_ONE card.");
             Card card1 = pile.drawCard();
             currentPlayer.addCard(card1);
-            System.out.println(currentPlayer.getName()+"drew " + card1);
+            System.out.println(currentPlayer.getName()+"drew a" + card1);
             drawOne = false;
         } else if (wildDrawTwo) {
             System.out.println(currentPlayer.getName()+" has to draw two cards due to the DRAW_TWO card.");
@@ -227,18 +232,14 @@ public class Game {
             Card card2 = pile.drawCard();
             currentPlayer.addCard(card1);
             currentPlayer.addCard(card2);
-            System.out.println(currentPlayer.getName()+"drew " + card1);
+            System.out.println(currentPlayer.getName()+" drew a " + card1 + " and a " + card2);
             wildDrawTwo = false;
         }
         for (Card card : currentPlayer.getHand()) {
             System.out.println(currentPlayer.getHand().indexOf(card)+1 + ". " + card);
         }
-        System.out.println("---------Things to consider----------");
-        System.out.println("top card of discard pile: " + pile.peekTopDiscard());
-        System.out.println("draw pile size: " + pile.getDrawPileSize());
-        System.out.println("------------------------------------");
         while (true) {
-            System.out.println("Enter number of card to play or enter 0 to draw a card from the draw pile");
+            System.out.println("Enter a card index to play a card, or 0 to draw a card:");
             int cardNumber = parseUserIntInput();
             if (cardNumber > 0 && cardNumber <= currentPlayer.handSize()) {
                 boolean valid = validatePlacedCard(currentPlayer.getHand().get(cardNumber - 1), pile.peekTopDiscard(), wildColor);
@@ -254,8 +255,8 @@ public class Game {
             } else if (cardNumber == 0) {
                 Card drawnCard = pile.drawCard();
                 currentPlayer.addCard(drawnCard);
-                System.out.println("Player " + currentPlayer.getName() + " drew a " + drawnCard + " !") ;
-                System.out.println("---------------------------------------------");
+                System.out.println("Player " + currentPlayer.getName() + " drew a " + drawnCard + "!") ;
+                System.out.println("---------------------------------------------\n");
                 break;
             } else {
                 System.out.println("Invalid input. Please try again.");
