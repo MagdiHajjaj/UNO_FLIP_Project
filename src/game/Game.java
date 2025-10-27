@@ -28,9 +28,9 @@ public class Game {
     private boolean exitGame;
 
     public Game() {
-        PileSystem pile = new PileSystem(); // creates and shuffles draw pile. Also creates discard pile;
+        pile = new PileSystem(); // creates and shuffles draw pile. Also creates discard pile;
         pile.addToDiscardPile(pile.drawCard()); // adds the first card to the discard pile
-        Scanner scanner = new Scanner(System.in);
+        scanner = new Scanner(System.in);
         players = new ArrayList<Player>();
         drawOne = false;
         wildDrawTwo = false;
@@ -50,6 +50,7 @@ public class Game {
 
             while (i < players.size()){
                 if (players.get(i).getHand().isEmpty()) {
+                    currentPlayer = players.get(i);
                     currentPlayer.addScore(calculateScore(i));
                     Player winner = checkWinner();
                     if (winner != null) {
@@ -65,6 +66,11 @@ public class Game {
                     }
                 }
                 if (skip) {
+                    if (direction > 0) {
+                        i = (i == players.size() - 1) ? 0 : i + 1;
+                    } else {
+                        i = (i == 0) ? players.size() - 1 : i - 1;
+                    }
                     System.out.println(players.get(i).getName() + "'s turn is skipped");
                     skip = false;
                     continue;
@@ -266,22 +272,22 @@ public class Game {
         String chosenColor;
         pile.addToDiscardPile(placedCardFromHand);
         switch (placedCardFromHand.getType()) {
-            case CardType.ONE, CardType.TWO, CardType.THREE, CardType.FOUR, CardType.FIVE, CardType.SIX, CardType.SEVEN, CardType.EIGHT, CardType.NINE:
+            case ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE:
                 System.out.println(currentPlayer.getName() + " placed a " + placedCardFromHand);
                 break;
-            case CardType.DRAW_ONE:
+            case DRAW_ONE:
                 System.out.println(currentPlayer.getName() + " placed a " + placedCardFromHand);
                 drawOne = true;
                 break;
-            case CardType.REVERSE:
+            case REVERSE:
                 System.out.println(currentPlayer.getName()+" played a Reverse Card, direction is reversed.");
                 direction *= -1;
                 break;
-            case CardType.SKIP:
+            case SKIP:
                 skip = true;
                 System.out.println(currentPlayer.getName()+" played a Skip Card.");
                 break;
-            case CardType.WILD:
+            case WILD:
                 System.out.println("Enter color (RED, YELLOW, BLUE, GREEN)");
                 chosenColor = parseUserStringInput();
                 while (true) {
@@ -295,7 +301,7 @@ public class Game {
                     }
                 }
                 break;
-            case CardType.WILD_DRAW_TWO:
+            case WILD_DRAW_TWO:
                 System.out.println("Enter color (RED, YELLOW, BLUE, GREEN)");
                 chosenColor = parseUserStringInput();
                 while (true) {
@@ -343,9 +349,10 @@ public class Game {
     public boolean validatePlacedCard(Card placedCardFromHand, Card topCardOfDiscardPile, Card wildColor) {
         if (topCardOfDiscardPile.getType()==CardType.WILD ||
                 topCardOfDiscardPile.getType()==CardType.WILD_DRAW_TWO) { // if true, must check for the specifed color from previous player using wildColor
-            if (placedCardFromHand.getColor() == wildColor.getColor()) {
-                return true;
+            if (topCardOfDiscardPile.getType() == CardType.WILD || topCardOfDiscardPile.getType() == CardType.WILD_DRAW_TWO) {
+                return wildColor != null && placedCardFromHand.getColor() == wildColor.getColor();
             }
+
             return false;
         } else if (placedCardFromHand == topCardOfDiscardPile ||
                 placedCardFromHand.getColor() == topCardOfDiscardPile.getColor() ||
@@ -370,7 +377,7 @@ public class Game {
             numberOfPlayers = parseUserIntInput();
         }
         for (int i = 0; i < numberOfPlayers; i++) {
-            System.out.println("Enter name of player " + i+1);
+            System.out.println("Enter name of player " + (i+1));
             String name = parseUserStringInput();
             players.add(new Player(name));
             generatePlayerHand(players.get(i)); // o(1)
