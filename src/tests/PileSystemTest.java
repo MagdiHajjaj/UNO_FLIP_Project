@@ -1,93 +1,65 @@
 package tests;
-/**
- * Test class for game.PileSystem
- *
- * @author Magdi Hajjaj
- * @version M1
- */
 
-
-import game.Card;
-import game.CardColor;
-import game.CardType;
-import game.PileSystem;
-import org.junit.jupiter.api.*;
+import game.*;
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PileSystemTest {
-
-    private PileSystem pileSystem;
-
-    @BeforeEach
-    public void setUp() {
-        pileSystem = new PileSystem();
-    }
-
     /**
-     * Test that the draw pile is initialized correctly
-     */
-
-
-    /**
-     * Test drawing a card reduces the pile size by one
+     * Tests that the draw pile is correctly initialized with 104 cards.
      */
     @Test
-    public void testDrawCardRemovesFromDrawPile() {
-        int initialSize = pileSystem.getDrawPileSize();
-        Card drawnCard = pileSystem.drawCard();
-        assertNotNull(drawnCard, "Drawn card should not be null.");
-        assertEquals(initialSize - 1, pileSystem.getDrawPileSize(), "Draw pile size should decrease by one.");
+    public void testDrawPileInitialization() {
+        PileSystem piles = new PileSystem();
+        int expectedCards = (4 * ((9 + 3) * 2)) + (2 * 4 * 1);
+        assertEquals(expectedCards, piles.getDrawPileSize(), "Draw pile should contain 104 cards initially");
     }
-
     /**
-     * Test adding a card to the discard pile
+     * Tests that drawing a card reduces the draw pile size by one.
      */
     @Test
-    public void testAddToDiscardPile() {
-        Card testCard = new Card(CardColor.RED, CardType.SKIP);
-        pileSystem.addToDiscardPile(testCard);
-        assertEquals(testCard, pileSystem.peekTopDiscard(), "Top of discard pile should be the card just added.");
+    public void testDrawCardReducesPileSize() {
+        PileSystem piles = new PileSystem();
+        int initialSize = piles.getDrawPileSize();
+        piles.drawCard();
+        assertEquals(initialSize - 1, piles.getDrawPileSize(), "Drawing a card should reduce pile size by one");
     }
-
     /**
-     * Test restoring draw pile keeps top discard card
+     * Tests adding a card to the discard pile and retrieving it using  peekTopDiscard().
      */
     @Test
-    public void testRestoreDrawPileKeepsTopDiscard() {
-        while (!pileSystem.isDrawPileEmpty()) {
-            pileSystem.drawCard();
+    public void testAddToDiscardPileAndPeek() {
+        PileSystem piles = new PileSystem();
+        Card card = new Card(CardColor.RED, CardType.ONE);
+        piles.addToDiscardPile(card);
+
+        assertEquals(card, piles.peekTopDiscard(), "Top discard should match the card added");
+    }
+    /**
+     * Tests that the draw pile can be restored from the discard pile when empty.
+     * Ensures no exception is thrown during the restore process.
+     */
+    @Test
+    public void testRestoreDrawPileWhenEmpty() {
+        PileSystem piles = new PileSystem();
+
+        Card lastCard = piles.drawCard();
+        piles.addToDiscardPile(lastCard);
+
+        while (!piles.isDrawPileEmpty()) {
+            piles.addToDiscardPile(piles.drawCard());
         }
-
-        Card topCard = new Card(CardColor.BLUE, CardType.REVERSE);
-        pileSystem.addToDiscardPile(new Card(CardColor.GREEN, CardType.ONE));
-        pileSystem.addToDiscardPile(topCard);
-
-        pileSystem.restoreDrawPile();
-
-        assertEquals(topCard, pileSystem.peekTopDiscard(), "Top card should remain after restore.");
-        assertFalse(pileSystem.isDrawPileEmpty(), "Draw pile should be refilled after restore.");
-    }
-
-    /**
-     * Test restoreDrawPile throws exception when discard pile is empty
-     */
-    @Test
-    public void testRestoreDrawPileEmptyDiscardThrowsException() {
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
-            pileSystem.restoreDrawPile();
+        assertDoesNotThrow(() -> {
+            piles.drawCard(); // This triggers restoreDrawPile() internally
         });
-        assertTrue(exception.getMessage().contains("empty"), "Exception should mention discard pile is empty.");
     }
-
     /**
-     * Test shuffling changes card order (probabilistically)
+     * Tests that peekTopDiscard() returns null when the discard pile is empty.
      */
+
     @Test
-    public void testShuffleChangesOrder() {
-        PileSystem newPile = new PileSystem();
-        PileSystem newPile2 = new PileSystem();
-
-
-        assertFalse(newPile.drawCard() == newPile2.drawCard(), "Shuffle should change the order of at least one card.");
+    public void testPeekTopDiscardReturnsNullWhenEmpty() {
+        PileSystem piles = new PileSystem();
+        assertNull(piles.peekTopDiscard(), "Should return null if discard pile is empty");
     }
 }

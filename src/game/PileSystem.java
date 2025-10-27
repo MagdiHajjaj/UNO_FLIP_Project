@@ -53,7 +53,7 @@ public class PileSystem {
      * This method ensures that the cards in the draw pile are in a random sequence
      * before the game begins or when the pile needs to be reshuffled.
      */
-    public void shuffleDrawPile(){
+    private void shuffleDrawPile(){
         Collections.shuffle(drawPile);
     }
 
@@ -80,7 +80,7 @@ public class PileSystem {
      *
      * @throws IllegalStateException if the discard pile is empty and the draw pile cannot be restored
      */
-    public void restoreDrawPile(){
+    private void restoreDrawPile(){
         if (discardPile.isEmpty()) {
             throw new IllegalStateException("Cannot restore draw pile — discard pile is empty!");
         }
