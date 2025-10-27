@@ -53,7 +53,7 @@ public class Game {
             currentPlayer = createPlayers(numberOfPlayers);
 
             while (i < players.size()){
-                if (players.get(i).getHand().isEmpty()) {
+                if (checkIfAnyHandIsEmpty()) {
                     currentPlayer = players.get(i);
                     currentPlayer.addScore(calculateScore(i));
                     Player winner = checkWinner();
@@ -114,6 +114,19 @@ public class Game {
                 break;
             }
         }
+    }
+    /**
+     * Checks if any player's hand is empty.
+     *
+     * @return true if any player's hand is empty, false otherwise
+     */
+    public boolean checkIfAnyHandIsEmpty() {
+        for (Player player : players) {
+            if (player.getHand().isEmpty()) {
+                return true;
+            }
+        }
+        return false;
     }
     /**
      * Resets per-round game fields to their initial state and redeals hands.
@@ -205,7 +218,7 @@ public class Game {
      * take any input or return any value.
      */
     public void welcomeMenu() {
-        System.out.println("Welcome to UNO Flip!\n");
+        System.out.println("Welcome to UNO Flip!");
         System.out.println("------------------------------------");
     }
     /**
@@ -246,7 +259,7 @@ public class Game {
                 if (valid) {
                     Card cardPlaced = currentPlayer.removeCardAt(cardNumber - 1);
                     proccessCard(cardPlaced);
-                    System.out.println("---------------------------------------------");
+                    System.out.println("");
                     break;
                 } else {
                     System.out.println("Invalid card. Please try again.");
@@ -383,6 +396,7 @@ public class Game {
             players.add(new Player(name));
             generatePlayerHand(players.get(i)); // o(1)
         }
+        System.out.println("");
         return players.get(0); // returns the current player (first one when game starts)
         
     }
