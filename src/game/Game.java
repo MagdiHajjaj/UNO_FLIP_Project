@@ -75,7 +75,7 @@ public class Game {
                     } else {
                         i = (i == 0) ? players.size() - 1 : i - 1;
                     }
-                    System.out.println(players.get(i).getName() + "'s turn is skipped");
+                    System.out.println(players.get(i-1).getName() + "'s turn is skipped");
                     skip = false;
                     continue;
                 }
