@@ -100,6 +100,14 @@ public class Player {
         if (c != null)
             hand.add(c);
     }
+    /**
+     * Sets the player's cumulative score.
+     *
+     * @param score new total score
+     */
+    public void setScore(int score) {
+        totalScore = score;
+    }
 
     /**
      * Removes and returns the card at the given index, for example when playing.
