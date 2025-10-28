@@ -44,6 +44,10 @@ Running this file will start our playable UNO implementation.
 - Created sequence diagrams for gameplay scenarios  
 
 ---
+To execute the jar file:
+- Open a terminal
+- Navigate to the folder containing the jar file
+- Run the command: java -jar UnoExampleM1.jar
 
 ✅ **Milestone Goal:**  
 Deliver a functional UNO game simulation with documented class relationships, data structures, and test coverage.
