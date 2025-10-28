@@ -6,6 +6,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for game.Card
+ *
+ * @author Edward Savin
+ * @version M1
+ */
 class CardTest {
     private Card c1;
     private Card c2;
@@ -55,6 +61,9 @@ class CardTest {
         assertThrows(IllegalArgumentException.class, () -> new Card(CardColor.WILD, CardType.SKIP));
     }
 
+    /**
+     * Test for Points map
+     */
     @Test
     void pointTest(){
         assertEquals(5, c1.getPoint());
@@ -67,6 +76,9 @@ class CardTest {
         assertEquals(40, c8.getPoint());
     }
 
+    /**
+     * Test toString method
+     */
     @Test
     void toStringTest(){
         assertEquals("RED FIVE", c1.toString());
@@ -79,6 +91,9 @@ class CardTest {
         assertEquals("WILD WILD", c8.toString());
     }
 
+    /**
+     * Test Equals method
+     */
     @Test
     void equalsTest(){
         assertNotEquals(c1, c2);
