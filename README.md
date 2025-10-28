@@ -5,6 +5,7 @@ Executing the file will allow the user to play our milestone #1 UNO iteration.
 Other files include a UML diagram for our program, Sequence diagrams of important scenarios, and an explanation of our data structures.
 
 Contributions
+
 Edward, Savin 101239342
 -Card class
 -Enum Classes
