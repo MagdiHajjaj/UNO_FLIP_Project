@@ -1,7 +1,6 @@
 package game;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
-import java.util.Locale;
 import java.util.Scanner;
 
 /**
@@ -437,6 +436,21 @@ public class Game {
 
     }
 
+    // Test-mode constructor: init fields, NO game loop.
+    public Game(java.util.Scanner scanner, boolean testMode) {
+        this.scanner = scanner != null ? scanner : new java.util.Scanner(System.in);
+        this.players = new java.util.ArrayList<>();
+        this.pile = new PileSystem();
+        this.wildColor = null;
+        this.drawOne = false;
+        this.wildDrawTwo = false;
+        this.skip = false;
+        this.exitGame = false;
+        this.isWinner = false;
+        this.direction = 1;
+        this.indexOfCurrentPlayer = 0;
+        this.roundNumber = 1;
+    }
 
     /**
      * Returns the current play direction.
