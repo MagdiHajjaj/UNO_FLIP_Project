@@ -13,15 +13,15 @@ Edward, Savin 101239342
 -PlayerTest class
 -Data Structure explanation
 
-Magdi, Hajjaj
+Magdi, Hajjaj 101299841
 -PileSystem class
 -PileSystemTest class
--UML diagram
+-UML
 
-Mohammed, Osman
+Mohammed, Osman 101311022
 -Game class
 -Card Equals() method
 
-Hamza, Mohammed Salih
+Hamza, Mohammed Salih 101311021
 -Player class
 -Sequence Diagrams

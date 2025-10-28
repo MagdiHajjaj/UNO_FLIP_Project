@@ -1,13 +1,16 @@
 package game;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.util.Locale;
 import java.util.Scanner;
 
 /**
  * Constructs a new UNO Flip game instance.
  * Initializes piles, scanner, player list and round control flags,
  * then enters the main menu/setup loop to start or continue play.
- * @author Mohammed Osman
- * @id 101311022
+ *
+ * @author Mohammed Osman, Magdi Hajjaj
+ * @id 101311022, 101299841
  * @version M1
  */
 public class Game {
@@ -15,14 +18,16 @@ public class Game {
     private ArrayList<Player> players;
     private Player currentPlayer;
     private PileSystem pile;
+    private Card wildColor;
     private boolean drawOne;
     private boolean wildDrawTwo;
-    private int direction;
-    private int index;
     private boolean skip;
-    private Card wildColor;
-    private int i;
     private boolean exitGame;
+    private boolean isWinner;
+    private int direction;
+    private int indexOfCurrentPlayer;
+    private int roundNumber;
+    private static final int WINNING_SCORE = 500;
 
     public Game() {
         pile = new PileSystem();
@@ -32,12 +37,11 @@ public class Game {
         wildDrawTwo = false;
         currentPlayer = null;
         direction = 1;
-        index = 0;
         wildColor = null;
         skip = false;
-        i = 0;
+        indexOfCurrentPlayer = 0;
         exitGame = false;
-
+        roundNumber = 1;
 
         // adds the first card to the discard pile
         pile.addToDiscardPile(pile.drawCard());
@@ -51,172 +55,45 @@ public class Game {
             int numberOfPlayers = parseUserIntInput();
             currentPlayer = createPlayers(numberOfPlayers);
 
-            while (i < players.size()){
+            while (indexOfCurrentPlayer < players.size()){
                 if (checkIfAnyHandIsEmpty()) {
-                    currentPlayer = players.get(i);
-                    currentPlayer.addScore(calculateScore(i));
-                    Player winner = checkWinner();
-                    if (winner != null) {
-                        System.out.println(winner.getName() + " has won the game!");
+                    currentPlayer.addScore(calculateScore());
+                    isWinner = checkWinner(currentPlayer);
+                    if (isWinner == true) {
+                        System.out.println(currentPlayer.getName() + " has 0 cards left! they win this round.");
+                        System.out.println(currentPlayer.getName() + " has earned " + currentPlayer.getScore() + " points.");
+                        System.out.println("FINAL SCORES:");
                         displayScores();
+                        System.out.print("There is a winner! "+ currentPlayer.getName() + " is the winner of the game. ");
                         restartGame();
                         break;
                     } else {
                         System.out.println(currentPlayer.getName() + " has 0 cards left! they win this round.");
                         System.out.println(currentPlayer.getName() + " has earned " + currentPlayer.getScore() + " points.");
+                        System.out.println("CURRENT SCORES:");
                         displayScores();
                         newRound();
                     }
                 }
                 if (skip) {
-                    System.out.println(players.get(i).getName() + "'s turn is skipped");
+                    System.out.println(players.get(indexOfCurrentPlayer).getName() + "'s turn is skipped");
                     if (direction > 0) {
-                        i = (i == players.size() - 1) ? 0 : i + 1;
+                        indexOfCurrentPlayer = (indexOfCurrentPlayer == players.size() - 1) ? 0 : indexOfCurrentPlayer + 1;
                     } else {
-                        i = (i == 0) ? players.size() - 1 : i - 1;
+                        indexOfCurrentPlayer = (indexOfCurrentPlayer == 0) ? players.size() - 1 : indexOfCurrentPlayer - 1;
                     }
                     skip = false;
                     continue;
                 }
-                if (direction > 0) {
-                    if (i == players.size()-1) {
-                        displayTurn(players.get(i));
-                        i = 0;
-                    } else {
-                        displayTurn(players.get(i));
-                        i++;
-                    }
-                } else if (direction < 0){
-                    if (i == 0) {
-                        displayTurn(players.get(i));
-                        i = players.size()-1;
-                    } else {
-                        displayTurn(players.get(i));
-                        i--;
-                    }
-                }
+                // Show current player's turn
+                displayTurn(players.get(indexOfCurrentPlayer));
+                indexOfCurrentPlayer = ((indexOfCurrentPlayer + direction) % players.size() + players.size()) % players.size();
+
             }
 
         }
     }
-    /**
-     * Starts a new round when no player has won the game yet.
-     * Prompts the user to type "new" and, upon confirmation,
-     * resets per-round fields and redeals cards.
-     */
-    public void newRound() {
-        while (true) {
-            System.out.println("No winner yet. type 'new' to start a new round");
-            String input = parseUserStringInput();
-            if (input.equals("new")) {
-                resetFeilds();
-                break;
-            }
-        }
-    }
-    /**
-     * Checks if any player's hand is empty.
-     *
-     * @return true if any player's hand is empty, false otherwise
-     */
-    public boolean checkIfAnyHandIsEmpty() {
-        for (Player player : players) {
-            if (player.getHand().isEmpty()) {
-                return true;
-            }
-        }
-        return false;
-    }
-    /**
-     * Resets per-round game fields to their initial state and redeals hands.
-     * Does not reset player scores.
-     * Recreates the draw/discard piles and reinitializes control flags.
-     */
-    public void resetFeilds() {
-        i = 0;
-        drawOne = false;
-        wildDrawTwo = false;
-        direction = 1;
-        skip = false;
-        wildColor = null;
-        currentPlayer = null;
-        pile = new PileSystem();
-        exitGame = false;
-        pile.addToDiscardPile(pile.drawCard());
-        while(pile.peekTopDiscard().getColor() == CardColor.WILD){
-            pile.addToDiscardPile(pile.drawCard());
-        }
-        for (Player player : players) {
-            player.clearHand();
-            this.generatePlayerHand(player);
-        }
-    }
-    /**
-     * Resets per-round game fields to their initial state and redeals hands,
-     * with an option to also reset player scores to zero.
-     *
-     * @param resetScore if {@code true}, all players' scores are set to 0 in addition to round reset
-     */
-    public void resetFeilds(boolean resetScore) {
-        i = 0;
-        drawOne = false;
-        wildDrawTwo = false;
-        direction = 1;
-        skip = false;
-        wildColor = null;
-        currentPlayer = null;
-        pile = new PileSystem();
-        exitGame = false;
-        pile.addToDiscardPile(pile.drawCard());
-        while(pile.peekTopDiscard().getColor() == CardColor.WILD){
-            pile.addToDiscardPile(pile.drawCard());
-        }
-        for (Player player : players) {
-            player.clearHand();
-            this.generatePlayerHand(player);
-        }
-        if (resetScore) {
-            for (Player player : players) {
-                player.setScore(0);
-            }
-        }
-    }
-    /**
-     * Checks if any player has reached the winning score threshold (>= 500).
-     *
-     * @return the winning {@link Player} if one exists; otherwise {@code null}
-     */
-    public Player checkWinner() {
-        for (Player player : players) {
-            if (player.getScore() >= 500) {
-                return player;
-            }
-        }
-        return null;
-    }
-    /**
-     * Prints all players' current scores to the console.
-     * Output format: "<name>: <score>" per line.
-     */
-    public void displayScores() {
-        System.out.println("CURRENT SCORES:");
-        for (Player player : players) {
-            System.out.println(player.getName() + ": " + player.getScore());
-        }
-    }
-    /**
-     * Prompts to start a brand new game (fresh scores and hands).
-     * If the user types "new", resets all fields and scores; otherwise sets a flag to exit.
-     */
-    public void restartGame() {
-        System.out.println("Type 'new' to start a new game");
-        String input = parseUserStringInput();
-        if (input.equals("new")) {
-            resetFeilds(true);
-        } else {
-            exitGame = true;
-        }
-    }
+
     /**
      * Displays the welcome message and introductory menu header
      * for the UNO Flip game.
@@ -228,6 +105,7 @@ public class Game {
         System.out.println("Welcome to UNO Flip!");
         System.out.println("------------------------------------");
     }
+
     /**
      * Displays the current player's turn, including any special card effects.
      * If the player has a DRAW_ONE card, they must draw one card.
@@ -244,7 +122,7 @@ public class Game {
             System.out.println(currentPlayer.getName()+" has to draw one card due to the DRAW_ONE card.");
             Card card1 = pile.drawCard();
             currentPlayer.addCard(card1);
-            System.out.println(currentPlayer.getName()+"drew a" + card1);
+            System.out.println(currentPlayer.getName()+" drew a " + card1);
             drawOne = false;
         } else if (wildDrawTwo) {
             System.out.println(currentPlayer.getName()+" has to draw two cards due to the DRAW_TWO card.");
@@ -255,8 +133,8 @@ public class Game {
             System.out.println(currentPlayer.getName()+" drew a " + card1 + " and a " + card2);
             wildDrawTwo = false;
         }
-        for (Card card : currentPlayer.getHand()) {
-            System.out.println(currentPlayer.getHand().indexOf(card)+1 + ". " + card);
+        for (int j = 0; j < currentPlayer.getHand().size(); j++) {
+            System.out.println((j + 1) + ". " + currentPlayer.getHand().get(j));
         }
         while (true) {
             System.out.println("Enter a card index to play a card, or 0 to draw a card:");
@@ -283,6 +161,113 @@ public class Game {
             }
         }
     }
+
+    /**
+     * Starts a new round when no player has won the game yet.
+     * Prompts the user to type "new" and, upon confirmation,
+     * resets per-round fields and redeals cards.
+     */
+    public void newRound() {
+        while (true) {
+            System.out.println("No winner yet. type 'new' to start a new round");
+            String input = parseUserStringInput();
+            if (input.equals("new")) {
+                resetFeilds();
+                roundNumber++;
+                System.out.println("A new round begins! Hands have been reset, a new pile is ready. Current round: #" + roundNumber);
+                break;
+            }
+        }
+    }
+    /**
+     * Checks if any player's hand is empty.
+     *
+     * @return true if any player's hand is empty, false otherwise
+     */
+    public boolean checkIfAnyHandIsEmpty() {
+        for (Player player : players) {
+            if (player.getHand().isEmpty()) {
+                currentPlayer = player;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Resets per-round game fields to their initial state and redeals hands.
+     * Does not reset player scores.
+     * Recreates the draw/discard piles and reinitializes control flags.
+     */
+    public void resetFeilds() {
+        indexOfCurrentPlayer = 0;
+        drawOne = false;
+        wildDrawTwo = false;
+        direction = 1;
+        skip = false;
+        wildColor = null;
+        currentPlayer = null;
+        pile = new PileSystem();
+        exitGame = false;
+        pile.addToDiscardPile(pile.drawCard());
+        while(pile.peekTopDiscard().getColor() == CardColor.WILD){
+            pile.addToDiscardPile(pile.drawCard());
+        }
+        for (Player player : players) {
+            player.clearHand();
+            this.generatePlayerHand(player);
+        }
+    }
+    /**
+     * Resets per-round game fields to their initial state and redeals hands,
+     * with an option to also reset player scores to zero.
+     *
+     * @param resetScore if true, all players' scores are set to 0 in addition to round reset
+     */
+    public void resetFeilds(boolean resetScore) {
+        resetFeilds();
+        roundNumber = 1;
+        if (resetScore) {
+            for (Player player : players) {
+                player.setScore(0);
+            }
+        }
+    }
+
+    /**
+     * Checks if current player has reached the winning score threshold (>= 500).
+     *
+     * @return true if current player is a winner otherwise false.
+     */
+    public boolean checkWinner(Player current_player) {
+        return current_player.getScore()  >= WINNING_SCORE;
+    }
+
+    /**
+     * Prints all players' current scores to the console.
+     * Output format: "<name>: <score>" per line.
+     */
+    public void displayScores() {
+        for (Player player : players) {
+            System.out.println(player.getName() + ": " + player.getScore());
+        }
+    }
+
+    /**
+     * Prompts to start a brand new game (fresh scores and hands).
+     * If the user types "new", resets all fields and scores; otherwise sets a flag to exit.
+     */
+    public void restartGame() {
+        System.out.println("Type 'new' to start a new game.");
+        String input = parseUserStringInput();
+        if (input.equals("new")) {
+            resetFeilds(true);
+
+        } else {
+            exitGame = true;
+        }
+    }
+
     /**
      * Processes a card placement from the current player's hand.
      * Adds the card to the discard pile and handles special card effects.
@@ -301,8 +286,13 @@ public class Game {
                 drawOne = true;
                 break;
             case REVERSE:
-                System.out.println(currentPlayer.getName()+" played a Reverse Card, direction is reversed.");
+                System.out.print(currentPlayer.getName()+" played a Reverse Card, direction is set to ");
                 direction *= -1;
+                if(direction > 0){
+                    System.out.println("clock wise");
+                }else{
+                    System.out.println("counter clock wise");
+                }
                 break;
             case SKIP:
                 skip = true;
@@ -310,7 +300,7 @@ public class Game {
                 break;
             case WILD:
                 System.out.println("Enter color (RED, YELLOW, BLUE, GREEN)");
-                chosenColor = parseUserStringInput();
+                chosenColor = parseUserStringInput().toUpperCase();
                 while (true) {
                     if (chosenColor.equals("RED") || chosenColor.equals("YELLOW") || chosenColor.equals("BLUE") || chosenColor.equals("GREEN")) {
                         wildColor = new Card(CardColor.valueOf(chosenColor), null);
@@ -324,7 +314,7 @@ public class Game {
                 break;
             case WILD_DRAW_TWO:
                 System.out.println("Enter color (RED, YELLOW, BLUE, GREEN)");
-                chosenColor = parseUserStringInput();
+                chosenColor = parseUserStringInput().toUpperCase();
                 while (true) {
                     if (chosenColor.equals("RED") || chosenColor.equals("YELLOW") || chosenColor.equals("BLUE") || chosenColor.equals("GREEN")) {
                         wildColor = new Card(CardColor.valueOf(chosenColor), null);
@@ -339,24 +329,25 @@ public class Game {
                 break;
         }
     }
+
     /**
      * Calculates the score for a player by summing the point values of all cards in other players' hands.
      *
-     * @param index the index of the player for whom to calculate the score
      * @return the total score for the player
      */
-    public int calculateScore(int index) {
+    public int calculateScore() {
         int total = 0;
-        for (int i = 0; i < players.size(); i++) {
-            if (i == index) {
+        for (Player player: players) {
+            if (currentPlayer == player) {
                 continue;
             }
-            for (Card card:players.get(i).getHand()){
-                total += card.getPoint();
+            for (Card card: player.getHand()){
+                total += card.getPoint() ;
             }
         }
         return total;
     }
+
     /**
      * Validates a card placement from the current player's hand.
      * Checks if the card matches the top card of the discard pile,
@@ -365,16 +356,12 @@ public class Game {
      * @param placedCardFromHand the card being placed from the player's hand
      * @param topCardOfDiscardPile the top card of the discard pile
      * @param wildColor the color specified by the previous player using a WILD or WILD_DRAW_TWO card
-     * @return {@code true} if the placement is valid; otherwise {@code false}
+     * @return true if the placement is valid; otherwise {@code false}
      */
     public boolean validatePlacedCard(Card placedCardFromHand, Card topCardOfDiscardPile, Card wildColor) {
-        if (topCardOfDiscardPile.getType()==CardType.WILD ||
-                topCardOfDiscardPile.getType()==CardType.WILD_DRAW_TWO) { // if true, must check for the specifed color from previous player using wildColor
-            if (topCardOfDiscardPile.getType() == CardType.WILD || topCardOfDiscardPile.getType() == CardType.WILD_DRAW_TWO) {
-                return wildColor != null && placedCardFromHand.getColor() == wildColor.getColor();
-            }
+        if (topCardOfDiscardPile.getType()==CardType.WILD || topCardOfDiscardPile.getType()==CardType.WILD_DRAW_TWO) { // if true, must check for the specifed color from previous player using wildColor
+            return wildColor != null && (placedCardFromHand.getColor() == wildColor.getColor() || placedCardFromHand.getColor() == CardColor.WILD);
 
-            return false;
         } else if (placedCardFromHand == topCardOfDiscardPile ||
                 placedCardFromHand.getColor() == topCardOfDiscardPile.getColor() ||
                 placedCardFromHand.getType() == topCardOfDiscardPile.getType() ||
@@ -385,6 +372,7 @@ public class Game {
         }
         return false;
     }
+
     /**
      * Creates a specified number of players and assigns them hands.
      * Validates the number of players (between 2 and 4).
@@ -405,7 +393,7 @@ public class Game {
         }
         System.out.println("");
         return players.get(0); // returns the current player (first one when game starts)
-        
+
     }
     /**
      * Generates a hand of 7 cards for a player by drawing from the draw pile.
@@ -424,8 +412,19 @@ public class Game {
      * @return the parsed integer value
      */
     public int parseUserIntInput() {
-        int integer =  scanner.nextInt();
-        scanner.nextLine();
+        int integer = -1;
+        boolean valid = false;
+
+        while (!valid) {
+            try {
+                integer = scanner.nextInt();
+                scanner.nextLine();
+                valid = true;
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input! Please enter a number:");
+                scanner.nextLine();
+            }
+        }
         return integer;
     }
     /**
@@ -437,4 +436,44 @@ public class Game {
         return scanner.nextLine();
 
     }
+
+
+    /**
+     * Returns the current play direction.
+     * @return 1 for normal direction, -1 for reverse
+     */
+    public int getDirection() {
+        return direction;
+    }
+
+    /**
+     * Checks if the Draw One effect is active.
+     * @return true if a Draw One card was played, false otherwise
+     */
+    public boolean getDrawOne() {
+        return drawOne;
+    }
+
+    /**
+     * Checks if the Wild Draw Two effect is active.
+     * @return true if a Wild Draw Two card was played, false otherwise
+     */
+    public boolean getWildDrawTwo() {
+        return wildDrawTwo;
+    }
+
+    /**
+     * Adds a player to the game.
+     * @param player the player to add
+     */
+    public void addPlayer(Player player) {
+        players.add(player);
+    }
+
+    /**
+     * Checks if the player list is empty.
+     * @return true if there are no players, false otherwise
+     */
+    public boolean isPlayerListEmpty() {
+        return players.isEmpty();}
 }

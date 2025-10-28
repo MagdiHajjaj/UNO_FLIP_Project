@@ -15,7 +15,6 @@ public class PileSystem {
     /**
      * Constructor for game.Card takes a Color and Type
      *
-     * @paramc
      */
     public PileSystem() {
         drawPile = new Stack<>();
@@ -61,7 +60,6 @@ public class PileSystem {
      * Draws a card from the top of the draw pile.
      *
      * If the draw pile is empty, it restores the pile before drawing a card.
-     *
      * @return the card drawn from the top of the draw pile
      */
     public Card drawCard(){
