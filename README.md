@@ -1,27 +1,49 @@
-UNO_FLIP_PROJECT.jar contains a functioning version of the UNO game for milestone #1.
+# 🃏 UNO Flip Project — Milestone #1
 
-Executing the file will allow the user to play our milestone #1 UNO iteration.
+**UNO_FLIP_PROJECT.jar** contains a fully functioning version of the UNO game for **Milestone #1**.  
+Running this file will start our playable UNO implementation.
 
-Other files include a UML diagram for our program, Sequence diagrams of important scenarios, and an explanation of our data structures.
+---
 
-Contributions
+## 📂 Included Folder
 
-Edward, Savin 101239342
--Card class
--Enum Classes
--CardTest class
--PlayerTest class
--Data Structure explanation
+- **UNO_FLIP_PROJECT.jar** — Executable JAR file (playable version of the game)  
+- **UML Diagram** — Class diagram representing the overall program structure  
+- **Sequence Diagrams** — Visual representations of key gameplay scenarios  
+- **Data Structure Explanation** — Description of data structures and design choices  
 
-Magdi, Hajjaj 101299841
--PileSystem class
--PileSystemTest class
--UML
+---
 
-Mohammed, Osman 101311022
--Game class
--Card Equals() method
+## 👥 Team Contributions
 
-Hamza, Mohammed Salih 101311021
--Player class
--Sequence Diagrams
+### **Edward Savin (101239342)**
+- Implemented `Card` class  
+- Created `CardColor` and `CardType` enum classes  
+- Wrote `CardTest` and `PlayerTest` test classes  
+- Authored the data structure explanation document  
+
+---
+
+### **Magdi Hajjaj (101299841)**
+- Implemented `PileSystem` class  
+- Wrote `PileSystemTest` class
+- Helped with `Game` class
+- Implemented UML Diagrams
+- Designed and created the UML class diagram  
+
+---
+
+### **Mohammed Osman (101311022)**
+- Implemented `Game` class  
+- Developed the `Card.equals()` method  
+
+---
+
+### **Hamza Mohammed Salih (101311021)**
+- Implemented `Player` class  
+- Created sequence diagrams for gameplay scenarios  
+
+---
+
+✅ **Milestone Goal:**  
+Deliver a functional UNO game simulation with documented class relationships, data structures, and test coverage.
