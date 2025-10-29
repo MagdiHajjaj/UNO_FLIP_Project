@@ -1,11 +1,11 @@
-# 🃏 UNO Flip Project — Milestone #1
+# Group #25 - UNO Flip Project — Milestone #1 
 
 **UNO_FLIP_PROJECT.jar** contains a fully functioning version of the UNO game for **Milestone #1**.  
 Running this file will start our playable UNO implementation.
 
 ---
 
-## 📂 Included Folder
+## Included Folder
 
 - **UNO_FLIP_PROJECT.jar** — Executable JAR file (playable version of the game)  
 - **UML Diagram** — Class diagram representing the overall program structure  
@@ -14,7 +14,7 @@ Running this file will start our playable UNO implementation.
 
 ---
 
-## 👥 Team Contributions
+## Team Contributions
 
 ### **Edward Savin (101239342)**
 - Implemented `Card` class  
