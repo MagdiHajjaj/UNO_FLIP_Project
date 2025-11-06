@@ -437,9 +437,9 @@ public class Game {
     }
 
     // Test-mode constructor: init fields, NO game loop.
-    public Game(java.util.Scanner scanner, boolean testMode) {
-        this.scanner = scanner != null ? scanner : new java.util.Scanner(System.in);
-        this.players = new java.util.ArrayList<>();
+    public Game(Scanner scanner, boolean testMode) {
+        this.scanner = scanner != null ? scanner : new Scanner(System.in);
+        this.players = new ArrayList<>();
         this.pile = new PileSystem();
         this.wildColor = null;
         this.drawOne = false;
