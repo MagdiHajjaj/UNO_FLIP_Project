@@ -71,8 +71,8 @@ public class UnoModel extends Observable {
         resetFields();
         currentPlayer = players.get(0);
         status = Status.IN_GAME;
-        //setChanged()
-        //notifyObservers()
+        setChanged();
+        notifyObservers();
     }
 
     /**
@@ -126,8 +126,8 @@ public class UnoModel extends Observable {
                     nextPlayer();
                 }
             }
-            //setChanged()
-            //notifyObservers()
+            setChanged();
+            notifyObservers();
             return true;
 
         }
@@ -141,8 +141,8 @@ public class UnoModel extends Observable {
         if (currentPlayer != null){
             Card drawCard = pile.drawCard();
             currentPlayer.addCard(drawCard);
-            //setChanged()
-            //notifyObservers()
+            setChanged();
+            notifyObservers();
         }
     }
 
@@ -153,8 +153,8 @@ public class UnoModel extends Observable {
     public void setWildColor(CardColor color){
         this.wildColor = new Card(color, null);
         nextPlayer();
-        //setChanged()
-        //notifyObservers()
+        setChanged();
+        notifyObservers();
     }
 
     /**
@@ -166,8 +166,8 @@ public class UnoModel extends Observable {
         indexOfCurrentPlayer = 0;
         currentPlayer = players.get(indexOfCurrentPlayer);
         status = Status.IN_GAME;
-        //setChanged()
-        //notifyObservers()
+        setChanged();
+        notifyObservers();
     }
 
     /**
@@ -180,8 +180,8 @@ public class UnoModel extends Observable {
         resetFields();
         roundNumber = 1;
         status = Status.INITIALIZING;
-        //setChanged()
-        //notifyObservers()
+        setChanged();
+        notifyObservers();
     }
 
     /**
@@ -230,8 +230,8 @@ public class UnoModel extends Observable {
         } else {
             status = Status.ROUND_OVER;
         }
-        //setChanged()
-        //notifyObservers()
+        setChanged();
+        notifyObservers();
     }
 
     /**
