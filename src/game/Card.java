@@ -1,4 +1,6 @@
 package game;
+import javax.swing.*;
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 /**
@@ -13,6 +15,8 @@ import java.util.Map;
 public class Card {
     private final CardColor color; //game.Card has a Color
     private final CardType type; //game.Card has a Type
+    private ImageIcon image;
+
 
     //Point System
     private static final Map<CardType, Integer> Point_System = new HashMap<>();
@@ -63,7 +67,29 @@ public class Card {
         }
         color = c;
         type = t;
+        this.image = loadCardImage();
+    }
+    private ImageIcon loadCardImage() {
+        String imageName;
+        if (color == CardColor.WILD) {
+            imageName = "wild_" + type.name().toLowerCase() + ".png";
+        } else {
+            imageName = color.name().toLowerCase() + "_" + type.name().toLowerCase() + ".png";
+        }
 
+        java.net.URL imageUrl = getClass().getResource("/images/" + imageName);
+        if (imageUrl != null) {
+            ImageIcon originalIcon = new ImageIcon(imageUrl);
+            Image scaledImage = originalIcon.getImage().getScaledInstance(70, 100, Image.SCALE_SMOOTH);
+            return new ImageIcon(scaledImage);
+        } else {
+            System.err.println("Missing image: " + imageName);
+            return new ImageIcon();
+        }
+    }
+
+    public ImageIcon getImage() {
+        return image;
     }
 
     /**
