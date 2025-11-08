@@ -1,7 +1,6 @@
 package game;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
 
 /**
  * public class UnoModel
@@ -11,9 +10,10 @@ import java.util.Observable;
  * @version M2
  */
 
-public class UnoModel extends Observable {
+public class UNOModel {
 
     private ArrayList<Player> players;
+    private List<IView> viewersList;
     private Player currentPlayer;
     private PileSystem pile;
     private Card wildColor;
@@ -44,8 +44,9 @@ public class UnoModel extends Observable {
      * Constructor for uno model class
      * set status to INITIALIZING
      */
-    public UnoModel() {
+    public UNOModel() {
         this.players = new ArrayList<Player>();
+        this.viewersList = new ArrayList<>();
         this.currentPlayer = null;
         this.pile = new PileSystem();
         this.direction = 1;
@@ -55,24 +56,38 @@ public class UnoModel extends Observable {
 
     }
 
+
+    public void addViewer(IView view) {
+        this.viewersList.add(view);
+    }
+    public void removeViewer(IView view) {
+        this.viewersList.remove(view);
+    }
+    public void notifyViewers() {
+        for (IView viewer : this.viewersList) {
+            viewer.update();
+        }
+
+    }
+
     /**
      * Starts a new game with a list of player names
      * set status to IN_GAME
      * @param playerNames list of players for game
      */
-    public void newGame(List<String> playerNames) {
-        if (playerNames == null || playerNames.size() < 2 || playerNames.size() > 4) {
-            throw new IllegalArgumentException("must have 2-4 players");
-        }
+    public void newGame(int numPlayers) {
+//        if (playerNames == null || playerNames.size() < 2 || playerNames.size() > 4) {
+//            throw new IllegalArgumentException("must have 2-4 players");
+//        }
         players.clear();
-        for(String name : playerNames){
-            players.add(new Player(name));
+        for(int i = 1; i <= numPlayers; i++) {
+
+            players.add(new Player("Player " + i));
         }
         resetFields();
-        currentPlayer = players.get(0);
+        currentPlayer = players.getFirst();
         status = Status.IN_GAME;
-        setChanged();
-        notifyObservers();
+        notifyViewers();
     }
 
     /**
@@ -126,8 +141,7 @@ public class UnoModel extends Observable {
                     nextPlayer();
                 }
             }
-            setChanged();
-            notifyObservers();
+            notifyViewers();
             return true;
 
         }
@@ -141,8 +155,7 @@ public class UnoModel extends Observable {
         if (currentPlayer != null){
             Card drawCard = pile.drawCard();
             currentPlayer.addCard(drawCard);
-            setChanged();
-            notifyObservers();
+            notifyViewers();
         }
     }
 
@@ -153,8 +166,7 @@ public class UnoModel extends Observable {
     public void setWildColor(CardColor color){
         this.wildColor = new Card(color, null);
         nextPlayer();
-        setChanged();
-        notifyObservers();
+        notifyViewers();
     }
 
     /**
@@ -166,8 +178,7 @@ public class UnoModel extends Observable {
         indexOfCurrentPlayer = 0;
         currentPlayer = players.get(indexOfCurrentPlayer);
         status = Status.IN_GAME;
-        setChanged();
-        notifyObservers();
+        notifyViewers();
     }
 
     /**
@@ -180,8 +191,7 @@ public class UnoModel extends Observable {
         resetFields();
         roundNumber = 1;
         status = Status.INITIALIZING;
-        setChanged();
-        notifyObservers();
+        notifyViewers();
     }
 
     /**
@@ -230,8 +240,7 @@ public class UnoModel extends Observable {
         } else {
             status = Status.ROUND_OVER;
         }
-        setChanged();
-        notifyObservers();
+        notifyViewers();
     }
 
     /**
