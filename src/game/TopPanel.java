@@ -10,16 +10,13 @@ public class TopPanel extends JPanel {
 
     public TopPanel() {
         setLayout(new BorderLayout());
-        setBackground(Color.WHITE);
-
+        this.setBorder(BorderFactory.createLineBorder(Color.black));
         // Section title
         JLabel title = new JLabel("Top Card");
         title.setFont(new Font("Arial", Font.BOLD, 14));
         add(title, BorderLayout.NORTH);
 
-        //Center area showing the card
         JPanel cardPanel = new JPanel();
-        cardPanel.setBackground(Color.WHITE);
 
         topCardImage = new JLabel();
         topCardLabel = new JLabel();
@@ -31,8 +28,6 @@ public class TopPanel extends JPanel {
 
         // Bottom status section
         JPanel bottomPanel = new JPanel(new GridLayout(2, 1));
-        bottomPanel.setBackground(Color.WHITE);
-
         currentPlayerLabel = new JLabel("Current Player: ");
         currentPlayerLabel.setFont(new Font("Arial", Font.BOLD, 12));
 
@@ -45,7 +40,6 @@ public class TopPanel extends JPanel {
         add(bottomPanel, BorderLayout.SOUTH);
     }
 
-    // Update methods (you call these from your UNOModel update)
     public void setTopCard(ImageIcon cardImage, String cardName) {
         topCardImage.setIcon(cardImage);
         topCardLabel.setText(cardName);

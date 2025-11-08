@@ -1,6 +1,9 @@
 package game;
 
-public class UNOController {
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class UNOController implements ActionListener {
     UNOModel model;
     UNOView view;
     public UNOController(UNOModel model, UNOView view) {
@@ -9,5 +12,10 @@ public class UNOController {
     }
     public void setNumPlayers(int numPlayers) {
         model.newGame(numPlayers);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
     }
 }

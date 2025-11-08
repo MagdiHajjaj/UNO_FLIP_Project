@@ -36,7 +36,8 @@ public class UNOModel {
         IN_GAME,
         WILD_CARD,
         ROUND_OVER,
-        GAME_OVER
+        GAME_OVER,
+        CARD_DRAWN
 
     }
 
@@ -73,7 +74,7 @@ public class UNOModel {
     /**
      * Starts a new game with a list of player names
      * set status to IN_GAME
-     * @param playerNames list of players for game
+     * @param numPlayers number of playerws
      */
     public void newGame(int numPlayers) {
 //        if (playerNames == null || playerNames.size() < 2 || playerNames.size() > 4) {
@@ -155,6 +156,8 @@ public class UNOModel {
         if (currentPlayer != null){
             Card drawCard = pile.drawCard();
             currentPlayer.addCard(drawCard);
+            status = Status.CARD_DRAWN;
+
             notifyViewers();
         }
     }
@@ -352,11 +355,17 @@ public class UNOModel {
     public Player getCurrentPlayer() {
         return currentPlayer;
     }
+    public List<Card> getCurrentPlayerHand() {
+        return currentPlayer.getHand();
+    }
     public ArrayList<Player> getPlayers(){
         return new ArrayList<>(players);
     }
     public PileSystem getPileSystem() {
         return pile;
+    }
+    public Card getTopCard() {
+        return pile.peekTopDiscard();
     }
 
     public Card getWildColor() {
