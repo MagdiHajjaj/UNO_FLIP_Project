@@ -121,6 +121,14 @@ public class Player {
         return hand.remove(index);
     }
 
+
+    public Card removeCardAt(Card cardToBeRemoved) {
+        int index = hand.indexOf(cardToBeRemoved);
+        if (index >= 0) {
+            return hand.remove(index);  // remove(int index) returns the element
+        }
+        return null; // not found
+    }
     /**
      * Returns a concise textual summary for logging or debugging.
      * Includes name, hand size, and score.
@@ -131,4 +139,7 @@ public class Player {
     public String toString() {
         return "Player{" + name + ", hand=" + hand.size() + ", score=" + totalScore + "}";
     }
+
+
+
 }

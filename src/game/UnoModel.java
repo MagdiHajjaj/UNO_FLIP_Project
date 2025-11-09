@@ -16,17 +16,29 @@ public class UNOModel {
     private List<IView> viewersList;
     private Player currentPlayer;
     private PileSystem pile;
-    private Card wildColor;
+    private CardColor wildColor;
+    private Card playedCard;
     private boolean drawOne;
     private boolean wildDrawTwo;
     private boolean skip;
     private boolean exitGame;
+    private Card lastDrawnCard;
     private int direction;
     private int indexOfCurrentPlayer;
     private int roundNumber;
     private static final int WINNING_SCORE = 500;
 
     private Status status;
+
+    public Player getPreviousPlayer() {
+        int prevIndex;
+        if (direction > 0) {
+            prevIndex = (indexOfCurrentPlayer == 0) ? players.size() - 1 : indexOfCurrentPlayer - 1;
+        } else {
+            prevIndex = (indexOfCurrentPlayer == players.size() - 1) ? 0 : indexOfCurrentPlayer + 1;
+        }
+        return players.get(prevIndex);
+    }
 
     /**
      * enum class for status for MVC pattern
@@ -37,7 +49,10 @@ public class UNOModel {
         WILD_CARD,
         ROUND_OVER,
         GAME_OVER,
-        CARD_DRAWN
+        CARD_DRAWN,
+        NEXT_PLAYER,
+        PLAYING_VALID_CARD,
+        PLAYING_INVALID_CARD,
 
     }
 
@@ -49,6 +64,7 @@ public class UNOModel {
         this.players = new ArrayList<Player>();
         this.viewersList = new ArrayList<>();
         this.currentPlayer = null;
+        this.lastDrawnCard = null;
         this.pile = new PileSystem();
         this.direction = 1;
         this.indexOfCurrentPlayer = 0;
@@ -118,35 +134,46 @@ public class UNOModel {
 
     /**
      * method used to play a card
-     * @param cardIndex index of card to be played
-     * @param color color of card played - deals with WildCards
+
      * @return true if the card was able to play, otherwise false
      */
-    public boolean playCard(int cardIndex, CardColor color){
-        if (currentPlayer == null || cardIndex < 0 || cardIndex >= currentPlayer.handSize()){
-            return false;
+    public void playCard(Card playedCard){
+        if (currentPlayer == null || playedCard == null) {
+            return;
         }
-        Card playingCard = currentPlayer.getHand().get(cardIndex);
-        Card topCard =pile.peekTopDiscard();
-
-        if (validatePlacedCard(playingCard, topCard, wildColor)){
-            Card toBePlayed = currentPlayer.removeCardAt(cardIndex);
+        Card topCard = pile.peekTopDiscard();
+        if (validatePlacedCard(playedCard, topCard, wildColor)){
+            Card toBePlayed = currentPlayer.removeCardAt(playedCard);
             pile.addToDiscardPile(toBePlayed);
-
+            this.playedCard = toBePlayed;
             processCard(toBePlayed);
 
-            if (status != Status.WILD_CARD){
-                if (currentPlayer.getHand().isEmpty()){
-                    roundEnd();
-                } else {
-                    nextPlayer();
-                }
+            if (toBePlayed.getType() == CardType.WILD || toBePlayed.getType() == CardType.WILD_DRAW_TWO) {
+                this.status = Status.WILD_CARD;
+                notifyViewers();
+                return;
             }
-            notifyViewers();
-            return true;
 
+            if (toBePlayed.getType() == CardType.DRAW_ONE) {
+                lastDrawnCard = pile.drawCard();
+                getNextPlayer().addCard(lastDrawnCard);
+                drawOne = false;
+                this.status = Status.CARD_DRAWN;
+                notifyViewers();
+                       return;
+            }
+
+            if (currentPlayer.getHand().isEmpty()) {
+                roundEnd();
+                return;
+            }
+
+            this.status = Status.PLAYING_VALID_CARD;
+            notifyViewers();
+            return;
         }
-        return false;
+        this.status = Status.PLAYING_INVALID_CARD;
+        notifyViewers();
     }
 
     /**
@@ -154,12 +181,14 @@ public class UNOModel {
      */
     public void drawCard(){
         if (currentPlayer != null){
-            Card drawCard = pile.drawCard();
-            currentPlayer.addCard(drawCard);
+            lastDrawnCard = pile.drawCard();
+            currentPlayer.addCard(lastDrawnCard);
             status = Status.CARD_DRAWN;
-
             notifyViewers();
         }
+    }
+    public Card getLastDrawnCard(){
+        return lastDrawnCard;
     }
 
     /**
@@ -167,9 +196,12 @@ public class UNOModel {
      * @param color is the chosen wild card color to be set
      */
     public void setWildColor(CardColor color){
-        this.wildColor = new Card(color, null);
-        nextPlayer();
-        notifyViewers();
+        this.wildColor = color;
+        if (wildDrawTwo){
+            getNextPlayer().addCard(pile.drawCard());
+            getNextPlayer().addCard(pile.drawCard());
+            wildDrawTwo = false;
+        }
     }
 
     /**
@@ -206,7 +238,6 @@ public class UNOModel {
             case DRAW_ONE:
                 drawOne = true;
                 break;
-
             case REVERSE:
                 //in 2-player games of Uno reverse acts as skip
                 if (players.size() == 2){
@@ -219,7 +250,6 @@ public class UNOModel {
             case SKIP:
                 skip = true;
                 break;
-
             case WILD:
                 status = Status.WILD_CARD;
                 break;
@@ -250,7 +280,7 @@ public class UNOModel {
      * method used to change turns
      * deals with special cases
      */
-    private void nextPlayer(){
+    public void nextPlayer(){
         advanceIndex();
         if (skip){
             advanceIndex();
@@ -258,14 +288,9 @@ public class UNOModel {
         }
         currentPlayer = players.get(indexOfCurrentPlayer);
 
-        if (drawOne){
-            currentPlayer.addCard(pile.drawCard());
-            drawOne = false;
-        } else if (wildDrawTwo){
-            currentPlayer.addCard(pile.drawCard());
-            currentPlayer.addCard(pile.drawCard());
-            wildDrawTwo = false;
-        }
+
+        this.status = Status.NEXT_PLAYER;
+        notifyViewers();
     }
 
     /**
@@ -277,6 +302,7 @@ public class UNOModel {
         } else {
             indexOfCurrentPlayer = (indexOfCurrentPlayer == 0) ? players.size() - 1 : indexOfCurrentPlayer - 1;
         }
+
     }
 
     /**
@@ -332,9 +358,9 @@ public class UNOModel {
      * @param wildColor the color specified by the previous player using a WILD or WILD_DRAW_TWO card
      * @return true if the placement is valid; otherwise {@code false}
      */
-    public boolean validatePlacedCard(Card placedCardFromHand, Card topCardOfDiscardPile, Card wildColor) {
+    public boolean validatePlacedCard(Card placedCardFromHand, Card topCardOfDiscardPile, CardColor wildColor) {
         if (topCardOfDiscardPile.getType()==CardType.WILD || topCardOfDiscardPile.getType()==CardType.WILD_DRAW_TWO) { // if true, must check for the specifed color from previous player using wildColor
-            return wildColor != null && (placedCardFromHand.getColor() == wildColor.getColor() || placedCardFromHand.getColor() == CardColor.WILD);
+            return wildColor != null && (placedCardFromHand.getColor() == wildColor || placedCardFromHand.getColor() == CardColor.WILD);
 
         } else if (placedCardFromHand == topCardOfDiscardPile ||
                 placedCardFromHand.getColor() == topCardOfDiscardPile.getColor() ||
@@ -347,7 +373,15 @@ public class UNOModel {
         return false;
     }
     //GETTERS
-
+    public Player getNextPlayer() {
+        int temp;
+        if (direction > 0) {
+            temp=  (indexOfCurrentPlayer == players.size() - 1) ? 0 : indexOfCurrentPlayer + 1;
+        } else {
+            temp =  (indexOfCurrentPlayer == 0) ? players.size() - 1 : indexOfCurrentPlayer - 1;
+        }
+        return players.get(temp);
+    }
 
     public int getDirection(){
         return direction;
@@ -367,8 +401,12 @@ public class UNOModel {
     public Card getTopCard() {
         return pile.peekTopDiscard();
     }
+    public Card getPlayedCard() {
+        return playedCard;
+    }
 
-    public Card getWildColor() {
+
+    public CardColor getWildColor() {
         return wildColor;
     }
     public Status getStatus() {
