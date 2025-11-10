@@ -44,7 +44,10 @@ Running this file will start our playable UNO implementation.
 - Created sequence diagrams for gameplay scenarios  
 
 ---
-To execute the jar file:
+## Set up
+- **Images** right-click on the resources folder, select 'Mark Directory As' -> 'Resources Root'
+
+**To execute the jar file:**
 - Open a terminal
 - Navigate to the folder containing the jar file
 - Run the command: java -jar UNO_Project.jar
