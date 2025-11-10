@@ -36,6 +36,7 @@ public class UNOController implements ActionListener {
         String command = e.getActionCommand();
         if (command.equals("DRAW_CARD")) {
             model.drawCard();
+            model.nextPlayer();
         }else if (command.equals("NEXT_PLAYER")) {
             model.nextPlayer();
         }else if (command.equals("PLAY_CARD")) {
