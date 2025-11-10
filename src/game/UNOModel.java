@@ -148,10 +148,10 @@ public class UNOModel {
             roundEnd();
             return;
         }
-        if (status != Status.PLAYING_VALID_CARD) {
-            nextPlayer();
-            return;
-        }
+        //if (status != Status.PLAYING_VALID_CARD) {
+            //nextPlayer();
+            //return;
+        //}
         status = Status.PLAYING_VALID_CARD;
         notifyViewers();
     }
