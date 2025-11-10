@@ -69,6 +69,12 @@ public class Card {
         type = t;
         this.image = loadCardImage();
     }
+
+    /**
+     * Loads the image for the card based on its color and type.
+     *
+     * @return ImageIcon representing the card's image
+     */
     private ImageIcon loadCardImage() {
         String imageName;
         if (color == CardColor.WILD) {
@@ -88,6 +94,11 @@ public class Card {
         }
     }
 
+    /**
+     * Returns the image of the card.
+     *
+     * @return ImageIcon representing the card's image
+     */
     public ImageIcon getImage() {
         return image;
     }
@@ -119,7 +130,6 @@ public class Card {
     public String toString() {
         return color + " " + type;
     }
-
 
     /**
      * Compares this {@code Card} to the specified object for equality.
