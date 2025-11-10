@@ -121,7 +121,14 @@ public class Player {
         return hand.remove(index);
     }
 
-
+    /**
+     * Removes and returns the card based on the card object, for example when playing.
+     * Callers should validate the index and the legality of the move elsewhere.
+     *
+     * @param cardToBeRemoved card to remove; may be null
+     * @return the removed card
+     * @throws IndexOutOfBoundsException if the index is out of range
+     */
     public Card removeCardAt(Card cardToBeRemoved) {
         int index = hand.indexOf(cardToBeRemoved);
         if (index >= 0) {

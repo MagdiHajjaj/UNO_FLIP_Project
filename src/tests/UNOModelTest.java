@@ -22,13 +22,13 @@ public class UNOModelTest {
     }
     @Test
     public void testStatusStartGame(){
-        assertEquals(UNOModel.Status.INITIALIZING,model.getStatus());
-        assertFalse(UNOModel.Status.GAME_OVER == model.getStatus());
-        assertFalse(UNOModel.Status.ROUND_OVER == model.getStatus());
+        assertEquals(Status.INITIALIZING,model.getStatus());
+        assertFalse(Status.GAME_OVER == model.getStatus());
+        assertFalse(Status.ROUND_OVER == model.getStatus());
         model.newGame(2);
-        assertEquals(UNOModel.Status.IN_GAME, model.getStatus());
-        assertFalse(UNOModel.Status.GAME_OVER == model.getStatus());
-        assertFalse(UNOModel.Status.ROUND_OVER == model.getStatus());
+        assertEquals(Status.IN_GAME, model.getStatus());
+        assertFalse(Status.GAME_OVER == model.getStatus());
+        assertFalse(Status.ROUND_OVER == model.getStatus());
     }
 
     @Test
@@ -107,7 +107,7 @@ public class UNOModelTest {
         assertNotNull(model.getCurrentPlayer());
         assertEquals(3, model.getPlayers().size());
         assertEquals("Player 1", model.getCurrentPlayer().getName());
-        assertEquals(UNOModel.Status.IN_GAME, model.getStatus());
+        assertEquals(Status.IN_GAME, model.getStatus());
         assertNotNull(model.getCurrentPlayerHand());
         assertNotNull(model.getTopCard());
     }
@@ -128,7 +128,7 @@ public class UNOModelTest {
         model.drawCard();
         assertNotEquals(initial, model.getCurrentPlayer().getHand().size());
         assertEquals(initial+1, model.getCurrentPlayer().getHand().size());
-        assertEquals(UNOModel.Status.CARD_DRAWN, model.getStatus());
+        assertEquals(Status.CARD_DRAWN, model.getStatus());
     }
 
     @Test
@@ -203,7 +203,7 @@ public class UNOModelTest {
         model.startNewRound();
         assertNotEquals(initial, model.getRoundNumber());
         assertEquals(2,  model.getRoundNumber());
-        assertEquals(UNOModel.Status.IN_GAME, model.getStatus());
+        assertEquals(Status.IN_GAME, model.getStatus());
 
     }
 
@@ -213,7 +213,7 @@ public class UNOModelTest {
 
         model.getCurrentPlayer().setScore(1);
         model.resetGame();
-        assertEquals(UNOModel.Status.IN_GAME, model.getStatus());
+        assertEquals(Status.IN_GAME, model.getStatus());
         assertEquals(0, model.getCurrentPlayer().getScore());
         assertEquals(1, model.getRoundNumber());
 
