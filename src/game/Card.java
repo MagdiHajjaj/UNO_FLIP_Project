@@ -17,7 +17,6 @@ public class Card {
     private final CardType type; //game.Card has a Type
     private ImageIcon image;
 
-
     //Point System
     private static final Map<CardType, Integer> Point_System = new HashMap<>();
     static {
