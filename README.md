@@ -1,56 +1,46 @@
-# Group #25 - UNO Flip Project — Milestone #1 
+# Group #25 — UNO Flip Project — Milestone #2
 
-**UNO_FLIP_PROJECT.jar** contains a fully functioning version of the UNO game for **Milestone #1**.  
-Running this file will start our playable UNO implementation.
-
----
-
-## Included Folder
-
-- **UNO_FLIP_PROJECT.jar** — Executable JAR file (playable version of the game)  
-- **UML Diagram** — Class diagram representing the overall program structure  
-- **Sequence Diagrams** — Visual representations of key gameplay scenarios  
-- **Data Structure Explanation** — Description of data structures and design choices  
+**UNO_PROJECT.jar** contains a fully functional playable version of our UNO game for **Milestone #2**.  
+Running this file starts the full game with turn handling, scoring, round transitions, and wild card logic.
 
 ---
 
-## Team Contributions
+## Included Files
 
-### **Edward Savin (101239342)**
-- Implemented `Card` class  
-- Created `CardColor` and `CardType` enum classes  
-- Wrote `CardTest` and `PlayerTest` test classes  
-- Authored the data structure explanation document  
-
----
-
-### **Magdi Hajjaj (101299841)**
-- Implemented `PileSystem` class  
-- Wrote `PileSystemTest` class
-- Helped with `Game` class
-- Implemented UML Diagrams
-- Designed and created the UML class diagram  
+| File / Folder | Description |
+|--------------|-------------|
+| `UNO_PROJECT.jar` | Executable JAR game build |
+| `UML Diagram` | Updated class diagram reflecting MVC structure |
+| `Sequence Diagrams` | Visual models of gameplay flow events |
+| `Data Structure Explanation` | Explanation of chosen structures and reasoning |
 
 ---
 
-### **Mohammed Osman (101311022)**
-- Implemented `Game` class  
-- Developed the `Card.equals()` method  
+## Team Contributions (Milestone #2)
 
----
+### Edward Savin (101239342)
+- Maintained and refined card-related logic (`Card`, `CardColor`, `CardType`)
+- Updated and expanded test cases
+- implemented the model of the UNO game
+- Supported debugging and rules validation during game refinement
 
-### **Hamza Mohammed Salih (101311021)**
-- Implemented `Player` class  
-- Created sequence diagrams for gameplay scenarios  
+### Magdi Hajjaj (101299841)
+- Implemented `UNOView` and GUI update logic
+- Developed `TopPanel` and the scoreboard / hand display layout
+- Contributed to controller logic and interaction flow
+- Assisted in UI behavior design (`UNOController` and event handling)
+- Helped align gameplay rules with user interface updates
 
----
-## Set up
-- **Images** right-click on the resources folder, select 'Mark Directory As' -> 'Resources Root'
+### Mohammed Osman (101311022)
+- Implemented and integrated `Status` enum for state-driven view updates
+- Added Javadoc documentation across classes
+- Generated the updated UML class diagram for Milestone #2
 
-**To execute the jar file:**
-- Open a terminal
-- Navigate to the folder containing the jar file
-- Run the command: java -jar UNO_Project.jar
+### Hamza Mohammed Salih (101311021)
+- Created and adjusted sequence diagrams to reflect final game flow
 
-✅ **Milestone Goal:**  
-Deliver a functional UNO game simulation with documented class relationships, data structures, and test coverage.
+
+## Setup Instructions
+open a terminal in the parent folder, run java -jar UNO_Project.jar
+
+### Mark Resources Folder (if card images do not appear)
