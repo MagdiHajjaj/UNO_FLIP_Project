@@ -20,6 +20,7 @@ public class PileSystem {
         drawPile = new Stack<>();
         discardPile = new Stack<>();
         createDrawPile();
+
         shuffleDrawPile();
     }
 
@@ -29,20 +30,31 @@ public class PileSystem {
      * The resulting draw pile represents a complete deck ready to be shuffled and used in the game.
      */
     private void createDrawPile(){
-        for(CardColor color: CardColor.values()){
+
+        for (CardColor color : CardColor.values()) {
+
+            if (!color.isLightSide()) {
+                continue; // skip dark colors
+            }
+
             if (color == CardColor.WILD) {
-                // Add 4 of each wild type
+
                 for (int i = 0; i < 4; i++) {
                     drawPile.push(new Card(CardColor.WILD, CardType.WILD));
                     drawPile.push(new Card(CardColor.WILD, CardType.WILD_DRAW_TWO));
                 }
-            }else {
-                for (CardType cardType : CardType.values()) {
-                    if (cardType != CardType.WILD_DRAW_TWO && cardType != CardType.WILD) {
-                        drawPile.push(new Card(color, cardType));
-                        drawPile.push(new Card(color, cardType));
-                    }
+                continue;
+            }
+
+            for (CardType type : CardType.values()) {
+                if (!type.isLightSide()) continue; // skip dark types
+
+                if (type == CardType.WILD || type == CardType.WILD_DRAW_TWO) {
+                    continue; // skip wilds during color loop
                 }
+
+                drawPile.push(new Card(color, type));
+                drawPile.push(new Card(color, type));
             }
         }
     }

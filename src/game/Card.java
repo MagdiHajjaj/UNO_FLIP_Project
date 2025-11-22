@@ -6,16 +6,23 @@ import java.util.Map;
 /**
  * game.Card class for the game of UNO
  *
- * @author Edward Savin
- * @id 101239342
- * @version M1
- * @see CardColor
+ * @author Magdi Hajjaj
+ * @id 101299841
+ * @version M3
  * @see CardType
+ * @see CardColor
  */
 public class Card {
-    private final CardColor color; //game.Card has a Color
-    private final CardType type; //game.Card has a Type
-    private ImageIcon image;
+    private final CardColor lightColor;
+    private final CardType lightType;
+
+    private final CardColor darkColor;
+    private final CardType darkType;
+    private boolean isDarkSide;
+
+    private ImageIcon lightImage;
+    private ImageIcon darkImage;
+
 
     //Point System
     private static final Map<CardType, Integer> Point_System = new HashMap<>();
@@ -30,13 +37,20 @@ public class Card {
         Point_System.put(CardType.EIGHT, 8);
         Point_System.put(CardType.NINE, 9);
 
-        Point_System.put(CardType.DRAW_ONE, 10);
+        Point_System.put(CardType.DRAW_ONE, 10); //light
+        Point_System.put(CardType.DRAW_FIVE, 20); //dark
 
-        Point_System.put(CardType.SKIP, 20);
+        Point_System.put(CardType.SKIP, 20); //light
+        Point_System.put(CardType.SKIP_EVERYONE, 30); //dark
+
+        Point_System.put(CardType.WILD_DRAW_TWO, 50); //light
+        Point_System.put(CardType.WILD_DRAW_COLOR, 60); //dark
+
+        Point_System.put(CardType.FLIP, 20);
+
         Point_System.put(CardType.REVERSE, 20);
-
         Point_System.put(CardType.WILD, 40);
-        Point_System.put(CardType.WILD_DRAW_TWO, 50);
+
     }
 
     /**
@@ -45,37 +59,103 @@ public class Card {
      * @return integer of Cards point value
      */
     public int getPoint() {
-        return Point_System.get(this.type);
+        return Point_System.get(getType());
     }
 
     /**
      * Constructor for game.Card takes a Color and Type
      *
-     * @param c game.CardColor enum used to construct game.Card
-     * @param t game.CardType enum used to construct game.Card
+
      */
-    public Card(CardColor c, CardType t){
-        if (t == CardType.WILD || t == CardType.WILD_DRAW_TWO) {
-            if (c != CardColor.WILD) {
-                throw new IllegalArgumentException("Wild cards can only be given the color: wild");
-            }
-        } else {
-            if (c == CardColor.WILD){
-                throw new IllegalArgumentException("Wild cards can only be given the color: wild");
-            }
-        }
-        color = c;
-        type = t;
-        this.image = loadCardImage();
+    public Card(CardColor lightColor, CardType lightType) {
+        this.lightColor = lightColor;
+        this.lightType = lightType;
+
+        this.darkColor = mapDarkColor(lightColor);
+        this.darkType = mapDarkType(lightType);
+
+        this.isDarkSide = false;
+        // Load images
+        this.lightImage = loadImage(lightColor, lightType);
+        this.darkImage = loadImage(darkColor, darkType);
     }
+
+    private CardColor mapDarkColor(CardColor lightColor) {
+        switch (lightColor) {
+            case RED:
+                return CardColor.ORANGE;
+            case BLUE:
+                return CardColor.PINK;
+            case GREEN:
+                return CardColor.TEAL;
+            case YELLOW:
+                return CardColor.PURPLE;
+            case WILD:
+                return CardColor.WILD;
+            default:
+                throw new IllegalArgumentException("Unknown light color: " + lightColor);
+        }
+    }
+
+    private CardType mapDarkType(CardType lightType) {
+        switch (lightType) {
+            case ONE:
+                return CardType.ONE;
+            case TWO:
+                return CardType.TWO;
+            case THREE:
+                return CardType.THREE;
+            case FOUR:
+                return CardType.FOUR;
+            case FIVE:
+                return CardType.FIVE;
+            case SIX:
+                return CardType.SIX;
+            case SEVEN:
+                return CardType.SEVEN;
+            case EIGHT:
+                return CardType.EIGHT;
+            case NINE:
+                return CardType.NINE;
+
+            // Light → Dark action cards
+            case DRAW_ONE:
+                return CardType.DRAW_FIVE;
+            case SKIP:
+                return CardType.SKIP_EVERYONE;
+            case REVERSE:
+                return CardType.REVERSE;
+
+            // Wilds
+            case WILD:
+                return CardType.WILD;
+            case WILD_DRAW_TWO:
+                return CardType.WILD_DRAW_COLOR;
+
+            // Flip stays Flip
+            case FLIP:
+                return CardType.FLIP;
+
+            default:
+                throw new IllegalArgumentException("Unknown light type: " + lightType);
+        }
+    }
+
+
+    public void flipSide() {
+        isDarkSide = !isDarkSide;
+    }
+
 
     /**
      * Loads the image for the card based on its color and type.
      *
      * @return ImageIcon representing the card's image
      */
-    private ImageIcon loadCardImage() {
+    private ImageIcon loadImage(CardColor color, CardType type) {
+
         String imageName;
+
         if (color == CardColor.WILD) {
             imageName = "wild_" + type.name().toLowerCase() + ".png";
         } else {
@@ -83,15 +163,17 @@ public class Card {
         }
 
         java.net.URL imageUrl = getClass().getResource("/images/" + imageName);
+
         if (imageUrl != null) {
-            ImageIcon originalIcon = new ImageIcon(imageUrl);
-            Image scaledImage = originalIcon.getImage().getScaledInstance(70, 100, Image.SCALE_SMOOTH);
-            return new ImageIcon(scaledImage);
+            ImageIcon original = new ImageIcon(imageUrl);
+            Image scaled = original.getImage().getScaledInstance(70, 100, Image.SCALE_SMOOTH);
+            return new ImageIcon(scaled);
         } else {
             System.err.println("Missing image: " + imageName);
             return new ImageIcon();
         }
     }
+
 
     /**
      * Returns the image of the card.
@@ -99,7 +181,7 @@ public class Card {
      * @return ImageIcon representing the card's image
      */
     public ImageIcon getImage() {
-        return image;
+        return isDarkSide ?  darkImage : lightImage;
     }
 
     /**
@@ -108,7 +190,8 @@ public class Card {
      * @return the game.CardColor enum value of the game.Card
      */
     public CardColor getColor() {
-        return color;
+        return isDarkSide ? darkColor : lightColor;
+
     }
 
     /**
@@ -117,9 +200,17 @@ public class Card {
      * @return the game.CardType enum value of game.Card
      */
     public CardType getType() {
-        return type;
-    }
+        return isDarkSide ? darkType : lightType;
 
+    }
+    public boolean isDarkSide() {
+        return isDarkSide;
+    }
+    public CardColor getLightColor() { return lightColor; }
+    public CardType getLightType() { return lightType; }
+
+    public CardColor getDarkColor() { return darkColor; }
+    public CardType getDarkType() { return darkType; }
     /**
      * String representation of game.Card
      *
@@ -127,7 +218,8 @@ public class Card {
      */
     @Override
     public String toString() {
-        return color + " " + type;
+
+        return isDarkSide ? darkColor + " " + darkType : lightColor + " " + lightType;
     }
 
     /**
@@ -141,13 +233,13 @@ public class Card {
      * @return {@code true} if the specified object is equal to this card;
      *         {@code false} otherwise
      */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || this.getClass() != o.getClass()) return false;
-        Card card = (Card) o;
-        return this.color == card.color && this.type == card.type;
-    }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || this.getClass() != o.getClass()) return false;
+//        Card card = (Card) o;
+//        return this.color == card.color && this.type == card.type;
+//    }
 
 
 

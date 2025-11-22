@@ -2,7 +2,6 @@ package game;
 
 
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.EventObject;
 
@@ -41,6 +40,7 @@ public class UNOEvent extends EventObject {
         this.wildColor = wildColor;
         this.players = players;
     }
+
     public void updateWildColor(CardColor wildColor) {
         this.wildColor = wildColor;
     }
