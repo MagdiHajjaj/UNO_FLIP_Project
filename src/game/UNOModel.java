@@ -13,6 +13,7 @@ import java.util.List;
 public class UNOModel {
     private static final int WINNING_SCORE = 500;
     /* INSTANCE VARIABLES */
+    private UNOEvent event;
     private ArrayList<Player> players;
     private List<IView> viewersList;
     private Player currentPlayer;
@@ -64,8 +65,19 @@ public class UNOModel {
      * Each view's update() method will be called.
      */
     public void notifyViewers() {
+        event = new UNOEvent(
+                this,
+                status,
+                playedCard,
+                lastDrawnCard,
+                currentPlayer,
+                getNextPlayer(),
+                pile.peekTopDiscard(),
+                wildColor,
+                players
+        );
         for (IView viewer : viewersList) {
-            viewer.update();
+            viewer.update(event);
         }
     }
     /**
@@ -181,6 +193,7 @@ public class UNOModel {
      */
     public void setWildColor(CardColor color) {
         this.wildColor = color;
+        event.updateWildColor(wildColor);
         if (wildDrawTwo) {
             getNextPlayer().addCard(pile.drawCard());
             getNextPlayer().addCard(pile.drawCard());

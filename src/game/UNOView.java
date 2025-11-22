@@ -303,45 +303,46 @@ public class UNOView extends JFrame implements IView {
      * the game.
      */
     @Override
-    public void update() {
-        Status status = model.getStatus();
+    public void update(UNOEvent event) {
+        Status status = event.getStatus();
         switch (status) {
             case Status.CARD_DRAWN:
                 String drawMsg;
-                if (model.getPlayedCard() != null && model.getPlayedCard().getType() == CardType.DRAW_ONE) {
-                    drawMsg = "A DRAW_ONE card has been played. " + model.getNextPlayer().getName() + " drew a card: "+ model.getLastDrawnCard().toString();
+                if (event.getPlayedCard() != null && event.getPlayedCard().getType() == CardType.DRAW_ONE) {
+                    drawMsg = "A DRAW_ONE card has been played. " + event.getNextPlayer().getName() + " drew a card: "+ event.getLastDrawnCard().toString();
                 } else {
-                    drawMsg = model.getCurrentPlayer().getName() + " drew a card: " + model.getLastDrawnCard();
+                    drawMsg = event.getCurrentPlayer().getName() + " drew a card: " + event.getLastDrawnCard();
                 }
                 updateUIState(false, false, true, drawMsg);
                 break;
             case Status.NEXT_PLAYER:
                 updateUIState(true, true, false, "");
                 refreshCenterCards();
-                topPanel.setCurrentPlayer(model.getCurrentPlayer().getName());
+                topPanel.setCurrentPlayer(event.getCurrentPlayer().getName());
                 break;
             case Status.WILD_CARD:
                 colorSelectionMenu();
-                topPanel.setCurrentWildColorLabel(model.getWildColor().name());
+
+                topPanel.setCurrentWildColorLabel(event.getWildColor().name());
                 String wildMsg;
-                if(model.getPlayedCard().getType()==CardType.WILD_DRAW_TWO) {
-                    int sizeOfHand = model.getNextPlayer().getHand().size();
-                    wildMsg = "A WILD DRAW TWO card has been played. " + model.getNextPlayer().getName() + " draws 2 cards: " +
-                            model.getNextPlayer().getHand().get(sizeOfHand - 1) + ", " +  model.getNextPlayer().getHand().get(sizeOfHand - 2);
+                if(event.getPlayedCard().getType()==CardType.WILD_DRAW_TWO) {
+                    int sizeOfHand = event.getNextPlayer().getHand().size();
+                    wildMsg = "A WILD DRAW TWO card has been played. " + event.getNextPlayer().getName() + " draws 2 cards: " +
+                            event.getNextPlayer().getHand().get(sizeOfHand - 1) + ", " +  event.getNextPlayer().getHand().get(sizeOfHand - 2);
 
                 }else{
-                    wildMsg = "WILD color selected: " + model.getWildColor().name();
+                    wildMsg = "WILD color selected: " + event.getWildColor().name();
                 }
                 updateUIState(false, false, true, wildMsg);
                 break;
             case Status.PLAYING_VALID_CARD:
                 String playMsg;
-                if (model.getTopCard().getType() == CardType.SKIP) {
-                    playMsg = "A SKIP card has been played. " + model.getNextPlayer().getName() + " turn has been skipped.";
-                } else if (model.getTopCard().getType() == CardType.REVERSE) {
+                if (event.getTopCard().getType() == CardType.SKIP) {
+                    playMsg = "A SKIP card has been played. " + event.getNextPlayer().getName() + " turn has been skipped.";
+                } else if (event.getTopCard().getType() == CardType.REVERSE) {
                     playMsg = "A REVERSE card has been played. The direction of player rotation changes.";
                 } else {
-                    playMsg = model.getCurrentPlayer().getName() + " played a card: " + model.getTopCard();
+                    playMsg = event.getCurrentPlayer().getName() + " played a card: " + event.getTopCard();
                 }
                 updateUIState(false, false, true, playMsg);
                 break;
@@ -351,22 +352,22 @@ public class UNOView extends JFrame implements IView {
             case Status.ROUND_OVER:
                 refreshCenterCards();
                 roundOverMenu();
-                String roundOver = model.getCurrentPlayer().getName() + " has 0 cards left! They win this round! "
-                        + model.getCurrentPlayer().getName() + " earned " + model.getCurrentPlayer().getScore() + " points.\n\n";
+                String roundOver = event.getCurrentPlayer().getName() + " has 0 cards left! They win this round! "
+                        + event.getCurrentPlayer().getName() + " earned " + event.getCurrentPlayer().getScore() + " points.\n\n";
                 updateUIState(true, true, false,roundOver);
-                updateScoreboard(model.getPlayers());
+                updateScoreboard(event.getPlayers());
                 break;
             case Status.GAME_OVER:
                 refreshCenterCards();
                 gameOverMenu();
-                String gameOver = model.getCurrentPlayer().getName() + " has reached 500+ points! They win the game! "
+                String gameOver = event.getCurrentPlayer().getName() + " has reached 500+ points! They win the game! "
                         + "Points have been reset for a new game.";
                 updateUIState(true, true, false,gameOver);
-                updateScoreboard(model.getPlayers());
+                updateScoreboard(event.getPlayers());
                 break;
         }
-        if(model.getPlayedCard() != null){
-            topPanel.setTopCard(model.getPlayedCard().getImage(), model.getPlayedCard().toString());
+        if(event.getPlayedCard() != null){
+            topPanel.setTopCard(event.getPlayedCard().getImage(), event.getPlayedCard().toString());
         }
 
     }

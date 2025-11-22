@@ -7,5 +7,5 @@ package game;
  * @version M2
  */
 public interface IView {
-    public void update();
+    void update(UNOEvent event);
 }
