@@ -4,7 +4,13 @@ package game;
 
 import java.util.ArrayList;
 import java.util.EventObject;
-
+/**
+ * public class UNOEvent
+ *
+ * @author Magdi Hajjaj
+ * @id 101299841
+ * @version M3
+ */
 public class UNOEvent extends EventObject {
     private final Status status;
     private Card playedCard;

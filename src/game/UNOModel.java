@@ -6,9 +6,9 @@ import java.util.List;
  * UNOModel - Main model class for the UNO game.
  * Handles all game logic, player actions, and notifications to the view.
  *
- * @author Edward Savin, Magdi Hajjaj
- * @id 101239342, 101299841
- * @version M2
+ * @author Magdi Hajjaj
+ * @id 101299841
+ * @version M3
  */
 public class UNOModel {
     private static final int WINNING_SCORE = 500;
