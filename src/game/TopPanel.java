@@ -64,7 +64,7 @@ public class TopPanel extends JPanel {
     public void setTopCard(ImageIcon cardImage, String cardName) {
         topCardImage.setIcon(cardImage);
         topCardLabel.setText(cardName);
-        currentWildColorLabel.setVisible(cardName.equals("WILD WILD_DRAW_TWO") || cardName.equals("WILD WILD"));
+        currentWildColorLabel.setVisible(cardName.equals("WILD WILD_DRAW_TWO") || cardName.equals("WILD WILD") || cardName.equals("WILD WILD_DRAW_COLOR"));
     }
     /**
      * sets the current color of the wild color for the next player on the top panel
