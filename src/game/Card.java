@@ -18,7 +18,6 @@ public class Card {
 
     private final CardColor darkColor;
     private final CardType darkType;
-    private boolean isDarkSide;
 
     private ImageIcon lightImage;
     private ImageIcon darkImage;
@@ -74,7 +73,6 @@ public class Card {
         this.darkColor = mapDarkColor(lightColor);
         this.darkType = mapDarkType(lightType);
 
-        this.isDarkSide = false;
         // Load images
         this.lightImage = loadImage(lightColor, lightType);
         this.darkImage = loadImage(darkColor, darkType);
@@ -142,9 +140,7 @@ public class Card {
     }
 
 
-    public void flipSide() {
-        isDarkSide = !isDarkSide;
-    }
+
 
 
     /**
@@ -181,7 +177,7 @@ public class Card {
      * @return ImageIcon representing the card's image
      */
     public ImageIcon getImage() {
-        return isDarkSide ?  darkImage : lightImage;
+        return UNOModel.isDarkSide ? darkImage : lightImage;
     }
 
     /**
@@ -190,7 +186,7 @@ public class Card {
      * @return the game.CardColor enum value of the game.Card
      */
     public CardColor getColor() {
-        return isDarkSide ? darkColor : lightColor;
+        return UNOModel.isDarkSide ? darkColor : lightColor;
 
     }
 
@@ -200,17 +196,11 @@ public class Card {
      * @return the game.CardType enum value of game.Card
      */
     public CardType getType() {
-        return isDarkSide ? darkType : lightType;
+        return UNOModel.isDarkSide ? darkType : lightType;
 
     }
-    public boolean isDarkSide() {
-        return isDarkSide;
-    }
-    public CardColor getLightColor() { return lightColor; }
-    public CardType getLightType() { return lightType; }
 
-    public CardColor getDarkColor() { return darkColor; }
-    public CardType getDarkType() { return darkType; }
+
     /**
      * String representation of game.Card
      *
@@ -219,7 +209,7 @@ public class Card {
     @Override
     public String toString() {
 
-        return isDarkSide ? darkColor + " " + darkType : lightColor + " " + lightType;
+        return UNOModel.isDarkSide ? darkColor + " " + darkType : lightColor + " " + lightType;
     }
 
     /**
@@ -233,13 +223,23 @@ public class Card {
      * @return {@code true} if the specified object is equal to this card;
      *         {@code false} otherwise
      */
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (o == null || this.getClass() != o.getClass()) return false;
-//        Card card = (Card) o;
-//        return this.color == card.color && this.type == card.type;
-//    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Card other = (Card) o;
+
+        // Compare ACTIVE (visible) side
+        if (UNOModel.isDarkSide) {
+            return this.darkColor == other.darkColor &&
+                    this.darkType == other.darkType;
+        } else {
+            return this.lightColor == other.lightColor &&
+                    this.lightType == other.lightType;
+        }
+    }
+
 
 
 

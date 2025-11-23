@@ -24,11 +24,18 @@ public class UNOModel {
     private boolean drawOne;
     private boolean wildDrawTwo;
     private boolean skip;
+    private boolean skipEveryone;
+    private boolean wildDrawColor;
+    private boolean drawFive;
     private boolean exitGame;
+
     private int direction;
     private int indexOfCurrentPlayer;
     private int roundNumber;
     private Status status;
+
+    protected static boolean isDarkSide; // entire game state
+
 
     /**
      * Initializes a new UNOModel object.
@@ -93,6 +100,7 @@ public class UNOModel {
         }
         resetFields();
         currentPlayer = players.getFirst();
+        isDarkSide  = false;
         status = Status.IN_GAME;
         notifyViewers();
     }
@@ -103,6 +111,8 @@ public class UNOModel {
     public void resetFields() {
         indexOfCurrentPlayer = 0;
         drawOne = false;
+        drawFive = false;
+        wildDrawColor = false;
         wildDrawTwo = false;
         direction = 1;
         skip = false;
@@ -133,7 +143,10 @@ public class UNOModel {
         if (currentPlayer == null || playedCard == null) return;
 
         Card topCard = pile.peekTopDiscard();
+
         if (!validatePlacedCard(playedCard, topCard, wildColor)) {
+
+            System.out.println("DID THIS RUN");
             status = Status.PLAYING_INVALID_CARD;
             notifyViewers();
             return;
@@ -146,8 +159,15 @@ public class UNOModel {
         processCard(toBePlayed);
 
         // Handle special card logic
-        if ((toBePlayed.getType() == CardType.WILD || toBePlayed.getType() == CardType.WILD_DRAW_TWO)
+        if ((toBePlayed.getType() == CardType.FLIP )
                 && !currentPlayer.getHand().isEmpty()) {
+            status = Status.FLIP_CARD;
+            isDarkSide = !isDarkSide;
+            notifyViewers();
+            return;
+        }
+
+        if ((toBePlayed.getType() == CardType.WILD || toBePlayed.getType() == CardType.WILD_DRAW_TWO || toBePlayed.getType() == CardType.WILD_DRAW_COLOR) && !currentPlayer.getHand().isEmpty()) {
             status = Status.WILD_CARD;
             notifyViewers();
             return;
@@ -161,15 +181,24 @@ public class UNOModel {
             notifyViewers();
             return;
         }
+        if (toBePlayed.getType() == CardType.DRAW_FIVE && !currentPlayer.getHand().isEmpty()) {
+
+            getNextPlayer().addCard(pile.drawCard());
+            getNextPlayer().addCard(pile.drawCard());
+            getNextPlayer().addCard(pile.drawCard());
+            getNextPlayer().addCard(pile.drawCard());
+            getNextPlayer().addCard(pile.drawCard());
+            drawFive = false;
+            status = Status.DRAW_FIVE;
+            notifyViewers();
+            return;
+        }
 
         if (currentPlayer.getHand().isEmpty()) {
             roundEnd();
             return;
         }
-        //if (status != Status.PLAYING_VALID_CARD) {
-            //nextPlayer();
-            //return;
-        //}
+
         status = Status.PLAYING_VALID_CARD;
         notifyViewers();
     }
@@ -198,6 +227,18 @@ public class UNOModel {
             getNextPlayer().addCard(pile.drawCard());
             getNextPlayer().addCard(pile.drawCard());
             wildDrawTwo = false;
+        }
+        if (wildDrawColor) {
+            getNextPlayer().addCard(pile.drawCard());
+            int counter = 1;
+            Card lastDrawn = getNextPlayer().getHand().getLast();
+            while(lastDrawn.getColor() != wildColor && lastDrawn.getColor() != CardColor.WILD) {
+                getNextPlayer().addCard(pile.drawCard());
+                lastDrawn = getNextPlayer().getHand().getLast();
+                counter++;
+            }
+            event.updateCardDrawnCounter(counter);
+            wildDrawColor = false;
         }
     }
     /**
@@ -249,11 +290,17 @@ public class UNOModel {
                 else direction *= -1;
             }
             case SKIP -> skip = true;
+            case SKIP_EVERYONE -> skipEveryone = true;
             case WILD -> status = Status.WILD_CARD;
             case WILD_DRAW_TWO -> {
                 wildDrawTwo = true;
                 status = Status.WILD_CARD;
             }
+            case WILD_DRAW_COLOR -> {
+                wildDrawColor = true;
+
+            }
+            case DRAW_FIVE -> drawFive = true;
         }
     }
     /**
@@ -265,6 +312,12 @@ public class UNOModel {
         if (skip) {
             advanceIndex();
             skip = false;
+        }
+        if(skipEveryone){
+            for(int i = 0 ; i < players.size() - 1; i++){
+                advanceIndex();
+            }
+            skipEveryone = false;
         }
         currentPlayer = players.get(indexOfCurrentPlayer);
         status = Status.NEXT_PLAYER;
@@ -288,14 +341,16 @@ public class UNOModel {
      * @return true if the move is valid, false otherwise
      */
     public boolean validatePlacedCard(Card handCard, Card topCard, CardColor wildColor) {
-        if (topCard.getType() == CardType.WILD || topCard.getType() == CardType.WILD_DRAW_TWO) {
+
+        if (topCard.getType() == CardType.WILD || topCard.getType() == CardType.WILD_DRAW_TWO || topCard.getType() == CardType.WILD_DRAW_COLOR) {
             return wildColor != null && (handCard.getColor() == wildColor || handCard.getColor() == CardColor.WILD);
         }
         return handCard == topCard ||
                 handCard.getColor() == topCard.getColor() ||
                 handCard.getType() == topCard.getType() ||
                 handCard.getType() == CardType.WILD ||
-                handCard.getType() == CardType.WILD_DRAW_TWO;
+                handCard.getType() == CardType.WILD_DRAW_TWO ||
+                handCard.getType() == CardType.WILD_DRAW_COLOR;
     }
     /**
      * Calculates the total points earned for the round by the current player.

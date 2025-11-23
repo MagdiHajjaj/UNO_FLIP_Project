@@ -14,6 +14,7 @@ public class UNOEvent extends EventObject {
     private Card topCard;
     private CardColor wildColor;
     private ArrayList<Player> players;
+    private int drawCounter;
 
     /**
      * Constructs a prototypical Event.
@@ -69,8 +70,15 @@ public class UNOEvent extends EventObject {
     public Card getTopCard() {
         return topCard;
     }
+    public int getDrawCounter() {
+        return drawCounter;
+    }
 
     public ArrayList<Player> getPlayers() {
         return players;
+    }
+
+    public void updateCardDrawnCounter(int counter) {
+        drawCounter = counter;
     }
 }

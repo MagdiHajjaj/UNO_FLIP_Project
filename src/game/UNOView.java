@@ -181,9 +181,11 @@ public class UNOView extends JFrame implements IView {
      * the chosen color is passed to the controller to update the game state.
      */
     private void colorSelectionMenu() {
-        String[] playerOptions = {"RED", "YELLOW", "GREEN", "BLUE"};
-        String selection = null;
+        String[] playerOptionsDark = {"ORANGE", "PINK", "PURPLE", "TEAL"};
+        String[] playerOptionsLight = {"RED", "YELLOW", "GREEN", "BLUE"};
 
+
+        String selection = null;
         while (selection == null) {
             selection = (String) JOptionPane.showInputDialog(
                     null,
@@ -191,8 +193,8 @@ public class UNOView extends JFrame implements IView {
                     "WILD Colour Selection",
                     JOptionPane.QUESTION_MESSAGE,
                     null,
-                    playerOptions,
-                    playerOptions[0]
+                    UNOModel.isDarkSide ? playerOptionsDark: playerOptionsLight,
+                    UNOModel.isDarkSide ? playerOptionsDark[0]: playerOptionsLight[0]
             );
 
             if (selection == null) {
@@ -330,6 +332,13 @@ public class UNOView extends JFrame implements IView {
                     wildMsg = "A WILD DRAW TWO card has been played. " + event.getNextPlayer().getName() + " draws 2 cards: " +
                             event.getNextPlayer().getHand().get(sizeOfHand - 1) + ", " +  event.getNextPlayer().getHand().get(sizeOfHand - 2);
 
+                }else if(event.getPlayedCard().getType() == CardType.WILD_DRAW_COLOR) {
+                    wildMsg = "A WILD DRAW COLOR card has been played. "
+                            + event.getNextPlayer().getName()
+                            + " draws " + event.getDrawCounter()
+                            + " cards until a " + event.getWildColor() + " card appears or a wild color.";
+
+
                 }else{
                     wildMsg = "WILD color selected: " + event.getWildColor().name();
                 }
@@ -341,6 +350,8 @@ public class UNOView extends JFrame implements IView {
                     playMsg = "A SKIP card has been played. " + event.getNextPlayer().getName() + " turn has been skipped.";
                 } else if (event.getTopCard().getType() == CardType.REVERSE) {
                     playMsg = "A REVERSE card has been played. The direction of player rotation changes.";
+                }else if (event.getTopCard().getType() == CardType.SKIP_EVERYONE) {
+                    playMsg = "A SKIP_EVERYONE card has been played. All players have been skipped. Turn returns to " + event.getCurrentPlayer().getName();
                 } else {
                     playMsg = event.getCurrentPlayer().getName() + " played a card: " + event.getTopCard();
                 }
@@ -365,6 +376,22 @@ public class UNOView extends JFrame implements IView {
                 updateUIState(true, true, false,gameOver);
                 updateScoreboard(event.getPlayers());
                 break;
+            case Status.FLIP_CARD:
+                refreshCenterCards();
+                String flipMsg = "A FLIP card has been played. ";
+
+                updateUIState(false, false, true, flipMsg);
+                break;
+            case Status.DRAW_FIVE:
+                int sizeOfHand = event.getNextPlayer().getHand().size();
+                String drawFiveMsg = "A DRAW_FIVE card has been played. " + event.getNextPlayer().getName() + " drew 5 cards: "
+                        + event.getNextPlayer().getHand().get(sizeOfHand - 1) + ", " +  event.getNextPlayer().getHand().get(sizeOfHand - 2)
+                        + event.getNextPlayer().getHand().get(sizeOfHand - 3) + ", " +  event.getNextPlayer().getHand().get(sizeOfHand - 4)
+                        + event.getNextPlayer().getHand().get(sizeOfHand - 5);
+
+                updateUIState(false, false, true, drawFiveMsg);
+                break;
+
         }
         if(event.getPlayedCard() != null){
             topPanel.setTopCard(event.getPlayedCard().getImage(), event.getPlayedCard().toString());
