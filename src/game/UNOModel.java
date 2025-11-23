@@ -158,6 +158,13 @@ public class UNOModel {
         this.playedCard = toBePlayed;
         processCard(toBePlayed);
 
+
+        if ((toBePlayed.getType() == CardType.SKIP_EVERYONE )
+                && !currentPlayer.getHand().isEmpty()) {
+            status = Status.SKIP_EVERYONE;
+            notifyViewers();
+            return;
+        }
         // Handle special card logic
         if ((toBePlayed.getType() == CardType.FLIP )
                 && !currentPlayer.getHand().isEmpty()) {
@@ -300,7 +307,10 @@ public class UNOModel {
                 wildDrawColor = true;
 
             }
-            case DRAW_FIVE -> drawFive = true;
+            case DRAW_FIVE -> {
+                    drawFive = true;
+                    skip = true;
+            }
         }
     }
     /**
@@ -506,4 +516,7 @@ public class UNOModel {
         return status == Status.ROUND_OVER;
     }
 
+    public static boolean getIsDarkSide() {
+        return isDarkSide;
+    }
 }
