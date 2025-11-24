@@ -28,8 +28,8 @@ public class UNOController implements ActionListener {
      * sets the number of players and starts a new game
      * @param numPlayers, the number of players
      */
-    public void setNumPlayers(int numPlayers) {
-        model.newGame(numPlayers);
+    public void setNumPlayers(int numPlayers, int numComputers) {
+        model.newGame(numPlayers, numComputers);
     }
 
     /**

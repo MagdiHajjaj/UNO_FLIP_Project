@@ -31,10 +31,10 @@ public class UNOView extends JFrame implements IView {
     public UNOView() {
         super("Uno Flip Game");
         model = new UNOModel();
-        model.addViewer(this);
+        model.addViewer(this); // subscribe to model, when model changes update is called
 
         controller = new UNOController(model, this);
-        playerSelectionMenu();
+        SelectionMenu(); // get number of players.
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(1400,900);
@@ -99,27 +99,55 @@ public class UNOView extends JFrame implements IView {
      * The selected value is sent to the controller to set up the game.
      * If the user cancels the dialog, the program exits.
      */
-    private void playerSelectionMenu() {
-        String[] playerOptions = {"2", "3", "4"};
+    private void SelectionMenu() {
+        String[] playerOptions = {"1", "2", "3", "4"};
+        while (true) {
+            String selection = (String) JOptionPane.showInputDialog(
+                    null,
+                    "Select the total number of Human players:",
+                    "Player Selection",
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    playerOptions,
+                    playerOptions[0]
+            );
+
+            if (selection != null) {
+                int numPlayers = Integer.parseInt(selection);
+                int numComputers = computerSelectionMenu();
+                if ((numComputers + numPlayers) <= 4) {
+                    controller.setNumPlayers(numPlayers, numComputers);
+                    break;
+                } else {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Total number of players cannot exceed 4.",
+                            "Invalid Input",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                    continue;
+                }
+            } else {
+                System.out.println("User canceled");
+                System.exit(0);
+            }
+        }
+    }
+    public int computerSelectionMenu() {
+        String[] playerOptions = {"1", "2", "3", "4"};
 
         String selection = (String) JOptionPane.showInputDialog(
                 null,
-                "Select the total number of players:",
-                "Player Selection",
+                "Select the total number of Computer players:",
+                "Computer Selection",
                 JOptionPane.QUESTION_MESSAGE,
                 null,
                 playerOptions,
                 playerOptions[0]
         );
-
-        if (selection != null) {
-            int numPlayers = Integer.parseInt(selection);
-            controller.setNumPlayers(numPlayers);
-        } else {
-            System.out.println("User canceled");
-            System.exit(0);
-        }
+        return Integer.parseInt(selection);
     }
+
     /**
      * Builds the main UNO game window and initializes the game.
      *
@@ -318,13 +346,21 @@ public class UNOView extends JFrame implements IView {
                 updateUIState(false, false, true, drawMsg);
                 break;
             case Status.NEXT_PLAYER:
-                updateUIState(true, true, false, "");
-                refreshCenterCards();
-                topPanel.setCurrentPlayer(event.getCurrentPlayer().getName());
+                Player currentPlayer = event.getCurrentPlayer();
+                if (currentPlayer instanceof ComputerPlayer) {
+                    Card card = model.computerCardChoice(event);
+                    String message = currentPlayer.getName() + " played a " + card.toString();
+                    updateUIState(false, false, true, message);
+                    refreshCenterCards();
+                    topPanel.setCurrentPlayer(currentPlayer.getName());
+                } else {
+                    updateUIState(true, true, false, "");
+                    refreshCenterCards();
+                    topPanel.setCurrentPlayer(currentPlayer.getName());
+                }
                 break;
             case Status.WILD_CARD:
                 colorSelectionMenu();
-
                 topPanel.setCurrentWildColorLabel(event.getWildColor().name());
                 String wildMsg;
                 if(event.getPlayedCard().getType()==CardType.WILD_DRAW_TWO) {
@@ -337,8 +373,6 @@ public class UNOView extends JFrame implements IView {
                             + event.getNextPlayer().getName()
                             + " draws " + event.getDrawCounter()
                             + " cards until a " + event.getWildColor() + " card appears or a wild color.";
-
-
                 }else{
                     wildMsg = "WILD color selected: " + event.getWildColor().name();
                 }

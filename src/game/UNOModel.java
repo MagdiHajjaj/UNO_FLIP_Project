@@ -2,6 +2,7 @@ package game;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 /**
  * UNOModel - Main model class for the UNO game.
  * Handles all game logic, player actions, and notifications to the view.
@@ -14,7 +15,7 @@ public class UNOModel {
     private static final int WINNING_SCORE = 500;
     /* INSTANCE VARIABLES */
     private UNOEvent event;
-    private ArrayList<Player> players;
+    private ArrayList<Player> players; // contains list players and computers
     private List<IView> viewersList;
     private Player currentPlayer;
     private PileSystem pile;
@@ -35,6 +36,7 @@ public class UNOModel {
     private Status status;
 
     protected static boolean isDarkSide; // entire game state
+    private static final Random random = new Random();
 
 
     /**
@@ -93,10 +95,13 @@ public class UNOModel {
      *
      * @param numPlayers number of players in the game
      */
-    public void newGame(int numPlayers) {
+    public void newGame(int numPlayers, int numComputers) {
         players.clear();
         for (int i = 1; i <= numPlayers; i++) {
             players.add(new Player("Player " + i));
+        }
+        for (int i = 1; i <= numComputers; i++) {
+            players.add(new ComputerPlayer("Computer " + i));
         }
         resetFields();
         currentPlayer = players.getFirst();
@@ -519,4 +524,18 @@ public class UNOModel {
     public static boolean getIsDarkSide() {
         return isDarkSide;
     }
+
+    public Card computerCardChoice(UNOEvent event) {
+        List<Card> listOfplayableCard = new ArrayList<>();
+        for (Card card : event.getCurrentPlayer().getHand()) {
+            if (validatePlacedCard(card, event.getTopCard(), event.getWildColor())) {
+                listOfplayableCard.add(card);
+            }
+        }
+        if (listOfplayableCard.isEmpty()) {
+            return null;
+        }
+        return listOfplayableCard.get(random.nextInt(listOfplayableCard.size()));
+    }
+
 }
