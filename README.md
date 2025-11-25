@@ -1,7 +1,11 @@
-# Group #25 — UNO Flip Project — Milestone #2
+# Group #25 — UNO Flip Project — Milestone #3
 
-**UNO_PROJECT.jar** contains a fully functional playable version of our UNO game for **Milestone #2**.  
+**UNO_PROJECT.jar** contains a fully functional playable version of our UNO game for **Milestone #3**.  
 Running this file starts the full game with turn handling, scoring, round transitions, and wild card logic.
+
+---
+
+**AI** The Game has an option to play versus computer players. The computer players check their hand for cards that are valid to play according to the current game state, including the top card on the discard pile and any active wild color. They then play the first valid card they find. If no card is valid, the computer draws a card instead.
 
 ---
 
@@ -16,28 +20,26 @@ Running this file starts the full game with turn handling, scoring, round transi
 
 ---
 
-## Team Contributions (Milestone #2)
+## Team Contributions (Milestone #3)
 
 ### Edward Savin (101239342)
-- Maintained and refined card-related logic (`Card`, `CardColor`, `CardType`)
 - Updated and expanded test cases
-- implemented the model of the UNO game
 - Supported debugging and rules validation during game refinement
 
 ### Magdi Hajjaj (101299841)
-- Implemented `UNOView` and GUI update logic
-- Developed `TopPanel` and the scoreboard / hand display layout
+- Implemented `UNOEvent` Class
+- Implemented Flip rules.
+- Helped implement the Ai
 - Contributed to controller logic and interaction flow
-- Assisted in UI behavior design (`UNOController` and event handling)
 - Helped align gameplay rules with user interface updates
 
 ### Mohammed Osman (101311022)
-- Implemented and integrated `Status` enum for state-driven view updates
+- Implemented AI
 - Added Javadoc documentation across classes
-- Generated the updated UML class diagram for Milestone #2
 
 ### Hamza Mohammed Salih (101311021)
 - Created and adjusted sequence diagrams to reflect final game flow
+- Created UML
 
 
 ## Setup Instructions
