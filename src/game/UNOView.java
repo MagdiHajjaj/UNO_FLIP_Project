@@ -375,7 +375,7 @@ public class UNOView extends JFrame implements IView {
                 break;
             case Status.PLAYING_VALID_CARD:
                 String playMsg;
-               
+
                 if (event.getTopCard().getType() == CardType.SKIP) {
                     playMsg = "A SKIP card has been played. " + event.getNextPlayer().getName() + " turn has been skipped.";
                 } else if (event.getTopCard().getType() == CardType.REVERSE) {
