@@ -21,6 +21,7 @@ public class UNOEvent extends EventObject {
     private CardColor wildColor;
     private ArrayList<Player> players;
     private int drawCounter;
+    private boolean computerWild;
 
     /**
      * Constructs a prototypical Event.
@@ -35,7 +36,8 @@ public class UNOEvent extends EventObject {
                     Player nextPlayer,
                     Card topCard,
                     CardColor wildColor,
-                    ArrayList<Player> players)
+                    ArrayList<Player> players,
+                    Boolean computerWild)
     {
         super(source);
         this.status = status;
@@ -46,6 +48,7 @@ public class UNOEvent extends EventObject {
         this.topCard = topCard;
         this.wildColor = wildColor;
         this.players = players;
+        this.computerWild = computerWild;
     }
 
     public void updateWildColor(CardColor wildColor) {
@@ -87,4 +90,13 @@ public class UNOEvent extends EventObject {
     public void updateCardDrawnCounter(int counter) {
         drawCounter = counter;
     }
-}
+    public boolean getComputerWild() {
+        return computerWild;
+    }
+    @Override
+    public String toString() {
+        return "UNOEvent [status=" + status + ", playedCard=" + playedCard + ", lastDrawnCard=" + lastDrawnCard
+                + ", currentPlayer=" + currentPlayer + ", nextPlayer=" + nextPlayer + ", topCard=" + topCard
+                + ", wildColor=" + wildColor + ", players=" + players + ", drawCounter=" + drawCounter + "]";
+    }
+ }

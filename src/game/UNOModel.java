@@ -13,6 +13,9 @@ import java.util.Random;
  */
 public class UNOModel {
     private static final int WINNING_SCORE = 500;
+    protected static final String[] playerOptionsDark = {"ORANGE", "PINK", "PURPLE", "TEAL"};
+    protected static final String[] playerOptionsLight = {"RED", "YELLOW", "GREEN", "BLUE"};
+    private static Random random;
     /* INSTANCE VARIABLES */
     private UNOEvent event;
     private ArrayList<Player> players; // contains list players and computers
@@ -29,6 +32,7 @@ public class UNOModel {
     private boolean wildDrawColor;
     private boolean drawFive;
     private boolean exitGame;
+    private boolean computerWild;
 
     private int direction;
     private int indexOfCurrentPlayer;
@@ -36,7 +40,6 @@ public class UNOModel {
     private Status status;
 
     protected static boolean isDarkSide; // entire game state
-    private static final Random random = new Random();
 
 
     /**
@@ -52,6 +55,7 @@ public class UNOModel {
         this.indexOfCurrentPlayer = 0;
         this.roundNumber = 1;
         this.status = Status.INITIALIZING;
+        this.computerWild = false;
     }
     /**
      * Registers a view so it will be notified when the model updates.
@@ -83,8 +87,10 @@ public class UNOModel {
                 getNextPlayer(),
                 pile.peekTopDiscard(),
                 wildColor,
-                players
+                players,
+                computerWild
         );
+        System.out.println(event);
         for (IView viewer : viewersList) {
             viewer.update(event);
         }
@@ -163,7 +169,17 @@ public class UNOModel {
         this.playedCard = toBePlayed;
         processCard(toBePlayed);
 
+        if (currentPlayer instanceof ComputerPlayer && (toBePlayed.getType() == CardType.WILD || toBePlayed.getType() == CardType.WILD_DRAW_TWO || toBePlayed.getType() == CardType.WILD_DRAW_COLOR)) {
+            currentPlayer.removeCardAt(toBePlayed);
+            computerWild = true;
+            if (isDarkSide) {
+                wildColor = CardColor.valueOf(playerOptionsDark[random.nextInt(playerOptionsDark.length)]);
 
+            } else {
+                wildColor = CardColor.valueOf(playerOptionsLight[random.nextInt(playerOptionsLight.length)]);
+            }
+            notifyViewers();
+        }
         if ((toBePlayed.getType() == CardType.SKIP_EVERYONE )
                 && !currentPlayer.getHand().isEmpty()) {
             status = Status.SKIP_EVERYONE;
@@ -335,6 +351,12 @@ public class UNOModel {
             skipEveryone = false;
         }
         currentPlayer = players.get(indexOfCurrentPlayer);
+        //check if ai
+        if (currentPlayer instanceof ComputerPlayer) {
+            status = Status.NEXT_PLAYER;
+            playCard(computerCardChoice());
+            return;
+        }
         status = Status.NEXT_PLAYER;
         notifyViewers();
     }
@@ -525,17 +547,19 @@ public class UNOModel {
         return isDarkSide;
     }
 
-    public Card computerCardChoice(UNOEvent event) {
+    public Card computerCardChoice() {
         List<Card> listOfplayableCard = new ArrayList<>();
-        for (Card card : event.getCurrentPlayer().getHand()) {
-            if (validatePlacedCard(card, event.getTopCard(), event.getWildColor())) {
+        for (Card card : currentPlayer.getHand()) {
+            if (validatePlacedCard(card, getTopCard(), getWildColor())) {
                 listOfplayableCard.add(card);
             }
         }
         if (listOfplayableCard.isEmpty()) {
+            this.drawCard();
             return null;
+
         }
-        return listOfplayableCard.get(random.nextInt(listOfplayableCard.size()));
+        return listOfplayableCard.get(0);
     }
 
 }

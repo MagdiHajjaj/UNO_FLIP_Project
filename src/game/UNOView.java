@@ -44,7 +44,8 @@ public class UNOView extends JFrame implements IView {
         topPanel = new TopPanel();
         add(topPanel, BorderLayout.NORTH);
         topPanel.setTopCard(model.getTopCard().getImage(), model.getTopCard().toString());
-        topPanel.setCurrentPlayer(model.getCurrentPlayer().getName());
+        System.out.println(model.getCurrentPlayer());
+        topPanel.setCurrentPlayer(model.getCurrentPlayer());
 
         //left button
         nextPlayerButton = new JButton("NEXT PLAYER");
@@ -87,7 +88,7 @@ public class UNOView extends JFrame implements IView {
         scoreboardPanel.add(title);
 
         for (int i = 0; i < players.size(); i++) {
-            JLabel label = new JLabel("Player " + (i + 1) + ": " + players.get(i).getScore());
+            JLabel label = new JLabel(players.get(i).getName()+ ": " + players.get(i).getScore());
             playerScoreLabels.add(label);
             scoreboardPanel.add(label);
         }
@@ -125,7 +126,6 @@ public class UNOView extends JFrame implements IView {
                             "Invalid Input",
                             JOptionPane.ERROR_MESSAGE
                     );
-                    continue;
                 }
             } else {
                 System.out.println("User canceled");
@@ -209,9 +209,6 @@ public class UNOView extends JFrame implements IView {
      * the chosen color is passed to the controller to update the game state.
      */
     private void colorSelectionMenu() {
-        String[] playerOptionsDark = {"ORANGE", "PINK", "PURPLE", "TEAL"};
-        String[] playerOptionsLight = {"RED", "YELLOW", "GREEN", "BLUE"};
-
 
         String selection = null;
         while (selection == null) {
@@ -221,8 +218,8 @@ public class UNOView extends JFrame implements IView {
                     "WILD Colour Selection",
                     JOptionPane.QUESTION_MESSAGE,
                     null,
-                    UNOModel.isDarkSide ? playerOptionsDark: playerOptionsLight,
-                    UNOModel.isDarkSide ? playerOptionsDark[0]: playerOptionsLight[0]
+                    UNOModel.isDarkSide ? UNOModel.playerOptionsDark: UNOModel.playerOptionsLight,
+                    UNOModel.isDarkSide ? UNOModel.playerOptionsDark[0]: UNOModel.playerOptionsLight[0]
             );
 
             if (selection == null) {
@@ -346,21 +343,14 @@ public class UNOView extends JFrame implements IView {
                 updateUIState(false, false, true, drawMsg);
                 break;
             case Status.NEXT_PLAYER:
-                Player currentPlayer = event.getCurrentPlayer();
-                if (currentPlayer instanceof ComputerPlayer) {
-                    Card card = model.computerCardChoice(event);
-                    String message = currentPlayer.getName() + " played a " + card.toString();
-                    updateUIState(false, false, true, message);
-                    refreshCenterCards();
-                    topPanel.setCurrentPlayer(currentPlayer.getName());
-                } else {
-                    updateUIState(true, true, false, "");
-                    refreshCenterCards();
-                    topPanel.setCurrentPlayer(currentPlayer.getName());
-                }
+                updateUIState(true, true, false, "");
+                refreshCenterCards();
+                topPanel.setCurrentPlayer(model.getCurrentPlayer());
                 break;
             case Status.WILD_CARD:
-                colorSelectionMenu();
+                if (!event.getComputerWild()) {
+                    colorSelectionMenu();
+                }
                 topPanel.setCurrentWildColorLabel(event.getWildColor().name());
                 String wildMsg;
                 if(event.getPlayedCard().getType()==CardType.WILD_DRAW_TWO) {
