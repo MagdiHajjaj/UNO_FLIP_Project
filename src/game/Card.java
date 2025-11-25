@@ -91,7 +91,21 @@ public class Card {
         this.darkImage = loadImage(darkColor, darkType);
 
     }
-
+    /**
+     * Maps a light-side card colour to its corresponding dark-side colour
+     * used in UNO Flip mode.
+     *
+     * Light → Dark mapping:
+     *  RED    → ORANGE
+     *  BLUE   → PINK
+     *  GREEN  → TEAL
+     *  YELLOW → PURPLE
+     *  WILD   → WILD (wild cards stay the same colour)
+     *
+     * @param lightColor the light-side CardColor to convert
+     * @return the corresponding dark-side CardColor
+     * @throws IllegalArgumentException if the provided colour does not match any known light-side value
+     */
     private CardColor mapDarkColor(CardColor lightColor) {
         switch (lightColor) {
             case RED:
@@ -108,7 +122,25 @@ public class Card {
                 throw new IllegalArgumentException("Unknown light color: " + lightColor);
         }
     }
-
+    /**
+     * Maps a light-side card type to its corresponding dark-side type
+     * for UNO Flip mode.
+     *
+     * Number cards map directly (1→1, 2→2, ..., 9→9).
+     * Action cards follow these mappings:
+     *
+     * Light → Dark:
+     *  DRAW_ONE        → DRAW_FIVE
+     *  SKIP            → SKIP_EVERYONE
+     *  REVERSE         → REVERSE (same)
+     *  WILD            → WILD (same)
+     *  WILD_DRAW_TWO   → WILD_DRAW_COLOR
+     *  FLIP            → FLIP (same)
+     *
+     * @param lightType the light-side CardType to convert
+     * @return the corresponding dark-side CardType
+     * @throws IllegalArgumentException if an unknown type is provided
+     */
     private CardType mapDarkType(CardType lightType) {
         switch (lightType) {
             case ONE:
@@ -152,11 +184,6 @@ public class Card {
                 throw new IllegalArgumentException("Unknown light type: " + lightType);
         }
     }
-
-
-
-
-
     /**
      * Loads the image for the card based on its color and type.
      *
@@ -183,8 +210,6 @@ public class Card {
             return new ImageIcon();
         }
     }
-
-
     /**
      * Returns the image of the card.
      *
@@ -193,7 +218,6 @@ public class Card {
     public ImageIcon getImage() {
         return UNOModel.isDarkSide ? darkImage : lightImage;
     }
-
     /**
      * Getter for Color of game.Card
      *
@@ -203,7 +227,6 @@ public class Card {
         return UNOModel.isDarkSide ? darkColor : lightColor;
 
     }
-
     /**
      * Getter for Type of game.Card
      *
@@ -213,8 +236,6 @@ public class Card {
         return UNOModel.isDarkSide ? darkType : lightType;
 
     }
-
-
     /**
      * String representation of game.Card
      *
@@ -253,17 +274,30 @@ public class Card {
                     this.lightType == other.lightType;
         }
     }
+    /**
+     * Returns the light-side colour of this card.
+     *
+     * @return the light-side CardColor
+     */
     public CardColor getLightColor(){
         return lightColor;
     }
+    /**
+     * Returns the light-side type of this card.
+     *
+     * @return the light-side CardType
+     */
     public CardType getLightType(){
         return lightType;
     }
+    /**
+     * Returns a string describing the light-side of this card
+     * in the format "COLOR TYPE".
+     *
+     * @return a string containing the light-side colour and type
+     */
     public String getLightToString() {
-
-        return  lightColor + " " + lightType;
+        return lightColor + " " + lightType;
     }
-
-
 
 }

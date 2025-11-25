@@ -1,5 +1,12 @@
 package game;
 
+/**
+ * game.CardType enum for the game of UNO
+ *
+ * @author Magdi Hajjaj
+ * @id 101299841
+ * @version M3
+ */
 public enum CardType {
     // Light
     ONE(true), TWO(true), THREE(true), FOUR(true), FIVE(true),
