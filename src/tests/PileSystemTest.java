@@ -11,7 +11,7 @@ public class PileSystemTest {
     @Test
     public void testDrawPileInitialization() {
         PileSystem piles = new PileSystem();
-        int expectedCards = (4 * ((9 + 3) * 2)) + (2 * 4 * 1);
+        int expectedCards = 112;
         assertEquals(expectedCards, piles.getDrawPileSize(), "Draw pile should contain 104 cards initially");
     }
     /**

@@ -279,7 +279,11 @@ public class UNOView extends JFrame implements IView {
         for (int i = 0; i < players.size() && i < playerScoreLabels.size(); i++) {
             Player player = players.get(i);
             JLabel label = playerScoreLabels.get(i);
-            label.setText("Player " + (i + 1) + ": " + player.getScore());
+            if(player instanceof ComputerPlayer){
+                label.setText("Computer " + (i + 1) + ": " + player.getScore());
+            }else{
+                label.setText("Player " + (i + 1) + ": " + player.getScore());
+            }
         }
 
         scoreBoardPanel.revalidate();
@@ -371,7 +375,7 @@ public class UNOView extends JFrame implements IView {
                 break;
             case Status.PLAYING_VALID_CARD:
                 String playMsg;
-                System.out.println("Playing valid card: " + event.getTopCard().getType());
+               
                 if (event.getTopCard().getType() == CardType.SKIP) {
                     playMsg = "A SKIP card has been played. " + event.getNextPlayer().getName() + " turn has been skipped.";
                 } else if (event.getTopCard().getType() == CardType.REVERSE) {

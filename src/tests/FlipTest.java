@@ -134,7 +134,7 @@ public class FlipTest {
         Card flipCard = new Card(game.getTopCard().getColor(), CardType.FLIP);
         p1.addCard(flipCard);
 
-        Card wildCard = new Card(game.getTopCard().getColor(), CardType.WILD_DRAW_TWO);
+        Card wildCard = new Card(CardColor.WILD, CardType.WILD_DRAW_TWO);
         p2.addCard(wildCard);
 
         game.playCard(flipCard);
@@ -204,7 +204,7 @@ public class FlipTest {
         p3.clearHand();
         p1.clearHand();
 
-        p2.addCard(new Card(CardColor.RED, CardType.WILD_DRAW_TWO));
+        p2.addCard(new Card(CardColor.WILD, CardType.WILD_DRAW_TWO));
         //only a wild draw color in rotation, score should be 60
         assertEquals(60, game.calculateScore());
     }

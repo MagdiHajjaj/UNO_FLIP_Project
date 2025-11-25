@@ -67,6 +67,19 @@ public class Card {
 
      */
     public Card(CardColor lightColor, CardType lightType) {
+        if ((lightType == CardType.WILD
+                || lightType == CardType.WILD_DRAW_TWO
+                || lightType == CardType.WILD_DRAW_COLOR)
+                && lightColor != CardColor.WILD) {
+            throw new IllegalArgumentException(lightType + " cards must have color WILD");
+        }
+
+        if (!(lightType == CardType.WILD
+                || lightType == CardType.WILD_DRAW_TWO
+                || lightType == CardType.WILD_DRAW_COLOR)
+                && lightColor == CardColor.WILD) {
+            throw new IllegalArgumentException("Non-wild cards cannot have color WILD");
+        }
         this.lightColor = lightColor;
         this.lightType = lightType;
 
@@ -76,6 +89,7 @@ public class Card {
         // Load images
         this.lightImage = loadImage(lightColor, lightType);
         this.darkImage = loadImage(darkColor, darkType);
+
     }
 
     private CardColor mapDarkColor(CardColor lightColor) {
@@ -239,7 +253,16 @@ public class Card {
                     this.lightType == other.lightType;
         }
     }
+    public CardColor getLightColor(){
+        return lightColor;
+    }
+    public CardType getLightType(){
+        return lightType;
+    }
+    public String getLightToString() {
 
+        return  lightColor + " " + lightType;
+    }
 
 
 

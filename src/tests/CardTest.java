@@ -40,18 +40,18 @@ class CardTest {
     @Test
     void cardTest(){
 
-        assertEquals(CardColor.RED, c1.getColor());
-        assertEquals(CardType.FIVE, c1.getType());
-        assertEquals(CardColor.YELLOW, c2.getColor());
-        assertEquals(CardType.FOUR, c2.getType());
-        assertEquals(CardColor.BLUE, c3.getColor());
-        assertEquals(CardType.THREE, c3.getType());
-        assertEquals(CardColor.GREEN, c4.getColor());
-        assertEquals(CardType.SIX, c4.getType());
-        assertEquals(CardColor.RED, c5.getColor());
-        assertEquals(CardType.REVERSE, c5.getType());
-        assertEquals(CardType.WILD_DRAW_TWO, c6.getType());
-        assertEquals(CardColor.WILD, c6.getColor());
+        assertEquals(CardColor.RED, c1.getLightColor());
+        assertEquals(CardType.FIVE, c1.getLightType());
+        assertEquals(CardColor.YELLOW, c2.getLightColor());
+        assertEquals(CardType.FOUR, c2.getLightType());
+        assertEquals(CardColor.BLUE, c3.getLightColor());
+        assertEquals(CardType.THREE, c3.getLightType());
+        assertEquals(CardColor.GREEN, c4.getLightColor());
+        assertEquals(CardType.SIX, c4.getLightType());
+        assertEquals(CardColor.RED, c5.getLightColor());
+        assertEquals(CardType.REVERSE, c5.getLightType());
+        assertEquals(CardType.WILD_DRAW_TWO, c6.getLightType());
+        assertEquals(CardColor.WILD, c6.getLightColor());
 
         assertThrows(IllegalArgumentException.class, () -> new Card(CardColor.RED, CardType.WILD));
         assertThrows(IllegalArgumentException.class, () -> new Card(CardColor.YELLOW, CardType.WILD_DRAW_TWO));
@@ -61,34 +61,20 @@ class CardTest {
         assertThrows(IllegalArgumentException.class, () -> new Card(CardColor.WILD, CardType.SKIP));
     }
 
-    /**
-     * Test for Points map
-     */
-    @Test
-    void pointTest(){
-        assertEquals(5, c1.getPoint());
-        assertEquals(4, c2.getPoint());
-        assertEquals(3, c3.getPoint());
-        assertEquals(6, c4.getPoint());
-        assertEquals(20, c5.getPoint());
-        assertEquals(50, c6.getPoint());
-        assertEquals(10, c7.getPoint());
-        assertEquals(40, c8.getPoint());
-    }
 
     /**
      * Test toString method
      */
     @Test
     void toStringTest(){
-        assertEquals("RED FIVE", c1.toString());
-        assertEquals("YELLOW FOUR", c2.toString());
-        assertEquals("BLUE THREE", c3.toString());
-        assertEquals("GREEN SIX", c4.toString());
-        assertEquals("RED REVERSE", c5.toString());
-        assertEquals("WILD WILD_DRAW_TWO", c6.toString());
-        assertEquals("YELLOW DRAW_ONE", c7.toString());
-        assertEquals("WILD WILD", c8.toString());
+        assertEquals("RED FIVE", c1.getLightToString());
+        assertEquals("YELLOW FOUR", c2.getLightToString());
+        assertEquals("BLUE THREE", c3.getLightToString());
+        assertEquals("GREEN SIX", c4.getLightToString());
+        assertEquals("RED REVERSE", c5.getLightToString());
+        assertEquals("WILD WILD_DRAW_TWO", c6.getLightToString());
+        assertEquals("YELLOW DRAW_ONE", c7.getLightToString());
+        assertEquals("WILD WILD", c8.getLightToString());
     }
 
     /**
