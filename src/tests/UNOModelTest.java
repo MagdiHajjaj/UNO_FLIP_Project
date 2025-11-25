@@ -24,7 +24,7 @@ public class UNOModelTest {
         assertEquals(Status.INITIALIZING,model.getStatus());
         assertFalse(Status.GAME_OVER == model.getStatus());
         assertFalse(Status.ROUND_OVER == model.getStatus());
-        model.newGame(2);
+        model.newGame(2,0);
         assertEquals(Status.IN_GAME, model.getStatus());
         assertFalse(Status.GAME_OVER == model.getStatus());
         assertFalse(Status.ROUND_OVER == model.getStatus());
@@ -34,7 +34,7 @@ public class UNOModelTest {
     public void testPlayerGetters(){
         assertTrue(model.getPlayers().isEmpty());
         assertNull(model.getCurrentPlayer());
-        model.newGame(3);
+        model.newGame(3,0);
         assertNotNull(model.getCurrentPlayer());
         assertEquals(3, model.getPlayers().size());
         assertEquals(0, model.getIndexOfCurrentPlayer());
@@ -45,7 +45,7 @@ public class UNOModelTest {
 
     @Test
     public void testCardGetters(){
-        model.newGame(2);
+        model.newGame(2,0);
         assertNotNull(model.getTopCard());
         assertNotNull(model.getPileSystem());
 
@@ -64,7 +64,7 @@ public class UNOModelTest {
         assertThrows(IndexOutOfBoundsException.class, () -> {
             model.getPreviousPlayer();
         });
-        model.newGame(3);
+        model.newGame(3,0);
         Player pX = model.getCurrentPlayer();
         assertNotNull(model.getNextPlayer());
         assertNotNull(model.getPreviousPlayer());
@@ -77,14 +77,14 @@ public class UNOModelTest {
     public void testDirectionGetter(){
         assertEquals(1, model.getDirection());
 
-        model.newGame(3);
+        model.newGame(3,0);
         assertEquals(1, model.getDirection());
     }
 
     @Test
     public void testRoundNumberGetter(){
         assertEquals(1, model.getRoundNumber());
-        model.newGame(3);
+        model.newGame(3,0);
         assertEquals(1, model.getRoundNumber());
         model.startNewRound();
         assertEquals(2, model.getRoundNumber());
@@ -93,7 +93,7 @@ public class UNOModelTest {
     @Test
     public void testIndexOfCurrentPlayer(){
         assertEquals(0, model.getIndexOfCurrentPlayer());
-        model.newGame(3);
+        model.newGame(3,0);
         assertEquals(0, model.getIndexOfCurrentPlayer());
 
         model.nextPlayer();
@@ -102,7 +102,7 @@ public class UNOModelTest {
 
     @Test
     public void testNewGame() {
-        model.newGame(3);
+        model.newGame(3,0);
         assertNotNull(model.getCurrentPlayer());
         assertEquals(3, model.getPlayers().size());
         assertEquals("Player 1", model.getCurrentPlayer().getName());
@@ -113,7 +113,7 @@ public class UNOModelTest {
 
     @Test
     public void testPlayerHands(){
-        model.newGame(2);
+        model.newGame(2,0);
 
         assertEquals(7, model.getCurrentPlayer().getHand().size());
         assertEquals(7, model.getNextPlayer().getHand().size());
@@ -121,7 +121,7 @@ public class UNOModelTest {
 
     @Test
     public void testDrawCard(){
-        model.newGame(3);
+        model.newGame(3,0);
         int initial = model.getCurrentPlayer().getHand().size();
 
         model.drawCard();
@@ -132,7 +132,7 @@ public class UNOModelTest {
 
     @Test
     public void testNextPlayer(){
-        model.newGame(3);
+        model.newGame(3,0);
         Player p1 = model.getCurrentPlayer();
 
         model.nextPlayer();
@@ -141,7 +141,7 @@ public class UNOModelTest {
 
     @Test
     public void testValidateCard() {
-        model.newGame(2);
+        model.newGame(2, 0);
         Card topCard = model.getTopCard();
         Card playCard = new Card(topCard.getColor(), CardType.ONE);
         assertTrue(model.validatePlacedCard(playCard,topCard, null));
@@ -158,7 +158,7 @@ public class UNOModelTest {
 
     @Test
     public void testWildColor(){
-        model.newGame(3);
+        model.newGame(3, 0);
         model.setWildColor(CardColor.GREEN);
         assertEquals(CardColor.GREEN, model.getWildColor());
     }
@@ -166,7 +166,7 @@ public class UNOModelTest {
     @Test
     public void testScoreCalculator() {
         assertEquals(0, model.calculateScore());
-        model.newGame(2);
+        model.newGame(2, 0);
         int score =  model.calculateScore();
         assertTrue(score > 0);
 
@@ -174,7 +174,7 @@ public class UNOModelTest {
     }
     @Test
     public void testGetAndSetScore() {
-        model.newGame(2);
+        model.newGame(2, 0);
         Player p1 = model.getCurrentPlayer();
         assertEquals(0, p1.getScore());
         p1.setScore(1);
@@ -184,7 +184,7 @@ public class UNOModelTest {
 
     @Test
     public void testGameWinner() {
-        model.newGame(3);
+        model.newGame(3, 0);
         Player p1 = model.getCurrentPlayer();
         p1.setScore(500);
         assertTrue(model.checkWinner(p1));
@@ -196,7 +196,7 @@ public class UNOModelTest {
 
     @Test
     public void testNewRound() {
-        model.newGame(3);
+        model.newGame(3, 0);
         int initial = model.getRoundNumber();
         assertEquals(1, initial);
         model.startNewRound();
@@ -208,7 +208,7 @@ public class UNOModelTest {
 
     @Test
     public void testResetGame() {
-        model.newGame(2);
+        model.newGame(2, 0);
 
         model.getCurrentPlayer().setScore(1);
         model.resetGame();

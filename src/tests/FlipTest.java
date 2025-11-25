@@ -22,7 +22,7 @@ public class FlipTest {
     @BeforeEach
     public void setUp() {
         game = new UNOModel();
-        game.newGame(3);
+        game.newGame(3,0);
 
         ArrayList<Player> players = game.getPlayers();
         p1 = players.get(0);
