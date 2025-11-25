@@ -546,7 +546,14 @@ public class UNOModel {
     public static boolean getIsDarkSide() {
         return isDarkSide;
     }
-
+    /**
+     * Chooses the next card for the computer player to play.
+     *
+     * Checks the computer player's hand for valid cards to play.
+     * If no valid card is found, the computer draws a card and returns null.
+     *
+     * @return the first valid card the computer can play, or null if none is playable
+     */
     public Card computerCardChoice() {
         List<Card> listOfplayableCard = new ArrayList<>();
         for (Card card : currentPlayer.getHand()) {
