@@ -56,6 +56,7 @@ public class UNOModel {
         this.roundNumber = 1;
         this.status = Status.INITIALIZING;
         this.computerWild = false;
+        this.random = new Random();
     }
     /**
      * Registers a view so it will be notified when the model updates.
@@ -90,7 +91,6 @@ public class UNOModel {
                 players,
                 computerWild
         );
-        System.out.println(event);
         for (IView viewer : viewersList) {
             viewer.update(event);
         }
@@ -156,8 +156,6 @@ public class UNOModel {
         Card topCard = pile.peekTopDiscard();
 
         if (!validatePlacedCard(playedCard, topCard, wildColor)) {
-
-            System.out.println("DID THIS RUN");
             status = Status.PLAYING_INVALID_CARD;
             notifyViewers();
             return;
@@ -187,8 +185,7 @@ public class UNOModel {
             return;
         }
         // Handle special card logic
-        if ((toBePlayed.getType() == CardType.FLIP )
-                && !currentPlayer.getHand().isEmpty()) {
+        if ((toBePlayed.getType() == CardType.FLIP ) && !currentPlayer.getHand().isEmpty()) {
             status = Status.FLIP_CARD;
             isDarkSide = !isDarkSide;
             notifyViewers();
@@ -339,6 +336,7 @@ public class UNOModel {
      * Updates the game status and notifies views.
      */
     public void nextPlayer() {
+        computerWild = false;
         advanceIndex();
         if (skip) {
             advanceIndex();
@@ -354,8 +352,10 @@ public class UNOModel {
         //check if ai
         if (currentPlayer instanceof ComputerPlayer) {
             status = Status.NEXT_PLAYER;
+            notifyViewers();
             playCard(computerCardChoice());
             return;
+
         }
         status = Status.NEXT_PLAYER;
         notifyViewers();

@@ -345,7 +345,7 @@ public class UNOView extends JFrame implements IView {
             case Status.NEXT_PLAYER:
                 updateUIState(true, true, false, "");
                 refreshCenterCards();
-                topPanel.setCurrentPlayer(model.getCurrentPlayer());
+                topPanel.setCurrentPlayer(event.getCurrentPlayer());
                 break;
             case Status.WILD_CARD:
                 if (!event.getComputerWild()) {
@@ -366,16 +366,16 @@ public class UNOView extends JFrame implements IView {
                 }else{
                     wildMsg = "WILD color selected: " + event.getWildColor().name();
                 }
+
                 updateUIState(false, false, true, wildMsg);
                 break;
             case Status.PLAYING_VALID_CARD:
                 String playMsg;
+                System.out.println("Playing valid card: " + event.getTopCard().getType());
                 if (event.getTopCard().getType() == CardType.SKIP) {
                     playMsg = "A SKIP card has been played. " + event.getNextPlayer().getName() + " turn has been skipped.";
                 } else if (event.getTopCard().getType() == CardType.REVERSE) {
                     playMsg = "A REVERSE card has been played. The direction of player rotation changes.";
-                }else if (event.getTopCard().getType() == CardType.SKIP_EVERYONE) {
-                    playMsg = "A SKIP_EVERYONE card has been played. All players have been skipped. Turn returns to " + event.getCurrentPlayer().getName();
                 } else {
                     playMsg = event.getCurrentPlayer().getName() + " played a card: " + event.getTopCard();
                 }
@@ -415,7 +415,12 @@ public class UNOView extends JFrame implements IView {
 
                 updateUIState(false, false, true, drawFiveMsg);
                 break;
+            case Status.SKIP_EVERYONE:
+                String Skipmsg;
+                Skipmsg = "A SKIP_EVERYONE card has been played. All players have been skipped. Turn returns to " + event.getCurrentPlayer().getName();
 
+                updateUIState(false, false, true, Skipmsg);
+                break;
         }
         if(event.getPlayedCard() != null){
             topPanel.setTopCard(event.getPlayedCard().getImage(), event.getPlayedCard().toString());
