@@ -44,7 +44,6 @@ public class UNOView extends JFrame implements IView {
         topPanel = new TopPanel();
         add(topPanel, BorderLayout.NORTH);
         topPanel.setTopCard(model.getTopCard().getImage(), model.getTopCard().toString());
-        System.out.println(model.getCurrentPlayer());
         topPanel.setCurrentPlayer(model.getCurrentPlayer());
 
         //left button

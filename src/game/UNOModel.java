@@ -171,10 +171,11 @@ public class UNOModel {
             currentPlayer.removeCardAt(toBePlayed);
             computerWild = true;
             if (isDarkSide) {
-                wildColor = CardColor.valueOf(playerOptionsDark[random.nextInt(playerOptionsDark.length)]);
+                setWildColor(CardColor.valueOf(playerOptionsDark[random.nextInt(playerOptionsDark.length)]));
 
             } else {
-                wildColor = CardColor.valueOf(playerOptionsLight[random.nextInt(playerOptionsLight.length)]);
+                setWildColor(CardColor.valueOf(playerOptionsDark[random.nextInt(playerOptionsLight.length)]));
+
             }
             notifyViewers();
         }
@@ -353,6 +354,7 @@ public class UNOModel {
         if (currentPlayer instanceof ComputerPlayer) {
             status = Status.NEXT_PLAYER;
             notifyViewers();
+
             playCard(computerCardChoice());
             return;
 
