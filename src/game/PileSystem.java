@@ -6,9 +6,11 @@ package game;
  * @id 101299841
  * @version M1
  */
+import java.io.Serializable;
 import java.util.*;
 
-public class PileSystem {
+public class PileSystem implements Serializable {
+    private static final long serialVersionUID = 1L;
     private Stack<Card> drawPile;
     private Stack<Card> discardPile;
 

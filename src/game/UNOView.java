@@ -20,6 +20,7 @@ public class UNOView extends JFrame implements IView {
     private JButton nextPlayerButton;
     private JButton drawCardButton;
     private ArrayList<JLabel> playerScoreLabels;
+    private JMenuBar menuBar;
     /**
      * Sets up the main UNO game window.
      *
@@ -66,6 +67,19 @@ public class UNOView extends JFrame implements IView {
         playerScoreLabels = new ArrayList<>();
         scoreBoardPanel = ScoreboardPanel(model.getPlayers());
         this.add(scoreBoardPanel, BorderLayout.SOUTH);
+
+        //Menu
+        menuBar = new JMenuBar();
+        JMenu menu = new JMenu("Menu");
+        menu.setFont(new Font("Arial", Font.BOLD, 14));
+        JMenuItem saveGameItem = new JMenuItem("Save Game");
+        saveGameItem.addActionListener(e -> controller.saveGame());
+        JMenuItem loadGameItem = new JMenuItem("Load Game");
+        loadGameItem.addActionListener(e -> controller.loadGame());
+        menu.add(saveGameItem);
+        menu.add(loadGameItem);
+        menuBar.add(menu);
+        this.setJMenuBar(menuBar);
 
         //Center cards
         refreshCenterCards();
@@ -423,6 +437,24 @@ public class UNOView extends JFrame implements IView {
                 Skipmsg = "A SKIP_EVERYONE card has been played. All players have been skipped. Turn returns to " + event.getCurrentPlayer().getName();
 
                 updateUIState(false, false, true, Skipmsg);
+                break;
+            case Status.LOAD:
+                Card topCard = event.getTopCard();
+                if (topCard != null) {
+                    topPanel.setTopCard(topCard.getImage(), topCard.toString());
+                }
+                refreshCenterCards();
+
+                topPanel.setCurrentPlayer(event.getCurrentPlayer());
+                if (event.getWildColor() != null) {
+                    topPanel.setCurrentWildColorLabel(event.getWildColor().name());
+                }
+
+                updateScoreboard(event.getPlayers());
+                updateUIState(true, true, false, "Game loaded");
+
+                this.revalidate();
+                this.repaint();
                 break;
         }
         if(event.getPlayedCard() != null){
