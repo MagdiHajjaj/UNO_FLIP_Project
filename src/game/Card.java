@@ -12,7 +12,7 @@ import java.util.Map;
  * @see CardType
  * @see CardColor
  */
-public class Card {
+public class Card implements Cloneable{
     private final CardColor lightColor;
     private final CardType lightType;
 
@@ -22,7 +22,19 @@ public class Card {
     private ImageIcon lightImage;
     private ImageIcon darkImage;
     private Side side;
-
+    /**
+     * Creates a deep copy of this card
+     */
+    @Override
+    public Card clone() {
+        try {
+            Card cloned = (Card) super.clone();
+            // Images can be shared, no need to deep copy
+            return cloned;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException("Clone not supported", e);
+        }
+    }
 
     //Point System
     private static final Map<CardType, Integer> Point_System = new HashMap<>();

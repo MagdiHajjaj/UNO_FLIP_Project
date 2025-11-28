@@ -11,7 +11,25 @@ import java.util.Collections;
  * @id 101311021
  * @version M1
  */
-public class Player {
+public class Player implements Cloneable {
+
+    /**
+     * Creates a deep copy of this player
+     */
+    @Override
+    public Player clone() {
+        try {
+            Player cloned = (Player) super.clone();
+            // Deep copy the hand
+            cloned.hand = new ArrayList<>();
+            for (Card card : this.hand) {
+                cloned.hand.add(card.clone());
+            }
+            return cloned;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException("Clone not supported", e);
+        }
+    }
 
     //Display name shown
     private final String name;

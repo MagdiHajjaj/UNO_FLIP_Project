@@ -3,6 +3,8 @@ package game;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Stack;
+
 /**
  * UNOModel - Main model class for the UNO game.
  * Handles all game logic, player actions, and notifications to the view.
@@ -11,7 +13,7 @@ import java.util.Random;
  * @id 101299841
  * @version M3
  */
-public class UNOModel {
+public class UNOModel implements Cloneable{
     private static final int WINNING_SCORE = 500;
     protected static final String[] playerOptionsDark = {"ORANGE", "PINK", "PURPLE", "TEAL"};
     protected static final String[] playerOptionsLight = {"RED", "YELLOW", "GREEN", "BLUE"};
@@ -39,6 +41,90 @@ public class UNOModel {
     private int roundNumber;
     private Status status;
     private Side side;
+    private final GameHistoryManager gameHistoryManager = new GameHistoryManager();
+    /**
+     * Creates a deep copy of this model
+     */
+    @Override
+    public UNOModel clone() {
+        try {
+            UNOModel cloned = (UNOModel) super.clone();
+
+            // Deep copy players
+            cloned.players = new ArrayList<>();
+            for (Player p : this.players) {
+                cloned.players.add(p.clone());
+            }
+
+            // Deep copy pile system
+            cloned.pile = this.pile.clone();
+
+            // Clone cards if they exist
+            cloned.playedCard = this.playedCard != null ? this.playedCard.clone() : null;
+            cloned.lastDrawnCard = this.lastDrawnCard != null ? this.lastDrawnCard.clone() : null;
+
+            // Deep copy viewers list
+            cloned.viewersList = new ArrayList<>(this.viewersList);
+
+            return cloned;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException("Clone not supported", e);
+        }
+    }
+    /**
+     * Restores this model's state from another model
+     */
+    private void setState(UNOModel other) {
+        this.players = new ArrayList<>();
+        for (Player p : other.players) {
+            this.players.add(p.clone());
+        }
+        this.currentPlayer = this.players.get(other.indexOfCurrentPlayer); // preserve current player
+        this.pile = other.pile.clone();
+        this.wildColor = other.wildColor;
+        this.playedCard = other.playedCard != null ? other.playedCard.clone() : null;
+        this.lastDrawnCard = other.lastDrawnCard != null ? other.lastDrawnCard.clone() : null;
+        this.drawOne = other.drawOne;
+        this.wildDrawTwo = other.wildDrawTwo;
+        this.skip = other.skip;
+        this.skipEveryone = other.skipEveryone;
+        this.wildDrawColor = other.wildDrawColor;
+        this.drawFive = other.drawFive;
+        this.direction = other.direction;
+        this.indexOfCurrentPlayer = other.indexOfCurrentPlayer;
+        this.status = other.status;
+        this.side = other.side;
+        this.computerWild = other.computerWild;
+    }
+
+    /**
+     * Saves the current state for undo functionality
+     */
+    public void saveToUndoStack() {
+        gameHistoryManager.saveState(this);
+    }
+
+    /**
+     * Undoes the last action
+     */
+    public void undo() {
+        UNOModel previousState = gameHistoryManager.undo(this);
+        if (previousState != null) {
+            this.setState(previousState);
+            notifyViewers();
+        }
+    }
+
+    /**
+     * Redoes the last undone action
+     */
+    public void redo() {
+        UNOModel nextState = gameHistoryManager.redo(this);
+        if (nextState != null) {
+            this.setState(nextState);
+            notifyViewers();
+        }
+    }
 
 
     /**
@@ -56,6 +142,7 @@ public class UNOModel {
         this.status = Status.INITIALIZING;
         this.computerWild = false;
         this.random = new Random();
+
     }
 
     public Side getSide() {
@@ -118,7 +205,10 @@ public class UNOModel {
         side = Side.LIGHT;
 
         status = Status.IN_GAME;
+        saveToUndoStack();
         notifyViewers();
+
+
     }
     /**
      * Resets round-specific fields and reinitializes the draw and discard piles.
@@ -136,6 +226,7 @@ public class UNOModel {
         currentPlayer = null;
         exitGame = false;
         pile = new PileSystem();
+        gameHistoryManager.resetUndoRedoHistory();
 
         // Initialize discard pile with non-wild card
         pile.addToDiscardPile(pile.drawCard());
@@ -157,7 +248,7 @@ public class UNOModel {
      */
     public void playCard(Card playedCard) {
         if (currentPlayer == null || playedCard == null) return;
-
+        saveToUndoStack();
         Card topCard = pile.peekTopDiscard();
         if (!validatePlacedCard(playedCard, topCard, wildColor)) {
 
@@ -245,6 +336,7 @@ public class UNOModel {
      */
     public void drawCard() {
         if (currentPlayer != null) {
+            saveToUndoStack();
             lastDrawnCard = pile.drawCard();
             currentPlayer.addCard(lastDrawnCard);
             status = Status.CARD_DRAWN;
@@ -290,6 +382,8 @@ public class UNOModel {
         status = Status.IN_GAME;
         playedCard = pile.peekTopDiscard();
         notifyViewers();
+        saveToUndoStack();
+
     }
     /**
      * Resets the entire game, including all player scores and round count.
@@ -348,6 +442,7 @@ public class UNOModel {
      * Updates the game status and notifies views.
      */
     public void nextPlayer() {
+        saveToUndoStack();
         computerWild = false;
         advanceIndex();
         if (skip) {

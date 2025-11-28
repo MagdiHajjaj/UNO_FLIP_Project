@@ -8,7 +8,33 @@ package game;
  */
 import java.util.*;
 
-public class PileSystem {
+public class PileSystem implements Cloneable {
+
+    /**
+     * Creates a deep copy of this pile system
+     */
+    @Override
+    public PileSystem clone() {
+        try {
+            PileSystem cloned = (PileSystem) super.clone();
+
+            // Deep copy draw pile
+            cloned.drawPile = new Stack<>();
+            for (Card card : this.drawPile) {
+                cloned.drawPile.push(card.clone());
+            }
+
+            // Deep copy discard pile
+            cloned.discardPile = new Stack<>();
+            for (Card card : this.discardPile) {
+                cloned.discardPile.push(card.clone());
+            }
+
+            return cloned;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException("Clone not supported", e);
+        }
+    }
     private Stack<Card> drawPile;
     private Stack<Card> discardPile;
 
@@ -150,9 +176,7 @@ public class PileSystem {
         for (Card card : discardPile) {
             card.flipCard();
         }
-
-
-
     }
+
 }
 

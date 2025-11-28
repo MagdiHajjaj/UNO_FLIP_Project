@@ -20,6 +20,10 @@ public class UNOView extends JFrame implements IView {
     private JButton nextPlayerButton;
     private JButton drawCardButton;
     private ArrayList<JLabel> playerScoreLabels;
+    private JMenuBar menuBar;
+    private JMenu fileMenu;
+    private JMenuItem undoMenuItem;
+    private JMenuItem redoMenuItem;
     /**
      * Sets up the main UNO game window.
      *
@@ -66,6 +70,24 @@ public class UNOView extends JFrame implements IView {
         playerScoreLabels = new ArrayList<>();
         scoreBoardPanel = ScoreboardPanel(model.getPlayers());
         this.add(scoreBoardPanel, BorderLayout.SOUTH);
+
+        menuBar = new JMenuBar();
+
+        fileMenu = new JMenu("File");
+
+        undoMenuItem = new JMenuItem("Undo");
+        undoMenuItem.setActionCommand("UNDO");
+        undoMenuItem.addActionListener(controller);  // controller handles undo
+
+        redoMenuItem = new JMenuItem("Redo");
+        redoMenuItem.setActionCommand("REDO");
+        redoMenuItem.addActionListener(controller);  // controller handles redo
+
+        fileMenu.add(undoMenuItem);
+        fileMenu.add(redoMenuItem);
+
+        menuBar.add(fileMenu);
+        setJMenuBar(menuBar);
 
         //Center cards
         refreshCenterCards();
@@ -336,6 +358,7 @@ public class UNOView extends JFrame implements IView {
     public void update(UNOEvent event) {
         Status status = event.getStatus();
         switch (status) {
+
             case Status.CARD_DRAWN:
                 String drawMsg;
                 if (event.getPlayedCard() != null && event.getPlayedCard().getType() == CardType.DRAW_ONE) {

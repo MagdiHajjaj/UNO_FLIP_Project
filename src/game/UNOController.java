@@ -70,6 +70,11 @@ public class UNOController implements ActionListener {
             JButton clickedButton = (JButton) e.getSource();
             Card playedCard = (Card) clickedButton.getClientProperty("card");
             model.playCard(playedCard);
+        }else if (command.equals("UNDO")) {
+            model.undo();
+        } else if (command.equals("REDO")) {
+            model.redo();
         }
     }
+
 }
