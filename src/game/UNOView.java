@@ -217,8 +217,8 @@ public class UNOView extends JFrame implements IView {
                     "WILD Colour Selection",
                     JOptionPane.QUESTION_MESSAGE,
                     null,
-                    UNOModel.isDarkSide ? UNOModel.playerOptionsDark: UNOModel.playerOptionsLight,
-                    UNOModel.isDarkSide ? UNOModel.playerOptionsDark[0]: UNOModel.playerOptionsLight[0]
+                    model.getSide() == Side.DARK ? UNOModel.playerOptionsDark: UNOModel.playerOptionsLight,
+                    model.getSide() == Side.DARK  ? UNOModel.playerOptionsDark[0]: UNOModel.playerOptionsLight[0]
             );
 
             if (selection == null) {
@@ -413,7 +413,7 @@ public class UNOView extends JFrame implements IView {
                 int sizeOfHand = event.getNextPlayer().getHand().size();
                 String drawFiveMsg = "A DRAW_FIVE card has been played. " + event.getNextPlayer().getName() + " drew 5 cards: "
                         + event.getNextPlayer().getHand().get(sizeOfHand - 1) + ", " +  event.getNextPlayer().getHand().get(sizeOfHand - 2)
-                        + event.getNextPlayer().getHand().get(sizeOfHand - 3) + ", " +  event.getNextPlayer().getHand().get(sizeOfHand - 4)
+                        + ", " + event.getNextPlayer().getHand().get(sizeOfHand - 3) + ", " +  event.getNextPlayer().getHand().get(sizeOfHand - 4) + ", "
                         + event.getNextPlayer().getHand().get(sizeOfHand - 5);
 
                 updateUIState(false, false, true, drawFiveMsg);

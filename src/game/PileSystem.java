@@ -143,5 +143,16 @@ public class PileSystem {
     public boolean isDrawPileEmpty(){
         return drawPile.isEmpty();
     }
+    public void flip() {
+        for (Card card : drawPile) {
+            card.flipCard();
+        }
+        for (Card card : discardPile) {
+            card.flipCard();
+        }
+
+
+
+    }
 }
 

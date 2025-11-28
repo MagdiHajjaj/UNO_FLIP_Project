@@ -1,4 +1,5 @@
 package tests;
+
 import game.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -6,206 +7,183 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 /**
- * Test Class for new flip implementation
- *
- * @author Edward Savin
- * @version M3
+ * Test Class for UNO Flip implementation
  */
 public class FlipTest {
-    private UNOModel game;
-    private Player p1, p2, p3;
 
-    /**
-     * setup before each test a new game with 3 players
-     */
+    private UNOModel game;
+    private ArrayList<Player> players;
+
     @BeforeEach
     public void setUp() {
         game = new UNOModel();
-        game.newGame(3,0);
+        game.newGame(3, 0); // 3 players, no AI
+        players = game.getPlayers();
 
-        ArrayList<Player> players = game.getPlayers();
-        p1 = players.get(0);
-        p2 = players.get(1);
-        p3 = players.get(2);
+        // Clear hands for controlled tests
+        for (Player p : players) {
+            p.clearHand();
+            p.addCard(new Card(CardColor.GREEN, CardType.ONE));
+        }
+
     }
 
-    /**
-     * test the initial state is lightside and cards are lightside
-     */
     @Test
-    void testInitialState(){
-        assertFalse(game.getIsDarkSide(), "No Flip card in initial state should be light side" );
-        for (Player p : game.getPlayers()) {
-            for (Card card : p.getHand()){
-                assertTrue(card.getColor().isLightSide(), "Card should be light side (true)" );
+    void testInitialState() {
+        assertEquals(Side.LIGHT, game.getSide(), "Initial side should be LIGHT");
+        for (Player p : players) {
+            for (Card c : p.getHand()) {
+                assertTrue(c.getColor().isLightSide(), "All cards should start on light side");
             }
         }
     }
 
-    /**
-     * test after first flip card is played
-     */
     @Test
-    void initialFLip(){
+    void testInitialFlip() {
         Card flipCard = new Card(game.getTopCard().getColor(), CardType.FLIP);
+        players.get(0).addCard(flipCard);
 
-        p1.addCard(flipCard);
-        game.playCard(flipCard);
+        game.playCard(players.get(0).getHand().get(1));
 
-
-        assertFalse(game.getTopCard().getColor().isLightSide(), "Card should be dark side (false)" );
-        assertTrue(game.getIsDarkSide(), "Flip card should dark side");
-        assertEquals(Status.FLIP_CARD, game.getStatus());
-
+        assertFalse(game.getTopCard().getColor().isLightSide(), "Top card should be dark side after flip");
+        assertEquals(Side.DARK, game.getSide(), "Game side should be DARK after first flip");
+        assertEquals(Status.FLIP_CARD, game.getStatus(), "Status should be FLIP_CARD");
     }
 
-    /**
-     * test multiple flips ensure states changes accordingly
-     */
     @Test
-    void testFlipCard(){
-        assertFalse(game.getIsDarkSide(), "No Flip card in initial state should be light side" );
-        Card flipCard = new Card(game.getTopCard().getColor(), CardType.FLIP);
-        Card flipCard2 = new Card(game.getTopCard().getColor(), CardType.FLIP);
-        p1.addCard(flipCard);
-        game.playCard(flipCard);
-        assertFalse(game.getTopCard().getColor().isLightSide(), "Card should be dark side (false)" );
-        assertTrue(game.getIsDarkSide(), "Flip card should dark side");
-        assertEquals(Status.FLIP_CARD, game.getStatus());
+    void testFlipCard() {
+        // Prepare two FLIP cards for first two players
+        Card flip1 = new Card(game.getTopCard().getColor(), CardType.FLIP);
+        Card flip2 = new Card(game.getTopCard().getColor(), CardType.FLIP);
+
+        players.get(0).addCard(flip1);
+        players.get(1).addCard(flip2);
+
+        // First player plays FLIP
+        game.playCard(players.get(0).getHand().get(1));
+
+        assertEquals(Side.DARK, game.getSide(), "Side should be DARK after first flip");
+        assertFalse(game.getTopCard().getColor().isLightSide(), "Top card should be dark side");
+        assertEquals(Status.FLIP_CARD, game.getStatus(), "Status should be FLIP_CARD");
         game.nextPlayer();
-        p2.addCard(flipCard2);
-        game.playCard(flipCard2);
-        assertTrue(game.getTopCard().getColor().isLightSide(), "Card should be light side (true)" );
-        assertFalse(game.getIsDarkSide(), "Flip card 2 should light side");
-        assertEquals(Status.FLIP_CARD, game.getStatus());
+        // Second player plays FLIP
+        game.playCard(players.get(1).getHand().get(1));
+
+        assertEquals(Side.LIGHT, game.getSide(), "Side should return to LIGHT after second flip");
+        assertTrue(game.getTopCard().getColor().isLightSide(), "Top card should be light side");
+        assertEquals(Status.FLIP_CARD, game.getStatus(), "Status should still be FLIP_CARD");
     }
 
-    /**
-     * test new draw five card
-     */
     @Test
-    void testDrawFive(){
+    void testDrawFive() {
         Card flipCard = new Card(game.getTopCard().getColor(), CardType.FLIP);
-        p1.addCard(flipCard);
-        Card draw1Card = new Card(game.getTopCard().getColor(), CardType.DRAW_ONE);
-        p2.addCard(draw1Card);
-        int initialHandSize = p3.getHand().size();
-        game.playCard(flipCard);
-        assertTrue(game.getIsDarkSide(), "Flip card should dark side");
+        players.get(0).addCard(flipCard);
+        Card drawCard = new Card(game.getTopCard().getColor(), CardType.DRAW_ONE);
+        players.get(1).addCard(drawCard);
 
-        game.nextPlayer();
-        game.playCard(draw1Card);
-        assertEquals(Status.DRAW_FIVE, game.getStatus());
-        assertEquals(initialHandSize + 5 , p3.getHand().size());
-        //advance next player to check for Draw 5 skip
-        game.nextPlayer();
-        assertEquals(p1, game.getCurrentPlayer());
+        int initialHandSize = players.get(2).getHand().size();
 
+        // First player plays FLIP
+        game.playCard(players.get(0).getHand().get(1));
+        assertEquals(Side.DARK, game.getSide(), "Side should be DARK after flip");
+        game.nextPlayer();
+
+        // Second player plays DRAW_ONE
+
+        game.playCard(players.get(1).getHand().get(1));
+
+        assertEquals(initialHandSize + 5, players.get(2).getHand().size(), "Third player should draw 5 cards");
+
+        // After DRAW_FIVE, turn should return to first player
+        game.nextPlayer();
+        assertEquals(players.get(0), game.getCurrentPlayer(), "Next player should be first player after DRAW_FIVE");
     }
 
-    /**
-     * test new skip everyone card
-     */
     @Test
-    void testSkipEveryone(){
+    void testSkipEveryone() {
         Card flipCard = new Card(game.getTopCard().getColor(), CardType.FLIP);
-        p1.addCard(flipCard);
-
+        players.get(0).addCard(flipCard);
         Card skipCard = new Card(game.getTopCard().getColor(), CardType.SKIP);
-        p2.addCard(skipCard);
+        players.get(1).addCard(skipCard);
 
-        game.playCard(flipCard);
-        assertTrue(game.getIsDarkSide(), "Flip card should dark side");
+        game.playCard(players.get(0).getHand().get(1));
+        assertEquals(Side.DARK, game.getSide(), "Side should be DARK after flip");
+        game.nextPlayer();
 
-        game.nextPlayer();
-        game.playCard(skipCard);
-        assertEquals(Status.SKIP_EVERYONE, game.getStatus());
-        //advance to skip all other players
-        game.nextPlayer();
-        assertEquals(p2, game.getCurrentPlayer());
+        assertEquals(players.get(1).getHand().get(1).getType(), CardType.SKIP_EVERYONE, "Status should be SKIP_EVERYONE");
+        game.playCard(players.get(1).getHand().get(1));
+        assertEquals(players.get(1), game.getCurrentPlayer(), "Current player should be second player after skip everyone");
     }
 
-    /**
-     * test new wild draw color card
-     */
     @Test
-    void testWildDrawColor(){
+    void testWildDrawColor() {
         Card flipCard = new Card(game.getTopCard().getColor(), CardType.FLIP);
-        p1.addCard(flipCard);
-
+        players.get(0).addCard(flipCard);
         Card wildCard = new Card(CardColor.WILD, CardType.WILD_DRAW_TWO);
-        p2.addCard(wildCard);
+        players.get(1).addCard(wildCard);
 
-        game.playCard(flipCard);
+        game.playCard(players.get(0).getHand().get(1));
         game.nextPlayer();
-        int initialHandSize = p3.getHand().size();
-        game.playCard(wildCard);
+
+        int initialHandSize = players.get(2).getHand().size();
+        game.playCard(players.get(1).getHand().get(1));
         game.setWildColor(CardColor.GREEN);
 
-
-        assertTrue(p3.getHand().size() > initialHandSize, "p3 has to draw cards till they get teal");
-        Card drawSelectedColorCard = p3.getHand().get(p3.getHand().size()-1);
-        assertTrue(CardColor.TEAL == drawSelectedColorCard.getColor() || CardColor.WILD == drawSelectedColorCard.getColor());
+        assertTrue(players.get(2).getHand().size() > initialHandSize, "Third player should draw cards until matching color");
+        Card lastCard = players.get(2).getHand().get(players.get(2).getHand().size() - 1);
+        assertTrue(lastCard.getColor() == CardColor.TEAL || lastCard.getColor() == CardColor.WILD,
+                "Last drawn card should be TEAL or WILD");
     }
-
-    //the following tests ensure the points of the new cards
 
     @Test
-    void testFlipPoints(){
-        Card flipCard = new Card(game.getTopCard().getColor(), CardType.FLIP);
+    void testFlipPoints() {
+        Card flipCard = new Card(CardColor.BLUE, CardType.FLIP);
+        players.get(0).clearHand();
+        players.get(1).addCard(flipCard);
+        players.get(2).clearHand();
 
-        p1.clearHand();
-        p2.clearHand();
-        p3.clearHand();
-        p2.addCard(flipCard);
-
-        //only a flip in rotation, score should be 20
-        assertEquals(20, game.calculateScore());
-
+        assertEquals(21, game.calculateScore(), "FLIP card should be worth 20 points");
     }
+
     @Test
     void testDrawFivePoints() {
         Card flipCard = new Card(game.getTopCard().getColor(), CardType.FLIP);
-        p1.addCard(flipCard);
-        game.playCard(flipCard);
+        players.get(0).addCard(flipCard);
+        players.get(1).addCard(new Card(CardColor.RED, CardType.DRAW_ONE));
+        game.playCard(players.get(0).getHand().get(1));
 
-        p2.clearHand();
-        p3.clearHand();
-        p1.clearHand();
+        players.get(0).clearHand();
+        players.get(2).clearHand();
 
-        p2.addCard(new Card(CardColor.RED, CardType.DRAW_ONE));
-        //only a draw 5 in rotation, score should be 20
-        assertEquals(20, game.calculateScore());
+        assertEquals(21, game.calculateScore(), "DRAW_FIVE should be worth 20 points");
     }
 
     @Test
     void testSkipEveryonePoints() {
         Card flipCard = new Card(game.getTopCard().getColor(), CardType.FLIP);
-        p1.addCard(flipCard);
-        game.playCard(flipCard);
+        players.get(0).addCard(flipCard);
+        players.get(1).addCard(new Card(CardColor.RED, CardType.SKIP));
+        game.playCard(players.get(0).getHand().get(1));
+        players.get(0).clearHand();
+        players.get(2).clearHand();
 
-        p2.clearHand();
-        p3.clearHand();
-        p1.clearHand();
 
-        p2.addCard(new Card(CardColor.RED, CardType.SKIP));
-        //only a skip everyone in rotation, score should be 30
-        assertEquals(30, game.calculateScore());
+        assertEquals(31, game.calculateScore(), "SKIP_EVERYONE should be worth 30 points");
     }
 
     @Test
-    void testWildDrawColorPoints(){
+    void testWildDrawColorPoints() {
         Card flipCard = new Card(game.getTopCard().getColor(), CardType.FLIP);
-        p1.addCard(flipCard);
-        game.playCard(flipCard);
+        players.get(0).addCard(flipCard);
+        players.get(1).addCard(new Card(CardColor.WILD, CardType.WILD_DRAW_TWO));
 
-        p2.clearHand();
-        p3.clearHand();
-        p1.clearHand();
+        game.playCard(players.get(0).getHand().get(1));
 
-        p2.addCard(new Card(CardColor.WILD, CardType.WILD_DRAW_TWO));
-        //only a wild draw color in rotation, score should be 60
-        assertEquals(60, game.calculateScore());
+        players.get(0).clearHand();
+        players.get(2).clearHand();
+
+        assertEquals(61, game.calculateScore(), "WILD_DRAW_COLOR should be worth 60 points");
     }
 }

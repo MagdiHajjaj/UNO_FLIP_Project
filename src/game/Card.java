@@ -21,6 +21,7 @@ public class Card {
 
     private ImageIcon lightImage;
     private ImageIcon darkImage;
+    private Side side;
 
 
     //Point System
@@ -89,6 +90,7 @@ public class Card {
         // Load images
         this.lightImage = loadImage(lightColor, lightType);
         this.darkImage = loadImage(darkColor, darkType);
+        this.side = Side.LIGHT;
 
     }
     /**
@@ -216,7 +218,7 @@ public class Card {
      * @return ImageIcon representing the card's image
      */
     public ImageIcon getImage() {
-        return UNOModel.isDarkSide ? darkImage : lightImage;
+        return this.side == Side.DARK ? darkImage : lightImage;
     }
     /**
      * Getter for Color of game.Card
@@ -224,7 +226,7 @@ public class Card {
      * @return the game.CardColor enum value of the game.Card
      */
     public CardColor getColor() {
-        return UNOModel.isDarkSide ? darkColor : lightColor;
+        return this.side == Side.DARK ? darkColor : lightColor;
 
     }
     /**
@@ -233,7 +235,7 @@ public class Card {
      * @return the game.CardType enum value of game.Card
      */
     public CardType getType() {
-        return UNOModel.isDarkSide ? darkType : lightType;
+        return this.side == Side.DARK ? darkType : lightType;
 
     }
     /**
@@ -244,7 +246,11 @@ public class Card {
     @Override
     public String toString() {
 
-        return UNOModel.isDarkSide ? darkColor + " " + darkType : lightColor + " " + lightType;
+        return this.side == Side.DARK? darkColor + " " + darkType : lightColor + " " + lightType;
+    }
+    public void flipCard() {
+        if (this.side == Side.LIGHT) this.side = Side.DARK;
+        else this.side = Side.LIGHT;
     }
 
     /**
@@ -266,7 +272,7 @@ public class Card {
         Card other = (Card) o;
 
         // Compare ACTIVE (visible) side
-        if (UNOModel.isDarkSide) {
+        if (this.side == Side.DARK) {
             return this.darkColor == other.darkColor &&
                     this.darkType == other.darkType;
         } else {

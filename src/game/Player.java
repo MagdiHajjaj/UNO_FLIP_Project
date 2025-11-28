@@ -146,7 +146,11 @@ public class Player {
     public String toString() {
         return "Player{" + name + ", hand=" + hand.size() + ", score=" + totalScore + "}";
     }
-
+    public void flipHand() {
+        for (Card card : hand) {  // assuming 'hand' is a List<Card>
+            card.flipCard();
+        }
+    }
 
 
 }

@@ -38,8 +38,7 @@ public class UNOModel {
     private int indexOfCurrentPlayer;
     private int roundNumber;
     private Status status;
-
-    protected static boolean isDarkSide; // entire game state
+    private Side side;
 
 
     /**
@@ -58,6 +57,11 @@ public class UNOModel {
         this.computerWild = false;
         this.random = new Random();
     }
+
+    public Side getSide() {
+        return side;
+    }
+
     /**
      * Registers a view so it will be notified when the model updates.
      *
@@ -111,7 +115,8 @@ public class UNOModel {
         }
         resetFields();
         currentPlayer = players.getFirst();
-        isDarkSide  = false;
+        side = Side.LIGHT;
+
         status = Status.IN_GAME;
         notifyViewers();
     }
@@ -154,8 +159,8 @@ public class UNOModel {
         if (currentPlayer == null || playedCard == null) return;
 
         Card topCard = pile.peekTopDiscard();
-
         if (!validatePlacedCard(playedCard, topCard, wildColor)) {
+
             status = Status.PLAYING_INVALID_CARD;
             notifyViewers();
             return;
@@ -170,7 +175,7 @@ public class UNOModel {
         if (currentPlayer instanceof ComputerPlayer && (toBePlayed.getType() == CardType.WILD || toBePlayed.getType() == CardType.WILD_DRAW_TWO || toBePlayed.getType() == CardType.WILD_DRAW_COLOR)) {
             currentPlayer.removeCardAt(toBePlayed);
             computerWild = true;
-            if (isDarkSide) {
+            if (side == Side.DARK) {
                 setWildColor(CardColor.valueOf(playerOptionsDark[random.nextInt(playerOptionsDark.length)]));
 
             } else {
@@ -185,10 +190,16 @@ public class UNOModel {
             notifyViewers();
             return;
         }
+
         // Handle special card logic
-        if ((toBePlayed.getType() == CardType.FLIP ) && !currentPlayer.getHand().isEmpty()) {
+        if (toBePlayed.getType() == CardType.FLIP && !currentPlayer.getHand().isEmpty()) {
+            for (Player player : players) {
+                player.flipHand();
+            }
+            pile.flip();
+            side = side == Side.LIGHT ? Side.DARK : Side.LIGHT;
             status = Status.FLIP_CARD;
-            isDarkSide = !isDarkSide;
+
             notifyViewers();
             return;
         }
@@ -208,7 +219,7 @@ public class UNOModel {
             return;
         }
         if (toBePlayed.getType() == CardType.DRAW_FIVE && !currentPlayer.getHand().isEmpty()) {
-
+            System.out.println("Test");
             getNextPlayer().addCard(pile.drawCard());
             getNextPlayer().addCard(pile.drawCard());
             getNextPlayer().addCard(pile.drawCard());
@@ -545,9 +556,6 @@ public class UNOModel {
         return status == Status.ROUND_OVER;
     }
 
-    public static boolean getIsDarkSide() {
-        return isDarkSide;
-    }
     /**
      * Chooses the next card for the computer player to play.
      *
