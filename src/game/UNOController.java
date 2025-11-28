@@ -71,7 +71,7 @@ public class UNOController implements ActionListener {
                 JOptionPane.showMessageDialog(this.view, "Game saved to " + saveFile.getAbsolutePath());
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(this.view, "Error saving game to " + saveFile.getAbsolutePath());
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         }
     }
@@ -84,6 +84,10 @@ public class UNOController implements ActionListener {
         int input = chooser.showOpenDialog(this.view);
         if (input == JFileChooser.APPROVE_OPTION) {
             File loadFile = chooser.getSelectedFile();
+            if (!loadFile.exists()) {
+                JOptionPane.showMessageDialog(this.view, "Error File not found or does not exist " + loadFile.getAbsolutePath());
+                return;
+            }
             if (!loadFile.getName().toLowerCase().endsWith("ser")) {
                 JOptionPane.showMessageDialog(this.view, "Error loading non '.Ser' File " + loadFile.getAbsolutePath());
                 return;
@@ -93,7 +97,7 @@ public class UNOController implements ActionListener {
                 JOptionPane.showMessageDialog(this.view, "Game loaded from " + loadFile.getAbsolutePath());
             } catch (IOException | ClassNotFoundException e) {
                 JOptionPane.showMessageDialog(this.view, "Error loading File " + loadFile.getAbsolutePath());
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         }
     }
