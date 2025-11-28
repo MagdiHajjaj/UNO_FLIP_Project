@@ -611,12 +611,14 @@ public class UNOModel implements Serializable {
             this.direction = loadModel.direction;
             this.indexOfCurrentPlayer = loadModel.indexOfCurrentPlayer;
             this.side = loadModel.side;
-            this.status = Status.LOAD;
+            this.status = loadModel.status;
 
             if (this.viewersList == null) {
                 this.viewersList = new ArrayList<>();
             }
-
+            if (playedCard != null) {
+                this.status = status.PLAYING_VALID_CARD;
+            }
             Card topCard = getTopCard();
             UNOEvent loadEvent = new UNOEvent(
                     this,
