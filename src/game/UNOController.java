@@ -123,6 +123,10 @@ public class UNOController implements ActionListener {
             model.undo();
         } else if (command.equals("REDO")) {
             model.redo();
+        } else if(command.equals("LOAD_GAME")) {
+            loadGame();
+        }else if (command.equals("SAVE_GAME")) {
+            saveGame();
         }
     }
 

@@ -76,9 +76,12 @@ public class UNOView extends JFrame implements IView {
 
         fileMenu = new JMenu("File");
         saveGameItem = new JMenuItem("Save Game");
-        saveGameItem.addActionListener(e -> controller.saveGame());
+        saveGameItem.setActionCommand("SAVE_GAME");
+
+        saveGameItem.addActionListener(controller);
         loadGameItem = new JMenuItem("Load Game");
-        loadGameItem.addActionListener(e -> controller.loadGame());
+        loadGameItem.setActionCommand("LOAD_GAME");
+        loadGameItem.addActionListener(controller);
 
 
         undoMenuItem = new JMenuItem("Undo");
