@@ -44,94 +44,8 @@ public class UNOModel implements Cloneable, Serializable{
     private int roundNumber;
     private Status status;
     private Side side;
-    private final GameHistoryManager gameHistoryManager = new GameHistoryManager();
-    /**
-     * Creates a deep copy of this model
-     */
-    @Override
-    public UNOModel clone() {
-        try {
-            UNOModel cloned = (UNOModel) super.clone();
+    private GameHistoryManager gameHistoryManager;
 
-            // Deep copy players
-            cloned.players = new ArrayList<>();
-            for (Player p : this.players) {
-                cloned.players.add(p.clone());
-            }
-
-            // Deep copy pile system
-            cloned.pile = this.pile.clone();
-
-            // Clone cards if they exist
-            cloned.playedCard = this.playedCard != null ? this.playedCard.clone() : null;
-            cloned.lastDrawnCard = this.lastDrawnCard != null ? this.lastDrawnCard.clone() : null;
-
-            // Deep copy viewers list
-            cloned.viewersList = new ArrayList<>(this.viewersList);
-
-            return cloned;
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException("Clone not supported", e);
-        }
-    }
-    /**
-     * Restores this model's state from another model
-     */
-    private void setState(UNOModel other) {
-        this.players = new ArrayList<>();
-        for (Player p : other.players) {
-            this.players.add(p.clone());
-        }
-        this.currentPlayer = this.players.get(other.indexOfCurrentPlayer); // preserve current player
-        this.pile = other.pile.clone();
-        this.wildColor = other.wildColor;
-        this.playedCard = other.playedCard != null ? other.playedCard.clone() : null;
-        this.lastDrawnCard = other.lastDrawnCard != null ? other.lastDrawnCard.clone() : null;
-        this.drawOne = other.drawOne;
-        this.wildDrawTwo = other.wildDrawTwo;
-        this.skip = other.skip;
-        this.skipEveryone = other.skipEveryone;
-        this.wildDrawColor = other.wildDrawColor;
-        this.drawFive = other.drawFive;
-        this.direction = other.direction;
-        this.indexOfCurrentPlayer = other.indexOfCurrentPlayer;
-        this.status = other.status;
-        this.side = other.side;
-        this.computerWild = other.computerWild;
-    }
-
-    /**
-     * Saves the current state for undo functionality
-     */
-    public void saveToUndoStack() {
-        System.out.println("SAVING STATE: " + this.status);
-        gameHistoryManager.saveState(this);
-    }
-
-    /**
-     * Undoes the last action
-     */
-    public void undo() {
-        UNOModel previousState = gameHistoryManager.undo(this);
-        if (previousState != null) {
-            if (previousState.playedCard == null && previousState.lastDrawnCard == null) {
-                previousState.status = Status.EDGE_CASE_UNDO;
-            }
-            this.setState(previousState);
-            notifyViewers();
-        }
-    }
-
-    /**
-     * Redoes the last undone action
-     */
-    public void redo() {
-        UNOModel nextState = gameHistoryManager.redo(this);
-        if (nextState != null) {
-            this.setState(nextState);
-            notifyViewers();
-        }
-    }
 
 
     /**
@@ -149,6 +63,7 @@ public class UNOModel implements Cloneable, Serializable{
         this.status = Status.INITIALIZING;
         this.computerWild = false;
         this.random = new Random();
+        gameHistoryManager = new GameHistoryManager();
     }
 
     public Side getSide() {
@@ -188,7 +103,6 @@ public class UNOModel implements Cloneable, Serializable{
                 players,
                 computerWild
         );
-        System.out.println("Event created: " + event);
         for (IView viewer : viewersList) {
             viewer.update(this.event);
         }
@@ -255,6 +169,7 @@ public class UNOModel implements Cloneable, Serializable{
      */
     public void playCard(Card playedCard) {
         if (currentPlayer == null || playedCard == null) return;
+
         saveToUndoStack();
         Card topCard = pile.peekTopDiscard();
         if (!validatePlacedCard(playedCard, topCard, wildColor)) {
@@ -466,14 +381,15 @@ public class UNOModel implements Cloneable, Serializable{
         if (currentPlayer instanceof ComputerPlayer) {
             status = Status.NEXT_PLAYER;
             notifyViewers();
-
             playCard(computerCardChoice());
+            gameHistoryManager.removeUndo();
             return;
 
         }
         status = Status.NEXT_PLAYER;
         notifyViewers();
     }
+
     /**
      * Updates indexOfCurrentPlayer based on the current turn direction.
      */
@@ -503,6 +419,7 @@ public class UNOModel implements Cloneable, Serializable{
                 handCard.getType() == CardType.WILD_DRAW_TWO ||
                 handCard.getType() == CardType.WILD_DRAW_COLOR;
     }
+
     /**
      * Calculates the total points earned for the round by the current player.
      *
@@ -535,6 +452,159 @@ public class UNOModel implements Cloneable, Serializable{
             p.addCard(pile.drawCard());
         }
     }
+    /**
+     * Creates a deep copy of this model
+     */
+    @Override
+    public UNOModel clone() {
+        try {
+            UNOModel cloned = (UNOModel) super.clone();
+
+            // Deep copy players
+            cloned.players = new ArrayList<>();
+            for (Player p : this.players) {
+                cloned.players.add(p.clone());
+            }
+
+            // Deep copy pile system
+            cloned.pile = this.pile.clone();
+
+            // Clone cards if they exist
+            cloned.playedCard = this.playedCard != null ? this.playedCard.clone() : null;
+            cloned.lastDrawnCard = this.lastDrawnCard != null ? this.lastDrawnCard.clone() : null;
+
+            // Deep copy viewers list
+            cloned.viewersList = new ArrayList<>(this.viewersList);
+
+            return cloned;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException("Clone not supported", e);
+        }
+    }
+    /**
+     * Restores this model's state from another model
+     */
+    private void setState(UNOModel other) {
+        this.players = new ArrayList<>();
+        for (Player p : other.players) {
+            this.players.add(p.clone());
+        }
+        this.currentPlayer = this.players.get(other.indexOfCurrentPlayer); // preserve current player
+        this.pile = other.pile.clone();
+        this.wildColor = other.wildColor;
+        this.playedCard = other.playedCard != null ? other.playedCard.clone() : null;
+        this.lastDrawnCard = other.lastDrawnCard != null ? other.lastDrawnCard.clone() : null;
+        this.drawOne = other.drawOne;
+        this.wildDrawTwo = other.wildDrawTwo;
+        this.skip = other.skip;
+        this.skipEveryone = other.skipEveryone;
+        this.wildDrawColor = other.wildDrawColor;
+        this.drawFive = other.drawFive;
+        this.direction = other.direction;
+        this.indexOfCurrentPlayer = other.indexOfCurrentPlayer;
+        this.status = other.status;
+        this.side = other.side;
+        this.computerWild = other.computerWild;
+    }
+
+    /**
+     * Saves the current state for undo functionality
+     */
+    public void saveToUndoStack() {
+        gameHistoryManager.saveState(this);
+    }
+
+    /**
+     * Undoes the last action
+     */
+    public void undo() {
+        UNOModel previousState = gameHistoryManager.undo(this);
+        if (previousState != null) {
+            if (previousState.playedCard == null && previousState.lastDrawnCard == null) {
+                previousState.status = Status.EDGE_CASE_UNDO;
+            }
+            if (previousState.status == Status.WILD_CARD && previousState.wildColor != null) {
+
+                previousState.status = Status.PLAYING_VALID_CARD;
+            }
+            this.setState(previousState);
+            System.out.println(previousState.status);
+            notifyViewers();
+        }
+    }
+
+    /**
+     * Redoes the last undone action
+     */
+    public void redo() {
+        UNOModel nextState = gameHistoryManager.redo(this);
+        if (nextState != null) {
+            this.setState(nextState);
+            notifyViewers();
+        }
+    }
+
+    public void saveGame(String file) throws IOException {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
+            out.writeObject(this);
+
+        }
+    }
+
+    public void loadGame(String file) throws IOException, ClassNotFoundException {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
+            UNOModel loadModel = (UNOModel) in.readObject();
+            this.players = loadModel.players;
+            this.currentPlayer = loadModel.currentPlayer;
+            this.pile = loadModel.pile;
+            this.wildColor = loadModel.wildColor;
+            this.playedCard = loadModel.playedCard;
+            this.lastDrawnCard = loadModel.lastDrawnCard;
+            this.roundNumber = loadModel.roundNumber;
+            this.drawOne =  loadModel.drawOne;
+            this.wildDrawTwo = loadModel.wildDrawTwo;
+            this.skip = loadModel.skip;
+            this.skipEveryone = loadModel.skipEveryone;
+            this.wildDrawColor = loadModel.wildDrawColor;
+            this.drawFive = loadModel.drawFive;
+            this.exitGame = loadModel.exitGame;
+            this.computerWild = loadModel.computerWild;
+            this.direction = loadModel.direction;
+            this.indexOfCurrentPlayer = loadModel.indexOfCurrentPlayer;
+            this.side = loadModel.side;
+            this.status = Status.LOAD;
+            this.gameHistoryManager = loadModel.gameHistoryManager;
+            if (this.viewersList == null) {
+                this.viewersList = new ArrayList<>();
+            }
+            notifyViewers();
+
+        }
+    }
+    /**
+     * Chooses the next card for the computer player to play.
+     *
+     * Checks the computer player's hand for valid cards to play.
+     * If no valid card is found, the computer draws a card and returns null.
+     *
+     * @return the first valid card the computer can play, or null if none is playable
+     */
+    public Card computerCardChoice() {
+        List<Card> listOfplayableCard = new ArrayList<>();
+        for (Card card : currentPlayer.getHand()) {
+            if (validatePlacedCard(card, getTopCard(), getWildColor())) {
+                listOfplayableCard.add(card);
+            }
+        }
+        if (listOfplayableCard.isEmpty()) {
+            this.drawCard();
+            return null;
+
+        }
+        return listOfplayableCard.get(0);
+    }
+
+
     /* GETTERS */
     /**
      * Returns the current player.
@@ -657,83 +727,7 @@ public class UNOModel implements Cloneable, Serializable{
         return status == Status.ROUND_OVER;
     }
 
-    /**
-     * Chooses the next card for the computer player to play.
-     *
-     * Checks the computer player's hand for valid cards to play.
-     * If no valid card is found, the computer draws a card and returns null.
-     *
-     * @return the first valid card the computer can play, or null if none is playable
-     */
-    public Card computerCardChoice() {
-        List<Card> listOfplayableCard = new ArrayList<>();
-        for (Card card : currentPlayer.getHand()) {
-            if (validatePlacedCard(card, getTopCard(), getWildColor())) {
-                listOfplayableCard.add(card);
-            }
-        }
-        if (listOfplayableCard.isEmpty()) {
-            this.drawCard();
-            return null;
-
-        }
-        return listOfplayableCard.get(0);
-    }
-
-    public void saveGame(String file) throws IOException {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
-            out.writeObject(this);
-
-        }
-    }
 
 
-    public void loadGame(String file) throws IOException, ClassNotFoundException {
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
-            UNOModel loadModel = (UNOModel) in.readObject();
-            this.players = loadModel.players;
-            this.currentPlayer = loadModel.currentPlayer;
-            this.pile = loadModel.pile;
-            this.wildColor = loadModel.wildColor;
-            this.playedCard = loadModel.playedCard;
-            this.lastDrawnCard = loadModel.lastDrawnCard;
-            this.roundNumber = loadModel.roundNumber;
-            this.drawOne =  loadModel.drawOne;
-            this.wildDrawTwo = loadModel.wildDrawTwo;
-            this.skip = loadModel.skip;
-            this.skipEveryone = loadModel.skipEveryone;
-            this.wildDrawColor = loadModel.wildDrawColor;
-            this.drawFive = loadModel.drawFive;
-            this.exitGame = loadModel.exitGame;
-            this.computerWild = loadModel.computerWild;
-            this.direction = loadModel.direction;
-            this.indexOfCurrentPlayer = loadModel.indexOfCurrentPlayer;
-            this.side = loadModel.side;
-            this.status = Status.LOAD;
-
-            if (this.viewersList == null) {
-                this.viewersList = new ArrayList<>();
-            }
-//            if (playedCard != null) {
-//                this.status = status.PLAYING_VALID_CARD;
-//            }
-//            Card topCard = getTopCard();
-//            UNOEvent loadEvent = new UNOEvent(
-//                    this,
-//                    Status.LOAD,
-//                    topCard,
-//                    lastDrawnCard,
-//                    currentPlayer,
-//                    getNextPlayer(),
-//                    topCard,
-//                    wildColor,
-//                    players,
-//                    computerWild
-//            );
-//            this.event = loadEvent;
-            notifyViewers();
-
-        }
-    }
 
 }

@@ -31,7 +31,7 @@ public class Card implements Cloneable, Serializable {
     public Card clone() {
         try {
             Card cloned = (Card) super.clone();
-            // Images can be shared, no need to deep copy
+           
             return cloned;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException("Clone not supported", e);

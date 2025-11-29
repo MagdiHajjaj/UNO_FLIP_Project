@@ -357,55 +357,35 @@ public class UNOView extends JFrame implements IView {
         }
     }
     public void rebuildScoreboard(ArrayList<Player> players) {
-        SwingUtilities.invokeLater(() -> {
-            if (scoreBoardPanel == null) return;
+        if (scoreBoardPanel == null) return;
 
-            // Clear and reset state
-            scoreBoardPanel.removeAll();
-            scoreBoardPanel.setLayout(new BoxLayout(scoreBoardPanel, BoxLayout.Y_AXIS));
-            playerScoreLabels = new ArrayList<>(); // reinitialize
+        scoreBoardPanel.removeAll();
+        scoreBoardPanel.setLayout(new BoxLayout(scoreBoardPanel, BoxLayout.Y_AXIS));
+        playerScoreLabels = new ArrayList<>();
 
-            // Title
-            JLabel title = new JLabel("Scoreboard:");
-            title.setFont(new Font("Arial", Font.BOLD, 12));
-            title.setAlignmentX(Component.LEFT_ALIGNMENT);
-            scoreBoardPanel.add(title);
+        // Title
+        JLabel title = new JLabel("Scoreboard:");
+        title.setFont(new Font("Arial", Font.BOLD, 12));
+        title.setAlignmentX(Component.LEFT_ALIGNMENT);
+        scoreBoardPanel.add(title);
 
-            // Player rows
-            int humanCount = 1;
-            int computerCount = 1;
+        // Player rows
+        int humanCount = 1;
+        int computerCount = 1;
 
-            for (Player p : players) {
-                String labelText;
+        for (Player p : players) {
+            String labelText = (p instanceof ComputerPlayer)
+                    ? "Computer " + computerCount++ + ": " + p.getScore()
+                    : "Player " + humanCount++ + ": " + p.getScore();
 
-                if (p instanceof ComputerPlayer) {
-                    labelText = "Computer " + computerCount + ": " + p.getScore();
-                    computerCount++;
-                } else {
-                    labelText = "Player " + humanCount + ": " + p.getScore();
-                    humanCount++;
-                }
+            JLabel label = new JLabel(labelText);
+            label.setAlignmentX(Component.LEFT_ALIGNMENT);
+            playerScoreLabels.add(label);
+            scoreBoardPanel.add(label);
+        }
 
-                JLabel label = new JLabel(labelText);
-                label.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-                playerScoreLabels.add(label);
-                scoreBoardPanel.add(label);
-            }
-
-            // Make sure layout refreshes up the component tree
-            scoreBoardPanel.revalidate();
-            scoreBoardPanel.repaint();
-
-            Container parent = scoreBoardPanel.getParent();
-            if (parent != null) {
-                parent.revalidate();
-                parent.repaint();
-            } else {
-                // debug fallback
-                System.out.println("scoreBoardPanel parent is null");
-            }
-        });
+        scoreBoardPanel.revalidate();
+        scoreBoardPanel.repaint();
     }
     /**
      * Updates the view when the model changes.
@@ -422,6 +402,7 @@ public class UNOView extends JFrame implements IView {
     @Override
     public void update(UNOEvent event) {
         Status status = event.getStatus();
+
         switch (status) {
             case EDGE_CASE_UNDO:
                 updateUIState(true, true, false, "");
@@ -440,6 +421,7 @@ public class UNOView extends JFrame implements IView {
                     drawMsg = event.getCurrentPlayer().getName() + " drew a card: " + event.getLastDrawnCard();
                 }
                 updateUIState(false, false, true, drawMsg);
+                topPanel.setCurrentPlayer(event.getCurrentPlayer());
                 break;
             case Status.NEXT_PLAYER:
                 updateUIState(true, true, false, "");
@@ -534,12 +516,10 @@ public class UNOView extends JFrame implements IView {
                 rebuildScoreboard(event.getPlayers());
                 updateScoreboard(event.getPlayers());
                 updateUIState(true, true, false, "Game loaded");
-
-                this.revalidate();
-                this.repaint();
                 break;
         }
         if(event.getPlayedCard() != null){
+            topPanel.setCurrentPlayer(event.getCurrentPlayer());
             topPanel.setTopCard(event.getPlayedCard().getImage(), event.getPlayedCard().toString());
         }
 

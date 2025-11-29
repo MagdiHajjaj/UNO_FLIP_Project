@@ -1,5 +1,6 @@
 package game;
 
+import java.io.Serializable;
 import java.util.Stack;
 
 /**
@@ -9,7 +10,7 @@ import java.util.Stack;
  * @author Magdi Hajjaj
  * @version M4
  */
-public class GameHistoryManager {
+public class GameHistoryManager implements Serializable {
     private Stack<UNOModel> undoStack;
     private Stack<UNOModel> redoStack;
     private static final int MAX_UNDO_LEVELS = 10;
@@ -27,12 +28,11 @@ public class GameHistoryManager {
      * @param model the current model to save
      */
     public void saveState(UNOModel model) {
-        // Limit stack size for performance
         if (undoStack.size() >= MAX_UNDO_LEVELS) {
-            undoStack.remove(0); // Remove oldest state
+            undoStack.remove(0);
         }
         undoStack.push(model.clone());
-        redoStack.clear(); // Clear redo stack when new action is taken
+        redoStack.clear();
     }
 
     /**
@@ -45,10 +45,8 @@ public class GameHistoryManager {
             return null;
         }
 
-        // Save current state to redo stack
         redoStack.push(currentModel.clone());
 
-        // Return previous state
         return undoStack.pop();
     }
 
@@ -61,11 +59,7 @@ public class GameHistoryManager {
         if (redoStack.isEmpty()) {
             return null;
         }
-
-        // Save current state to undo stack
         undoStack.push(currentModel.clone());
-
-        // Return next state
         return redoStack.pop();
     }
 
@@ -91,5 +85,8 @@ public class GameHistoryManager {
     public void resetUndoRedoHistory() {
         undoStack.clear();
         redoStack.clear();
+    }
+    public void removeUndo() {
+         undoStack.pop();
     }
 }

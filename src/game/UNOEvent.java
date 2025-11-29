@@ -71,6 +71,7 @@ public class UNOEvent extends EventObject {
         this.wildColor = wildColor;
         this.players = players;
         this.computerWild = computerWild;
+
     }
 
     /**
@@ -90,6 +91,7 @@ public class UNOEvent extends EventObject {
     public Status getStatus() {
         return status;
     }
+
 
     /**
      * Returns the wild color chosen for this event (if applicable).
