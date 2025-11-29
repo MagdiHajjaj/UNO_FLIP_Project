@@ -528,7 +528,6 @@ public class UNOModel implements Cloneable, Serializable{
                 previousState.status = Status.PLAYING_VALID_CARD;
             }
             this.setState(previousState);
-            System.out.println(previousState.status);
             notifyViewers();
         }
     }
