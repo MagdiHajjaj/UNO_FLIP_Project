@@ -104,6 +104,7 @@ public class UNOModel implements Cloneable, Serializable{
      * Saves the current state for undo functionality
      */
     public void saveToUndoStack() {
+        System.out.println("SAVING STATE: " + this.status);
         gameHistoryManager.saveState(this);
     }
 

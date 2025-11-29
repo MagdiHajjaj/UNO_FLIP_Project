@@ -425,6 +425,10 @@ public class UNOView extends JFrame implements IView {
         switch (status) {
             case EDGE_CASE_UNDO:
                 updateUIState(true, true, false, "");
+                Card topCard1 = event.getTopCard();
+                if (topCard1 != null) {
+                    topPanel.setTopCard(topCard1.getImage(), topCard1.toString());
+                }
                 refreshCenterCards();
                 topPanel.setCurrentPlayer(event.getCurrentPlayer());
                 break;
