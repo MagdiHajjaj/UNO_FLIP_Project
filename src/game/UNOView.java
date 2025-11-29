@@ -64,7 +64,6 @@ public class UNOView extends JFrame implements IView {
         this.add(drawCardButton, BorderLayout.EAST);
 
         //bottom scoreboard
-        playerScoreLabels = new ArrayList<>();
         scoreBoardPanel = ScoreboardPanel(model.getPlayers());
         this.add(scoreBoardPanel, BorderLayout.SOUTH);
 
@@ -94,6 +93,7 @@ public class UNOView extends JFrame implements IView {
      */
     public JPanel ScoreboardPanel(ArrayList<Player> players) {
         JPanel scoreboardPanel = new JPanel();
+        playerScoreLabels = new ArrayList<>();
         scoreboardPanel.setLayout(new BoxLayout(scoreboardPanel, BoxLayout.Y_AXIS));
         scoreboardPanel.setBorder(BorderFactory.createLineBorder(Color.black));
         JLabel title = new JLabel("Scoreboard:");
@@ -299,6 +299,11 @@ public class UNOView extends JFrame implements IView {
             }
         }
 
+//            for (int i = 1; i <= playerScoreLabels.size() - players.size(); i++) {
+//                playerScoreLabels.remove(playerScoreLabels.size()-i);
+//            }
+
+
         scoreBoardPanel.revalidate();
         scoreBoardPanel.repaint();
     }
@@ -333,6 +338,57 @@ public class UNOView extends JFrame implements IView {
         for (Component comp : handPanel.getComponents()) {
             comp.setEnabled(false);
         }
+    }
+    public void rebuildScoreboard(ArrayList<Player> players) {
+        SwingUtilities.invokeLater(() -> {
+            if (scoreBoardPanel == null) return;
+
+            // Clear and reset state
+            scoreBoardPanel.removeAll();
+            scoreBoardPanel.setLayout(new BoxLayout(scoreBoardPanel, BoxLayout.Y_AXIS));
+            playerScoreLabels = new ArrayList<>(); // reinitialize
+
+            // Title
+            JLabel title = new JLabel("Scoreboard:");
+            title.setFont(new Font("Arial", Font.BOLD, 12));
+            title.setAlignmentX(Component.LEFT_ALIGNMENT);
+            scoreBoardPanel.add(title);
+
+            // Player rows
+            int humanCount = 1;
+            int computerCount = 1;
+
+            for (Player p : players) {
+                String labelText;
+
+                if (p instanceof ComputerPlayer) {
+                    labelText = "Computer " + computerCount + ": " + p.getScore();
+                    computerCount++;
+                } else {
+                    labelText = "Player " + humanCount + ": " + p.getScore();
+                    humanCount++;
+                }
+
+                JLabel label = new JLabel(labelText);
+                label.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+                playerScoreLabels.add(label);
+                scoreBoardPanel.add(label);
+            }
+
+            // Make sure layout refreshes up the component tree
+            scoreBoardPanel.revalidate();
+            scoreBoardPanel.repaint();
+
+            Container parent = scoreBoardPanel.getParent();
+            if (parent != null) {
+                parent.revalidate();
+                parent.repaint();
+            } else {
+                // debug fallback
+                System.out.println("scoreBoardPanel parent is null");
+            }
+        });
     }
     /**
      * Updates the view when the model changes.
@@ -449,7 +505,7 @@ public class UNOView extends JFrame implements IView {
                 if (event.getWildColor() != null) {
                     topPanel.setCurrentWildColorLabel(event.getWildColor().name());
                 }
-
+                rebuildScoreboard(event.getPlayers());
                 updateScoreboard(event.getPlayers());
                 updateUIState(true, true, false, "Game loaded");
 
@@ -460,6 +516,8 @@ public class UNOView extends JFrame implements IView {
         if(event.getPlayedCard() != null){
             topPanel.setTopCard(event.getPlayedCard().getImage(), event.getPlayedCard().toString());
         }
+
+
 
     }
 

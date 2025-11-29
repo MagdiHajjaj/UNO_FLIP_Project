@@ -98,6 +98,7 @@ public class UNOModel implements Serializable {
                 players,
                 computerWild
         );
+        System.out.println("Event created: " + event);
         for (IView viewer : viewersList) {
             viewer.update(this.event);
         }
@@ -182,8 +183,7 @@ public class UNOModel implements Serializable {
                 setWildColor(CardColor.valueOf(playerOptionsDark[random.nextInt(playerOptionsDark.length)]));
 
             } else {
-                setWildColor(CardColor.valueOf(playerOptionsDark[random.nextInt(playerOptionsLight.length)]));
-
+                setWildColor(CardColor.valueOf(playerOptionsLight[random.nextInt(playerOptionsLight.length)]));
             }
             notifyViewers();
         }
@@ -611,28 +611,28 @@ public class UNOModel implements Serializable {
             this.direction = loadModel.direction;
             this.indexOfCurrentPlayer = loadModel.indexOfCurrentPlayer;
             this.side = loadModel.side;
-            this.status = loadModel.status;
+            this.status = Status.LOAD;
 
             if (this.viewersList == null) {
                 this.viewersList = new ArrayList<>();
             }
-            if (playedCard != null) {
-                this.status = status.PLAYING_VALID_CARD;
-            }
-            Card topCard = getTopCard();
-            UNOEvent loadEvent = new UNOEvent(
-                    this,
-                    Status.LOAD,
-                    topCard,
-                    lastDrawnCard,
-                    currentPlayer,
-                    getNextPlayer(),
-                    topCard,
-                    wildColor,
-                    players,
-                    computerWild
-            );
-            this.event = loadEvent;
+//            if (playedCard != null) {
+//                this.status = status.PLAYING_VALID_CARD;
+//            }
+//            Card topCard = getTopCard();
+//            UNOEvent loadEvent = new UNOEvent(
+//                    this,
+//                    Status.LOAD,
+//                    topCard,
+//                    lastDrawnCard,
+//                    currentPlayer,
+//                    getNextPlayer(),
+//                    topCard,
+//                    wildColor,
+//                    players,
+//                    computerWild
+//            );
+//            this.event = loadEvent;
             notifyViewers();
 
         }
