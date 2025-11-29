@@ -113,6 +113,9 @@ public class UNOModel implements Cloneable, Serializable{
     public void undo() {
         UNOModel previousState = gameHistoryManager.undo(this);
         if (previousState != null) {
+            if (previousState.playedCard == null && previousState.lastDrawnCard == null) {
+                previousState.status = Status.EDGE_CASE_UNDO;
+            }
             this.setState(previousState);
             notifyViewers();
         }

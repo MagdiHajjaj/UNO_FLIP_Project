@@ -423,6 +423,11 @@ public class UNOView extends JFrame implements IView {
     public void update(UNOEvent event) {
         Status status = event.getStatus();
         switch (status) {
+            case EDGE_CASE_UNDO:
+                updateUIState(true, true, false, "");
+                refreshCenterCards();
+                topPanel.setCurrentPlayer(event.getCurrentPlayer());
+                break;
             case Status.CARD_DRAWN:
                 String drawMsg;
                 if (event.getPlayedCard() != null && event.getPlayedCard().getType() == CardType.DRAW_ONE) {

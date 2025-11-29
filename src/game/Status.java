@@ -20,5 +20,6 @@ public enum Status {
     SKIP_EVERYONE,
     DRAW_FIVE,
     COMPUTER_WILD,
-    LOAD
+    LOAD,
+    EDGE_CASE_UNDO
 }
