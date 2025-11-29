@@ -1,6 +1,7 @@
 package game;
 import javax.swing.*;
 import java.awt.*;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 /**
@@ -12,7 +13,8 @@ import java.util.Map;
  * @see CardType
  * @see CardColor
  */
-public class Card implements Cloneable{
+public class Card implements Cloneable, Serializable {
+    private static final long serialVersionUID = 1L;
     private final CardColor lightColor;
     private final CardType lightType;
 

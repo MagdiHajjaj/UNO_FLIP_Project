@@ -6,9 +6,10 @@ package game;
  * @id 101299841
  * @version M1
  */
+import java.io.Serializable;
 import java.util.*;
 
-public class PileSystem implements Cloneable {
+public class PileSystem implements Cloneable, Serializable {
 
     /**
      * Creates a deep copy of this pile system
@@ -37,7 +38,7 @@ public class PileSystem implements Cloneable {
     }
     private Stack<Card> drawPile;
     private Stack<Card> discardPile;
-
+    private static final long serialVersionUID = 1L;
     /**
      * Constructor for game.Card takes a Color and Type
      *

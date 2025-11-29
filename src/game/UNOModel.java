@@ -1,5 +1,7 @@
 package game;
 
+import javax.swing.*;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -13,7 +15,8 @@ import java.util.Stack;
  * @id 101299841
  * @version M3
  */
-public class UNOModel implements Cloneable{
+public class UNOModel implements Cloneable, Serializable{
+    private static final long serialVersionUID = 1L;
     private static final int WINNING_SCORE = 500;
     protected static final String[] playerOptionsDark = {"ORANGE", "PINK", "PURPLE", "TEAL"};
     protected static final String[] playerOptionsLight = {"RED", "YELLOW", "GREEN", "BLUE"};
@@ -21,7 +24,7 @@ public class UNOModel implements Cloneable{
     /* INSTANCE VARIABLES */
     private UNOEvent event;
     private ArrayList<Player> players; // contains list players and computers
-    private List<IView> viewersList;
+    private transient List<IView> viewersList;
     private Player currentPlayer;
     private PileSystem pile;
     private CardColor wildColor;
@@ -142,7 +145,6 @@ public class UNOModel implements Cloneable{
         this.status = Status.INITIALIZING;
         this.computerWild = false;
         this.random = new Random();
-
     }
 
     public Side getSide() {
@@ -182,8 +184,9 @@ public class UNOModel implements Cloneable{
                 players,
                 computerWild
         );
+        System.out.println("Event created: " + event);
         for (IView viewer : viewersList) {
-            viewer.update(event);
+            viewer.update(this.event);
         }
     }
     /**
@@ -270,8 +273,7 @@ public class UNOModel implements Cloneable{
                 setWildColor(CardColor.valueOf(playerOptionsDark[random.nextInt(playerOptionsDark.length)]));
 
             } else {
-                setWildColor(CardColor.valueOf(playerOptionsDark[random.nextInt(playerOptionsLight.length)]));
-
+                setWildColor(CardColor.valueOf(playerOptionsLight[random.nextInt(playerOptionsLight.length)]));
             }
             notifyViewers();
         }
@@ -672,6 +674,62 @@ public class UNOModel implements Cloneable{
 
         }
         return listOfplayableCard.get(0);
+    }
+
+    public void saveGame(String file) throws IOException {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
+            out.writeObject(this);
+
+        }
+    }
+
+
+    public void loadGame(String file) throws IOException, ClassNotFoundException {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
+            UNOModel loadModel = (UNOModel) in.readObject();
+            this.players = loadModel.players;
+            this.currentPlayer = loadModel.currentPlayer;
+            this.pile = loadModel.pile;
+            this.wildColor = loadModel.wildColor;
+            this.playedCard = loadModel.playedCard;
+            this.lastDrawnCard = loadModel.lastDrawnCard;
+            this.roundNumber = loadModel.roundNumber;
+            this.drawOne =  loadModel.drawOne;
+            this.wildDrawTwo = loadModel.wildDrawTwo;
+            this.skip = loadModel.skip;
+            this.skipEveryone = loadModel.skipEveryone;
+            this.wildDrawColor = loadModel.wildDrawColor;
+            this.drawFive = loadModel.drawFive;
+            this.exitGame = loadModel.exitGame;
+            this.computerWild = loadModel.computerWild;
+            this.direction = loadModel.direction;
+            this.indexOfCurrentPlayer = loadModel.indexOfCurrentPlayer;
+            this.side = loadModel.side;
+            this.status = Status.LOAD;
+
+            if (this.viewersList == null) {
+                this.viewersList = new ArrayList<>();
+            }
+//            if (playedCard != null) {
+//                this.status = status.PLAYING_VALID_CARD;
+//            }
+//            Card topCard = getTopCard();
+//            UNOEvent loadEvent = new UNOEvent(
+//                    this,
+//                    Status.LOAD,
+//                    topCard,
+//                    lastDrawnCard,
+//                    currentPlayer,
+//                    getNextPlayer(),
+//                    topCard,
+//                    wildColor,
+//                    players,
+//                    computerWild
+//            );
+//            this.event = loadEvent;
+            notifyViewers();
+
+        }
     }
 
 }

@@ -19,5 +19,6 @@ public enum Status {
     PLAYING_INVALID_CARD,
     SKIP_EVERYONE,
     DRAW_FIVE,
-    COMPUTER_WILD
+    COMPUTER_WILD,
+    LOAD
 }

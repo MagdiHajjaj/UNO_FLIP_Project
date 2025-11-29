@@ -1,5 +1,6 @@
 package game;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
@@ -11,7 +12,7 @@ import java.util.Collections;
  * @id 101311021
  * @version M1
  */
-public class Player implements Cloneable {
+public class Player implements Cloneable, Serializable {
 
     /**
      * Creates a deep copy of this player
@@ -30,7 +31,7 @@ public class Player implements Cloneable {
             throw new RuntimeException("Clone not supported", e);
         }
     }
-
+    private static final long serialVersionUID = 1L;
     //Display name shown
     private final String name;
 
