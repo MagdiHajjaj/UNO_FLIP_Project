@@ -1,8 +1,8 @@
-package tests;
 import game.*;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -209,7 +209,6 @@ public class UNOModelTest {
     @Test
     public void testResetGame() {
         model.newGame(2, 0);
-
         model.getCurrentPlayer().setScore(1);
         model.resetGame();
         assertEquals(Status.IN_GAME, model.getStatus());
@@ -217,4 +216,30 @@ public class UNOModelTest {
         assertEquals(1, model.getRoundNumber());
 
     }
+
+    @Test
+    public void testSetState() {
+        UNOModel model1 = new UNOModel();
+        model1.newGame(2, 0);
+        UNOModel model2 = new UNOModel();
+        model2.newGame(2, 0);
+        model2.setState(model1);
+        assertEquals(model1, model2);
+    }
+
+    @Test
+    public void testLoadGame() throws IOException, ClassNotFoundException {
+        UNOModel model1 = new UNOModel();
+        model1.newGame(2, 0);
+        model1.saveGame("test");
+        UNOModel model2 = new UNOModel();
+        model2.loadGame("test");
+        assertEquals(model1, model2);
+    }
+
+    @Test
+    public void testSaveGame() {
+
+    }
+
 }
