@@ -143,6 +143,10 @@ public class UNOModel implements Cloneable, Serializable{
         wildDrawTwo = false;
         direction = 1;
         skip = false;
+        if(side != Side.LIGHT) {
+            side = Side.DARK;
+            pile.flip();
+        }
         wildColor = null;
         currentPlayer = null;
         exitGame = false;

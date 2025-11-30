@@ -49,6 +49,7 @@ public class UNOView extends JFrame implements IView {
         // add top part
         topPanel = new TopPanel();
         add(topPanel, BorderLayout.NORTH);
+        System.out.println("First set top" + model.getTopCard().toString());
         topPanel.setTopCard(model.getTopCard().getImage(), model.getTopCard().toString());
         topPanel.setCurrentPlayer(model.getCurrentPlayer());
 
@@ -405,12 +406,12 @@ public class UNOView extends JFrame implements IView {
     @Override
     public void update(UNOEvent event) {
         Status status = event.getStatus();
-
         switch (status) {
             case EDGE_CASE_UNDO:
                 updateUIState(true, true, false, "");
                 Card topCard1 = event.getTopCard();
                 if (topCard1 != null) {
+                    System.out.println("Sec set top" + topCard1);
                     topPanel.setTopCard(topCard1.getImage(), topCard1.toString());
                 }
                 refreshCenterCards();
@@ -455,7 +456,6 @@ public class UNOView extends JFrame implements IView {
                 break;
             case Status.PLAYING_VALID_CARD:
                 String playMsg;
-
                 if (event.getTopCard().getType() == CardType.SKIP) {
                     playMsg = "A SKIP card has been played. " + event.getNextPlayer().getName() + " turn has been skipped.";
                 } else if (event.getTopCard().getType() == CardType.REVERSE) {
@@ -473,16 +473,23 @@ public class UNOView extends JFrame implements IView {
                 roundOverMenu();
                 String roundOver = event.getCurrentPlayer().getName() + " has 0 cards left! They win this round! "
                         + event.getCurrentPlayer().getName() + " earned " + event.getCurrentPlayer().getScore() + " points.\n\n";
+                Card newTop = model.getTopCard();
+                topPanel.setTopCard(newTop.getImage(), newTop.toString());
                 updateUIState(true, true, false,roundOver);
-                updateScoreboard(event.getPlayers());
+                rebuildScoreboard(event.getPlayers());
                 break;
             case Status.GAME_OVER:
                 refreshCenterCards();
                 gameOverMenu();
                 String gameOver = event.getCurrentPlayer().getName() + " has reached 500+ points! They win the game! "
                         + "Points have been reset for a new game.";
+                Card newTop2 = model.getTopCard();
                 updateUIState(true, true, false,gameOver);
-                updateScoreboard(event.getPlayers());
+                rebuildScoreboard(event.getPlayers());
+                topPanel.setTopCard(newTop2.getImage(), newTop2.toString());
+                topPanel.setCurrentPlayer(event.getCurrentPlayer());
+                topPanel.repaint();
+                topPanel.revalidate();
                 break;
             case Status.FLIP_CARD:
                 refreshCenterCards();
@@ -502,7 +509,6 @@ public class UNOView extends JFrame implements IView {
             case Status.SKIP_EVERYONE:
                 String Skipmsg;
                 Skipmsg = "A SKIP_EVERYONE card has been played. All players have been skipped. Turn returns to " + event.getCurrentPlayer().getName();
-
                 updateUIState(false, false, true, Skipmsg);
                 break;
             case Status.LOAD:
@@ -523,7 +529,8 @@ public class UNOView extends JFrame implements IView {
         }
         if(event.getPlayedCard() != null){
             topPanel.setCurrentPlayer(event.getCurrentPlayer());
-            topPanel.setTopCard(event.getPlayedCard().getImage(), event.getPlayedCard().toString());
+
+            topPanel.setTopCard(model.getTopCard().getImage(), model.getTopCard().toString());
         }
 
 

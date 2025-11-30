@@ -87,6 +87,8 @@ public class GameHistoryManager implements Serializable {
         redoStack.clear();
     }
     public void removeUndo() {
-         undoStack.pop();
+        if (undoStack != null && !undoStack.isEmpty()) {
+            undoStack.pop();
+        }
     }
 }
