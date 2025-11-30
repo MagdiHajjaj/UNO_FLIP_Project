@@ -44,9 +44,7 @@ public class GameHistoryManager implements Serializable {
         if (undoStack.isEmpty()) {
             return null;
         }
-
         redoStack.push(currentModel.clone());
-
         return undoStack.pop();
     }
 
@@ -88,5 +86,13 @@ public class GameHistoryManager implements Serializable {
     }
     public void removeUndo() {
          undoStack.pop();
+    }
+
+    public int getUndoSize() {
+        return undoStack.size();
+    }
+
+    public int getRedoSize() {
+        return redoStack.size();
     }
 }
