@@ -1,7 +1,7 @@
+package tests;
 import game.*;
 import org.junit.jupiter.api.*;
 import java.util.*;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AITest {

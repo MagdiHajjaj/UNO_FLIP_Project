@@ -527,13 +527,8 @@ public class UNOView extends JFrame implements IView {
                 break;
         }
         if(event.getPlayedCard() != null){
-            topPanel.setCurrentPlayer(event.getCurrentPlayer());
-
+            topPanel.setCurrentPlayer(model.getCurrentPlayer());
             topPanel.setTopCard(model.getTopCard().getImage(), model.getTopCard().toString());
         }
-
-
-
     }
-
 }

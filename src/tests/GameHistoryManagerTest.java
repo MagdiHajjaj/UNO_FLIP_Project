@@ -1,3 +1,4 @@
+package tests;
 import game.GameHistoryManager;
 import game.UNOModel;
 import org.junit.jupiter.api.BeforeEach;

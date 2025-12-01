@@ -145,8 +145,8 @@ public class UNOModel implements Cloneable, Serializable{
         wildDrawTwo = false;
         direction = 1;
         skip = false;
-        if(side != Side.LIGHT) {
-            side = Side.DARK;
+        if(side == Side.DARK) {
+            side = Side.LIGHT;
             pile.flip();
         }
         wildColor = null;
@@ -322,7 +322,7 @@ public class UNOModel implements Cloneable, Serializable{
         roundNumber = 1;
         currentPlayer = players.get(indexOfCurrentPlayer);
         status = Status.IN_GAME;
-        playedCard = pile.peekTopDiscard();
+        playedCard = null;
         notifyViewers();
     }
     /**
@@ -583,7 +583,6 @@ public class UNOModel implements Cloneable, Serializable{
                 this.viewersList = new ArrayList<>();
             }
             notifyViewers();
-
         }
     }
     /**
