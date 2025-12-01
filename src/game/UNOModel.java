@@ -17,10 +17,11 @@ import java.util.Stack;
  */
 public class UNOModel implements Cloneable, Serializable{
     private static final long serialVersionUID = 1L;
-    private static final int WINNING_SCORE = 500;
+    private static final int WINNING_SCORE = 40;
     protected static final String[] playerOptionsDark = {"ORANGE", "PINK", "PURPLE", "TEAL"};
     protected static final String[] playerOptionsLight = {"RED", "YELLOW", "GREEN", "BLUE"};
     private static Random random;
+
     /* INSTANCE VARIABLES */
     private UNOEvent event;
     private ArrayList<Player> players; // contains list players and computers
@@ -103,6 +104,7 @@ public class UNOModel implements Cloneable, Serializable{
                 players,
                 computerWild
         );
+        System.out.println(event);
         for (IView viewer : viewersList) {
             viewer.update(this.event);
         }
@@ -488,7 +490,7 @@ public class UNOModel implements Cloneable, Serializable{
     /**
      * Restores this model's state from another model
      */
-    private void setState(UNOModel other) {
+    public void setState(UNOModel other) {
         this.players = new ArrayList<>();
         for (Player p : other.players) {
             this.players.add(p.clone());
@@ -606,8 +608,6 @@ public class UNOModel implements Cloneable, Serializable{
         }
         return listOfplayableCard.get(0);
     }
-
-
     /* GETTERS */
     /**
      * Returns the current player.

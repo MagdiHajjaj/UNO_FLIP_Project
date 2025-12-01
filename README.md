@@ -33,7 +33,7 @@ Running this file starts the full game with turn handling, scoring, round transi
 - Contributed to controller logic and interaction flow
 - Helped align gameplay rules with user interface updates
 
-### Mohammed Osman (101311022)
+### Mohammed Osman (101312104)
 - Implemented AI
 - Added Javadoc documentation across classes
 
