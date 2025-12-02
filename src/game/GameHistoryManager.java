@@ -13,7 +13,6 @@ import java.util.Stack;
 public class GameHistoryManager implements Serializable {
     private Stack<UNOModel> undoStack;
     private Stack<UNOModel> redoStack;
-    private static final int MAX_UNDO_LEVELS = 10;
 
     /**
      * Constructor for GameHistoryManager
@@ -24,13 +23,12 @@ public class GameHistoryManager implements Serializable {
     }
 
     /**
-     * Saves the current state to the undo stack
+     * Saves the current state to the undo stack.
+     * Redo stack is cleared when a new state is saved.
+     *
      * @param model the current model to save
      */
     public void saveState(UNOModel model) {
-        if (undoStack.size() >= MAX_UNDO_LEVELS) {
-            undoStack.remove(0);
-        }
         undoStack.push(model.clone());
         redoStack.clear();
     }

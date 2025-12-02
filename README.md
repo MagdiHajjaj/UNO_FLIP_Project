@@ -1,6 +1,6 @@
-# Group #25 — UNO Flip Project — Milestone #3
+# Group #25 — UNO Flip Project — Milestone #4
 
-**UNO_PROJECT.jar** contains a fully functional playable version of our UNO game for **Milestone #3**.  
+**UNO_PROJECT.jar** contains a fully functional playable version of our UNO game for **Milestone #4**.  
 Running this file starts the full game with turn handling, scoring, round transitions, and wild card logic.
 
 ---
@@ -11,37 +11,34 @@ Running this file starts the full game with turn handling, scoring, round transi
 
 ## Included Files
 
-| File / Folder | Description |
-|--------------|-------------|
-| `UNO_PROJECT.jar` | Executable JAR game build |
+| File / Folder | Description                                    |
+|--------------|------------------------------------------------|
+| `UNO_PROJECT.jar` | Executable JAR game build                      |
 | `UML Diagram` | Updated class diagram reflecting MVC structure |
-| `Sequence Diagrams` | Visual models of gameplay flow events |
+| `Sequence Diagrams` | Visual models of gameplay flow events          |
 | `Data Structure Explanation` | Explanation of chosen structures and reasoning |
+| `User Manual` | Explanation of How to run, play, and use features|
 
 ---
 
-## Team Contributions (Milestone #3)
+## Team Contributions (Milestone #4)
 
 ### Edward Savin (101239342)
-- Updated and expanded test cases
-- Supported debugging and rules validation during game refinement
+- Implemented serialization and deserialization functionality
+- Assisted with debugging
 
 ### Magdi Hajjaj (101299841)
-- Implemented `UNOEvent` Class
-- Implemented Flip rules.
-- Helped implement the Ai
-- Contributed to controller logic and interaction flow
-- Helped align gameplay rules with user interface updates
+- Implemented undo/redo functionality
+- Implemented replay functionality
+- Fixed major issues in the game
 
 ### Mohammed Osman (101312104)
-- Implemented AI
 - Added Javadoc documentation across classes
 
 ### Hamza Mohammed Salih (101311021)
-- Created and adjusted sequence diagrams to reflect final game flow
-- Created UML
-
-
+- Created and updated sequence diagrams to reflect the final game flow
+- Created UML diagrams
+- Updated unit tests to verify undo/redo functionality and serialization/deserialization functionality (JUnit)
 ## Setup Instructions
 open a terminal in the parent folder, run java -jar UNO_Project.jar
 

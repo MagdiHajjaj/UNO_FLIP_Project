@@ -17,7 +17,7 @@ import java.util.Stack;
  */
 public class UNOModel implements Cloneable, Serializable{
     private static final long serialVersionUID = 1L;
-    private static final int WINNING_SCORE = 40;
+    private static final int WINNING_SCORE = 500;
     protected static final String[] playerOptionsDark = {"ORANGE", "PINK", "PURPLE", "TEAL"};
     protected static final String[] playerOptionsLight = {"RED", "YELLOW", "GREEN", "BLUE"};
     private static Random random;
@@ -39,7 +39,6 @@ public class UNOModel implements Cloneable, Serializable{
     private boolean drawFive;
     private boolean exitGame;
     private boolean computerWild;
-
     private int direction;
     private int indexOfCurrentPlayer;
     private int roundNumber;
@@ -104,7 +103,6 @@ public class UNOModel implements Cloneable, Serializable{
                 players,
                 computerWild
         );
-        System.out.println(event);
         for (IView viewer : viewersList) {
             viewer.update(this.event);
         }
@@ -150,7 +148,6 @@ public class UNOModel implements Cloneable, Serializable{
             pile.flip();
         }
         wildColor = null;
-        currentPlayer = null;
         exitGame = false;
         pile = new PileSystem();
         gameHistoryManager.resetUndoRedoHistory();
@@ -167,6 +164,7 @@ public class UNOModel implements Cloneable, Serializable{
             generatePlayerHand(player);
         }
     }
+
     /**
      * Attempts to play the given card from the current player's hand.
      * Validates the move, applies effects, updates game status, and notifies views.
@@ -257,6 +255,7 @@ public class UNOModel implements Cloneable, Serializable{
         status = Status.PLAYING_VALID_CARD;
         notifyViewers();
     }
+
     /**
      * Draws one card from the pile and adds it to the current player's hand.
      * Updates the game status and notifies views.
@@ -320,6 +319,7 @@ public class UNOModel implements Cloneable, Serializable{
         for (Player player : players) player.setScore(0);
         resetFields();
         roundNumber = 1;
+        indexOfCurrentPlayer = 0;
         currentPlayer = players.get(indexOfCurrentPlayer);
         status = Status.IN_GAME;
         playedCard = null;
@@ -332,9 +332,25 @@ public class UNOModel implements Cloneable, Serializable{
     private void roundEnd() {
         int roundScore = calculateScore();
         currentPlayer.addScore(roundScore);
-        status = checkWinner(currentPlayer) ? Status.GAME_OVER : Status.ROUND_OVER;
+
+        if (checkWinner(currentPlayer)) {
+            status = Status.GAME_OVER;
+            notifyViewers();   // Final game over event
+            return;
+        }
+
+        // Round is over but game still continuing
+        status = Status.ROUND_OVER;
+        notifyViewers();
+
+
+        resetFields();
+
+        status = Status.IN_GAME;
+        playedCard = null;
         notifyViewers();
     }
+
     /**
      * Applies the effects of the given card (skip, reverse, draw, wild, etc.).
      *
@@ -364,6 +380,7 @@ public class UNOModel implements Cloneable, Serializable{
             }
         }
     }
+
     /**
      * Moves the turn to the next player, accounting for skip and reverse effects.
      * Updates the game status and notifies views.

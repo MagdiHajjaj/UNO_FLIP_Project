@@ -361,6 +361,13 @@ public class UNOView extends JFrame implements IView {
             comp.setEnabled(false);
         }
     }
+    /**
+     * Rebuilds the scoreboard panel to display the current scores of all players.
+     * Clears any existing components, adds a title, and lists each player's score.
+     * Player numbering differentiates between human players and computer players.
+     *
+     * @param players the list of players whose scores will be displayed
+     */
     public void rebuildScoreboard(ArrayList<Player> players) {
         if (scoreBoardPanel == null) return;
 
@@ -407,6 +414,7 @@ public class UNOView extends JFrame implements IView {
     @Override
     public void update(UNOEvent event) {
         Status status = event.getStatus();
+        System.out.println(event);
         switch (status) {
             case EDGE_CASE_UNDO:
                 updateUIState(true, true, false, "");
@@ -427,11 +435,13 @@ public class UNOView extends JFrame implements IView {
                 }
                 updateUIState(false, false, true, drawMsg);
                 topPanel.setCurrentPlayer(event.getCurrentPlayer());
+                topPanel.setTopCard(event.getTopCard().getImage(), event.getTopCard().toString());
                 break;
             case Status.NEXT_PLAYER:
                 updateUIState(true, true, false, "");
                 refreshCenterCards();
                 topPanel.setCurrentPlayer(event.getCurrentPlayer());
+                topPanel.setTopCard(event.getTopCard().getImage(), event.getTopCard().toString());
                 break;
             case Status.WILD_CARD:
                 if (!event.getComputerWild()) {
@@ -473,7 +483,7 @@ public class UNOView extends JFrame implements IView {
                 roundOverMenu();
                 String roundOver = event.getCurrentPlayer().getName() + " has 0 cards left! They win this round! "
                         + event.getCurrentPlayer().getName() + " earned " + event.getCurrentPlayer().getScore() + " points.\n\n";
-                Card newTop = model.getTopCard();
+                Card newTop = event.getTopCard();
                 topPanel.setTopCard(newTop.getImage(), newTop.toString());
                 updateUIState(true, true, false,roundOver);
                 rebuildScoreboard(event.getPlayers());
@@ -483,7 +493,7 @@ public class UNOView extends JFrame implements IView {
                 gameOverMenu();
                 String gameOver = event.getCurrentPlayer().getName() + " has reached 500+ points! They win the game! "
                         + "Points have been reset for a new game.";
-                Card newTop2 = model.getTopCard();
+                Card newTop2 = event.getTopCard();
                 updateUIState(true, true, false,gameOver);
                 rebuildScoreboard(event.getPlayers());
                 topPanel.setTopCard(newTop2.getImage(), newTop2.toString());
@@ -525,10 +535,18 @@ public class UNOView extends JFrame implements IView {
                 updateScoreboard(event.getPlayers());
                 updateUIState(true, true, false, "Game loaded");
                 break;
+            case Status.IN_GAME:
+                if (topPanel != null) {
+                    refreshCenterCards();
+                    SwingUtilities.invokeLater(() -> {
+                        topPanel.setCurrentPlayer(event.getCurrentPlayer());
+                        topPanel.setTopCard(event.getTopCard().getImage(), event.getTopCard().toString());
+                    });
+                }
         }
         if(event.getPlayedCard() != null){
-            topPanel.setCurrentPlayer(model.getCurrentPlayer());
-            topPanel.setTopCard(model.getTopCard().getImage(), model.getTopCard().toString());
+            topPanel.setCurrentPlayer(event.getCurrentPlayer());
+            topPanel.setTopCard(event.getTopCard().getImage(), event.getTopCard().toString());
         }
     }
 }

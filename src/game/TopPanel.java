@@ -88,7 +88,10 @@ public class TopPanel extends JPanel {
      * @param player, the current player
      */
     public void setCurrentPlayer(Player player) {
+
         currentPlayerLabel.setText("Current Player: " + player.getName());
+        this.repaint();
+        this.revalidate();
     }
     /**
      * sets a message to be displayed on the top panel regarding info on what the card placed does.
