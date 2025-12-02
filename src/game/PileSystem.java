@@ -170,12 +170,35 @@ public class PileSystem implements Cloneable, Serializable {
     public boolean isDrawPileEmpty(){
         return drawPile.isEmpty();
     }
+    /**
+     * Flips all cards in the draw pile and discard pile.
+     * Calls flipCard() on each card.
+     */
     public void flip() {
         for (Card card : drawPile) {
             card.flipCard();
         }
         for (Card card : discardPile) {
             card.flipCard();
+        }
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        PileSystem other = (PileSystem) obj;
+
+        // Compare draw pile
+        if (drawPile == null) {
+            if (other.drawPile != null) return false;
+        } else if (!drawPile.equals(other.drawPile)) return false;
+
+        // Compare discard pile
+        if (discardPile == null) {
+            return other.discardPile == null;
+        } else {
+            return discardPile.equals(other.discardPile);
         }
     }
 

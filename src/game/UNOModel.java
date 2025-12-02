@@ -2,10 +2,7 @@ package game;
 
 import javax.swing.*;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * UNOModel - Main model class for the UNO game.
@@ -746,6 +743,29 @@ public class UNOModel implements Cloneable, Serializable{
         return status == Status.ROUND_OVER;
     }
 
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        UNOModel other = (UNOModel) obj;
+
+        return indexOfCurrentPlayer == other.indexOfCurrentPlayer
+                && roundNumber == other.roundNumber
+                && direction == other.direction
+                && drawOne == other.drawOne
+                && drawFive == other.drawFive
+                && wildDrawTwo == other.wildDrawTwo
+                && wildDrawColor == other.wildDrawColor
+                && skip == other.skip
+                && skipEveryone == other.skipEveryone
+                && computerWild == other.computerWild
+                && Objects.equals(players, other.players)
+                && Objects.equals(playedCard, other.playedCard)
+                && Objects.equals(lastDrawnCard, other.lastDrawnCard)
+                && wildColor == other.wildColor
+                && Objects.equals(pile, other.pile);
+    }
 
 
 

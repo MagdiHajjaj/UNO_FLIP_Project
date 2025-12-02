@@ -171,5 +171,46 @@ public class Player implements Cloneable, Serializable {
         }
     }
 
+    /**
+     * Compares this player to another object for equality.
+     * Players are considered equal if their name, hand, and score are equal.
+     *
+     * @param obj the object to compare with
+     * @return true if equal, false otherwise
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Player other = (Player) obj;
+
+        // Compare name
+        if (!name.equals(other.name)) return false;
+
+        // Compare hand
+        if (hand.size() != other.hand.size()) return false;
+        for (int i = 0; i < hand.size(); i++) {
+            if (!hand.get(i).equals(other.hand.get(i))) return false;
+        }
+
+        // Compare score
+        return totalScore == other.totalScore;
+    }
+
+    /**
+     * Generates a hash code consistent with equals().
+     *
+     * @return hash code of this player
+     */
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + hand.hashCode();
+        result = 31 * result + totalScore;
+        return result;
+    }
+
+
 
 }

@@ -1,5 +1,7 @@
 package tests;
+import game.Card;
 import game.GameHistoryManager;
+import game.Player;
 import game.UNOModel;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.Assert.assertEquals;
@@ -28,11 +30,14 @@ public class GameHistoryManagerTest {
     @Test
     public void testUndo() {
         model.newGame(1, 1);
-        int sizeOfHandBefore = model.getCurrentPlayerHand().size();
-        model.playCard(model.getCurrentPlayer().getHand().get(0));
-        model.redo();
+        Player current = model.getCurrentPlayer();
+        int sizeBefore = current.getHand().size();
+
+        Card cardToPlay = current.getHand().get(0);
+        model.playCard(cardToPlay);
+
         model.undo();
-        assertNotEquals(sizeOfHandBefore, model.getCurrentPlayerHand().size());
+        assertEquals(sizeBefore, current.getHand().size());
     }
 
     @Test

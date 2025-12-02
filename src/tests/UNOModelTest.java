@@ -233,32 +233,34 @@ public class UNOModelTest {
     public void testLoadGame() throws IOException, ClassNotFoundException {
         UNOModel model1 = new UNOModel();
         model1.newGame(2, 0);
-        model1.saveGame("test");
+        model1.saveGame("test.ser");
+
         UNOModel model2 = new UNOModel();
-        model2.loadGame("test");
+        model2.loadGame("test.ser");
         assertEquals(model1, model2);
     }
-
     @Test
     public void testSaveGame() throws IOException, ClassNotFoundException {
         UNOModel model = new UNOModel();
-        model.newGame(2, 0);  // or however you start a game
+        model.newGame(2, 0);
 
-        // Save game to a temporary file
         String filePath = "test_savegame.dat";
         model.saveGame(filePath);
 
-        // Verify file was actually created
         File f = new File(filePath);
         assertTrue(f.exists());
 
-        // Optionally check contents (if you have loadGame)
         UNOModel loaded = new UNOModel();
         loaded.loadGame(filePath);
-        assertEquals(model.getStatus(), loaded.getStatus());
 
-        // Clean up
+        assertEquals(model.getPlayers(), loaded.getPlayers());
+        assertEquals(model.getTopCard(), loaded.getTopCard());
+        assertEquals(model.getCurrentPlayer(), loaded.getCurrentPlayer());
+        assertEquals(model.getDirection(), loaded.getDirection());
+        assertEquals(model.getRoundNumber(), loaded.getRoundNumber());
+
         f.delete();
     }
+
 
 }
