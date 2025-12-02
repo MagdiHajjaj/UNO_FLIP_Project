@@ -1,7 +1,9 @@
+package tests;
 import game.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -238,8 +240,25 @@ public class UNOModelTest {
     }
 
     @Test
-    public void testSaveGame() {
+    public void testSaveGame() throws IOException, ClassNotFoundException {
+        UNOModel model = new UNOModel();
+        model.newGame(2, 0);  // or however you start a game
 
+        // Save game to a temporary file
+        String filePath = "test_savegame.dat";
+        model.saveGame(filePath);
+
+        // Verify file was actually created
+        File f = new File(filePath);
+        assertTrue(f.exists());
+
+        // Optionally check contents (if you have loadGame)
+        UNOModel loaded = new UNOModel();
+        loaded.loadGame(filePath);
+        assertEquals(model.getStatus(), loaded.getStatus());
+
+        // Clean up
+        f.delete();
     }
 
 }

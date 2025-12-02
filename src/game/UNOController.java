@@ -55,6 +55,11 @@ public class UNOController implements ActionListener {
         model.resetGame();
     }
 
+    /**
+     * Opens a file chooser dialog and saves the current game state to a .ser file.
+     * If the chosen file name does not end with ".ser", the extension is automatically appended.
+     * Shows a message dialog on success or failure.
+     */
     public void saveGame() {
         JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle("Choose a file");
@@ -75,7 +80,14 @@ public class UNOController implements ActionListener {
             }
         }
     }
-
+    /**
+     * Opens a file chooser dialog and loads a previously saved game state from a .ser file.
+     * If the chosen file has no extension, ".ser" is automatically appended.
+     * Shows an error if the file does not exist or is not a .ser file.
+     *
+     * @throws IOException if an I/O error occurs during loading
+     * @throws ClassNotFoundException if the saved game class cannot be found
+     */
     public void loadGame() {
         JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle("Choose a file");
@@ -84,6 +96,20 @@ public class UNOController implements ActionListener {
         int input = chooser.showOpenDialog(this.view);
         if (input == JFileChooser.APPROVE_OPTION) {
             File loadFile = chooser.getSelectedFile();
+            String fileName = loadFile.getName();
+
+            int dotIndex = fileName.lastIndexOf('.');
+            if (dotIndex == -1) {
+                loadFile = new File(loadFile.getParent(), fileName + ".ser");
+            } else {
+                String ext = fileName.substring(dotIndex + 1).toLowerCase();
+                if (!ext.equals("ser")) {
+                    JOptionPane.showMessageDialog(this.view,
+                            "Error loading non '.ser' file: " + loadFile.getAbsolutePath());
+                    return;
+                }
+            }
+
             if (!loadFile.exists()) {
                 JOptionPane.showMessageDialog(this.view, "Error File not found or does not exist " + loadFile.getAbsolutePath());
                 return;

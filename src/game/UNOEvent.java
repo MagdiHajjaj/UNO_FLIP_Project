@@ -48,7 +48,6 @@ public class UNOEvent extends EventObject {
      * @param wildColor     the selected wild color (null unless a wild was played)
      * @param players       list of all players in the game
      * @param computerWild  true if the computer chose a wild color automatically
-     *
      * @throws IllegalArgumentException if source is null
      */
     public UNOEvent(Object source, Status status,

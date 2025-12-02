@@ -65,6 +65,14 @@ public class TopPanel extends JPanel {
         topCardImage.setIcon(cardImage);
         topCardLabel.setText(cardName);
         currentWildColorLabel.setVisible(cardName.equals("WILD WILD_DRAW_TWO") || cardName.equals("WILD WILD") || cardName.equals("WILD WILD_DRAW_COLOR"));
+        this.revalidate();
+        this.repaint();
+
+        // Force parent to update too
+        if(this.getParent() != null){
+            this.getParent().revalidate();
+            this.getParent().repaint();
+        }
     }
     /**
      * sets the current color of the wild color for the next player on the top panel
@@ -80,7 +88,10 @@ public class TopPanel extends JPanel {
      * @param player, the current player
      */
     public void setCurrentPlayer(Player player) {
+
         currentPlayerLabel.setText("Current Player: " + player.getName());
+        this.repaint();
+        this.revalidate();
     }
     /**
      * sets a message to be displayed on the top panel regarding info on what the card placed does.
