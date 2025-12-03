@@ -413,6 +413,7 @@ public class UNOView extends JFrame implements IView {
     @Override
     public void update(UNOEvent event) {
         Status status = event.getStatus();
+        System.out.println(event);
         switch (status) {
             case EDGE_CASE_UNDO:
                 updateUIState(true, true, false, "");
@@ -475,6 +476,8 @@ public class UNOView extends JFrame implements IView {
                 break;
             case Status.PLAYING_INVALID_CARD:
                 updateUIState(true, true, false, "Placing that card is not a valid move. Try again.");
+                topPanel.setCurrentPlayer(event.getCurrentPlayer());
+                topPanel.setTopCard(event.getTopCard().getImage(), event.getTopCard().toString());
                 break;
             case Status.ROUND_OVER:
                 refreshCenterCards();
