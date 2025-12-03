@@ -49,7 +49,6 @@ public class UNOView extends JFrame implements IView {
         // add top part
         topPanel = new TopPanel();
         add(topPanel, BorderLayout.NORTH);
-        System.out.println("First set top" + model.getTopCard().toString());
         topPanel.setTopCard(model.getTopCard().getImage(), model.getTopCard().toString());
         topPanel.setCurrentPlayer(model.getCurrentPlayer());
 
@@ -414,7 +413,6 @@ public class UNOView extends JFrame implements IView {
     @Override
     public void update(UNOEvent event) {
         Status status = event.getStatus();
-        System.out.println(event);
         switch (status) {
             case EDGE_CASE_UNDO:
                 updateUIState(true, true, false, "");
