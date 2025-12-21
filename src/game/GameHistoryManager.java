@@ -8,7 +8,7 @@ import java.util.Stack;
  * Uses deep cloning to save complete game states.
  *
  * @author Magdi Hajjaj
- * @version M4
+ * @version M5
  */
 public class GameHistoryManager implements Serializable {
     private Stack<UNOModel> undoStack;

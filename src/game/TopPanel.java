@@ -8,7 +8,7 @@ import java.awt.*;
  *
  * @author Magdi Hajjaj
  * @id 101299841
- * @version M2
+ * @version M5
  */
 public class TopPanel extends JPanel {
     private JLabel topCardLabel;
@@ -20,19 +20,22 @@ public class TopPanel extends JPanel {
     /**
      * Constructor for TopPanel.
      */
-    public TopPanel() {
+    public TopPanel(Color textColor) {
         setLayout(new BorderLayout());
         this.setBorder(BorderFactory.createLineBorder(Color.black));
+        setOpaque(false);
         // Section title
         JLabel title = new JLabel("Top Card");
         title.setFont(new Font("Arial", Font.BOLD, 14));
+        title.setForeground(textColor);
         add(title, BorderLayout.NORTH);
 
         JPanel cardPanel = new JPanel();
-
+        cardPanel.setOpaque(false);
         topCardImage = new JLabel();
         topCardLabel = new JLabel();
-        topCardLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        topCardLabel.setFont(new Font("Arial", Font.BOLD, 15));
+        topCardLabel.setForeground(textColor);
 
         cardPanel.add(topCardImage);
         cardPanel.add(topCardLabel);
@@ -40,14 +43,18 @@ public class TopPanel extends JPanel {
 
         // Bottom status section
         JPanel bottomPanel = new JPanel(new GridLayout(3, 1));
+        bottomPanel.setOpaque(false);
         currentPlayerLabel = new JLabel("Current Player: ");
-        currentPlayerLabel.setFont(new Font("Arial", Font.BOLD, 12));
+        currentPlayerLabel.setFont(new Font("Arial", Font.BOLD, 15));
+        currentPlayerLabel.setForeground(textColor);
 
         statusMessageLabel = new JLabel("Status Message:");
-        statusMessageLabel.setFont(new Font("Arial", Font.BOLD, 12));
+        statusMessageLabel.setFont(new Font("Arial", Font.BOLD, 15));
+        statusMessageLabel.setForeground(textColor);
 
         currentWildColorLabel = new JLabel("Current Wild Color:");
-        currentWildColorLabel.setFont(new Font("Arial", Font.BOLD, 12));
+        currentWildColorLabel.setFont(new Font("Arial", Font.BOLD, 15));
+        currentWildColorLabel.setForeground(textColor);
 
         bottomPanel.add(currentPlayerLabel);
         bottomPanel.add(statusMessageLabel);

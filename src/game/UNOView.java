@@ -9,7 +9,7 @@ import java.util.List;
  *
  * @author Magdi Hajjaj
  * @id 101299841
- * @version M3
+ * @version M5
  */
 public class UNOView extends JFrame implements IView {
     private UNOModel model;
@@ -26,6 +26,8 @@ public class UNOView extends JFrame implements IView {
     private JMenuItem redoMenuItem;
     private JMenuItem loadGameItem;
     private JMenuItem saveGameItem;
+    private BackgroundPanel bgPanel;
+    private Color textColor = Color.WHITE;
     /**
      * Sets up the main UNO game window.
      *
@@ -44,33 +46,53 @@ public class UNOView extends JFrame implements IView {
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(1400,900);
-        this.setLayout(new BorderLayout());
+        bgPanel = new BackgroundPanel("/images/flip_background.png","/images/background.png", 1400, 900);
+        setContentPane(bgPanel);
 
         // add top part
-        topPanel = new TopPanel();
-        add(topPanel, BorderLayout.NORTH);
+        topPanel = new TopPanel(textColor);
+        bgPanel.add(topPanel, BorderLayout.NORTH);
         topPanel.setTopCard(model.getTopCard().getImage(), model.getTopCard().toString());
         topPanel.setCurrentPlayer(model.getCurrentPlayer());
 
         //left button
         nextPlayerButton = new JButton("NEXT PLAYER");
-        nextPlayerButton.setFont(new Font("Arial", Font.BOLD, 14));
+        nextPlayerButton.setFont(new Font("Arial", Font.BOLD, 15));
+        nextPlayerButton.setForeground(textColor);
         nextPlayerButton.setActionCommand("NEXT_PLAYER");
         nextPlayerButton.addActionListener(controller);
         nextPlayerButton.setEnabled(false);
-        this.add(nextPlayerButton, BorderLayout.WEST);
+        nextPlayerButton.setOpaque(false);
+        nextPlayerButton.setContentAreaFilled(false);
+        nextPlayerButton.setBorderPainted(false);
+        nextPlayerButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        nextPlayerButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+        ImageIcon nextPlayerIcon = new ImageIcon(getClass().getResource("/images/nextPlayer.png"));
+        Image img = nextPlayerIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+        nextPlayerButton.setIcon(new ImageIcon(img));
+        bgPanel.add(nextPlayerButton, BorderLayout.WEST);
 
         //right button
         drawCardButton = new JButton("DRAW CARD");
-        drawCardButton.setFont(new Font("Arial", Font.BOLD, 14));
+        drawCardButton.setFont(new Font("Arial", Font.BOLD, 15));
+        drawCardButton.setForeground(textColor);
         drawCardButton.setActionCommand("DRAW_CARD");
         drawCardButton.addActionListener(controller);
         drawCardButton.setEnabled(true);
-        this.add(drawCardButton, BorderLayout.EAST);
+        drawCardButton.setOpaque(false);
+        drawCardButton.setContentAreaFilled(false);
+        drawCardButton.setBorderPainted(false);
+        drawCardButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        drawCardButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+        ImageIcon drawCardButtonIcon = new ImageIcon(getClass().getResource("/images/drawCard.png"));
+        Image img2 = drawCardButtonIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+        drawCardButton.setIcon(new ImageIcon(img2));
+
+        bgPanel.add(drawCardButton, BorderLayout.EAST);
 
         //bottom scoreboard
         scoreBoardPanel = ScoreboardPanel(model.getPlayers());
-        this.add(scoreBoardPanel, BorderLayout.SOUTH);
+        bgPanel.add(scoreBoardPanel, BorderLayout.SOUTH);
 
         menuBar = new JMenuBar();
 
@@ -102,7 +124,7 @@ public class UNOView extends JFrame implements IView {
 
         //Center cards
         refreshCenterCards();
-
+        scoreBoardPanel.setOpaque(false);
         this.setVisible(true);
     }
     /**
@@ -117,12 +139,15 @@ public class UNOView extends JFrame implements IView {
         scoreboardPanel.setLayout(new BoxLayout(scoreboardPanel, BoxLayout.Y_AXIS));
         scoreboardPanel.setBorder(BorderFactory.createLineBorder(Color.black));
         JLabel title = new JLabel("Scoreboard:");
-        title.setFont(new Font("Arial", Font.BOLD, 12));
+        title.setFont(new Font("Arial", Font.BOLD, 15));
+        title.setForeground(textColor);
+
         scoreboardPanel.add(title);
 
         for (int i = 0; i < players.size(); i++) {
             JLabel label = new JLabel(players.get(i).getName()+ ": " + players.get(i).getScore());
             playerScoreLabels.add(label);
+            label.setForeground(textColor);
             scoreboardPanel.add(label);
         }
         return scoreboardPanel;
@@ -251,7 +276,6 @@ public class UNOView extends JFrame implements IView {
      */
     private void colorSelectionMenu() {
         String selection = null;
-        System.out.println(model.getSide());
         while (selection == null) {
             selection = (String) JOptionPane.showInputDialog(
                     null,
@@ -292,13 +316,20 @@ public class UNOView extends JFrame implements IView {
             cardButton.setIcon(card.getImage());
             cardButton.setVerticalTextPosition(SwingConstants.TOP);
             cardButton.setHorizontalTextPosition(SwingConstants.CENTER);
-            cardButton.setFont(new Font("Arial", Font.BOLD, 14));
+            cardButton.setFont(new Font("Arial", Font.BOLD, 15));
+            cardButton.setForeground(textColor);
+
             cardButton.putClientProperty("card", card);
             cardButton.setActionCommand("PLAY_CARD");
             cardButton.addActionListener(controller);
+            cardButton.setOpaque(false);
+            cardButton.setContentAreaFilled(false);
+            cardButton.setBorderPainted(false);
+            cardButton.setFocusPainted(false);
             handPanel.add(cardButton);
         }
-        this.add(handPanel, BorderLayout.CENTER);
+        handPanel.setOpaque(false);
+        bgPanel.add(handPanel, BorderLayout.CENTER); // if handPanel is already initialized
         this.revalidate();
         this.repaint();
     }
@@ -376,7 +407,8 @@ public class UNOView extends JFrame implements IView {
 
         // Title
         JLabel title = new JLabel("Scoreboard:");
-        title.setFont(new Font("Arial", Font.BOLD, 12));
+        title.setFont(new Font("Arial", Font.BOLD, 15));
+        title.setForeground(textColor);
         title.setAlignmentX(Component.LEFT_ALIGNMENT);
         scoreBoardPanel.add(title);
 
@@ -390,6 +422,7 @@ public class UNOView extends JFrame implements IView {
                     : "Player " + humanCount++ + ": " + p.getScore();
 
             JLabel label = new JLabel(labelText);
+            label.setForeground(textColor);
             label.setAlignmentX(Component.LEFT_ALIGNMENT);
             playerScoreLabels.add(label);
             scoreBoardPanel.add(label);
@@ -413,13 +446,11 @@ public class UNOView extends JFrame implements IView {
     @Override
     public void update(UNOEvent event) {
         Status status = event.getStatus();
-        System.out.println(event);
         switch (status) {
             case EDGE_CASE_UNDO:
                 updateUIState(true, true, false, "");
                 Card topCard1 = event.getTopCard();
                 if (topCard1 != null) {
-                    System.out.println("Sec set top" + topCard1);
                     topPanel.setTopCard(topCard1.getImage(), topCard1.toString());
                 }
                 refreshCenterCards();
@@ -476,8 +507,6 @@ public class UNOView extends JFrame implements IView {
                 break;
             case Status.PLAYING_INVALID_CARD:
                 updateUIState(true, true, false, "Placing that card is not a valid move. Try again.");
-                topPanel.setCurrentPlayer(event.getCurrentPlayer());
-                topPanel.setTopCard(event.getTopCard().getImage(), event.getTopCard().toString());
                 break;
             case Status.ROUND_OVER:
                 refreshCenterCards();
@@ -504,6 +533,7 @@ public class UNOView extends JFrame implements IView {
                 break;
             case Status.FLIP_CARD:
                 refreshCenterCards();
+                bgPanel.flip();
                 String flipMsg = "A FLIP card has been played. ";
                 updateUIState(false, false, true, flipMsg);
                 break;

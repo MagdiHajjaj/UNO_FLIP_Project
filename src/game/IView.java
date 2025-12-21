@@ -4,7 +4,7 @@ package game;
  *
  * @author Magdi Hajjaj
  * @id 101299841
- * @version M2
+ * @version M5
  */
 public interface IView {
     void update(UNOEvent event);

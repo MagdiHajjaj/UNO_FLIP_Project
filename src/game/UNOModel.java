@@ -10,7 +10,7 @@ import java.util.*;
  *
  * @author Magdi Hajjaj
  * @id 101299841
- * @version M3
+ * @version M5
  */
 public class UNOModel implements Cloneable, Serializable{
     private static final long serialVersionUID = 1L;
@@ -49,6 +49,7 @@ public class UNOModel implements Cloneable, Serializable{
      * Initializes a new UNOModel object.
      */
     public UNOModel() {
+
         this.players = new ArrayList<>();
         this.viewersList = new ArrayList<>();
         this.currentPlayer = null;
@@ -232,7 +233,6 @@ public class UNOModel implements Cloneable, Serializable{
             return;
         }
         if (toBePlayed.getType() == CardType.DRAW_FIVE && !currentPlayer.getHand().isEmpty()) {
-            System.out.println("Test");
             getNextPlayer().addCard(pile.drawCard());
             getNextPlayer().addCard(pile.drawCard());
             getNextPlayer().addCard(pile.drawCard());

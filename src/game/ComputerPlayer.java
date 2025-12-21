@@ -6,7 +6,7 @@ package game;
  *
  * @author Magdi Hajjaj
  * @id 101299841
- * @version M3
+ * @version M5
  */
 public class ComputerPlayer extends Player{
     ComputerPlayer(String name){

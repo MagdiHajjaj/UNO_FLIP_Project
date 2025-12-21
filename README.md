@@ -1,14 +1,26 @@
-# Group #25 — UNO Flip Project — Milestone #4
+# Group #25 — UNO Flip Project — Milestone #5
 
-**UNO_PROJECT.jar** contains a fully functional playable version of our UNO game for **Milestone #4**.  
+**UNO_PROJECT.jar** contains a fully functional playable version of our UNO game for **Milestone #5**.  
 Running this file starts the full game with turn handling, scoring, round transitions, and wild card logic.
 
 ---
 
-**AI** The Game has an option to play versus computer players. The computer players check their hand for cards that are valid to play according to the current game state, including the top card on the discard pile and any active wild color. They then play the first valid card they find. If no card is valid, the computer draws a card instead.
+**Feature Selected — Background Images for UNO Flip (Feature 1)** For this milestone, we added custom images to the game interface. The background now switches when a flip card is played, and the Draw Card and Next Player buttons have custom images applied to give the UI a cleaner look. The background changes between the light and dark side depending on the current game mode, making the flip mechanic easier to see during gameplay.
 
 ---
 
+## Where the Feature Was Implemented
+
+- A new class BackgroundPanel handles loading and drawing the light and dark background images.
+
+- The panel switches backgrounds using the flip() method when a flip card is played.
+
+- UNOView creates and manages the BackgroundPanel and triggers flips from the controller.
+
+- Custom images were added to the Draw Card button and Next Player button inside UNOView to improve appearance.
+
+- New image files were added to the images folder for both backgrounds and button icons.
+---
 ## Included Files
 
 | File / Folder | Description                                    |
@@ -20,25 +32,20 @@ Running this file starts the full game with turn handling, scoring, round transi
 | `User Manual` | Explanation of How to run, play, and use features|
 
 ---
-
-## Team Contributions (Milestone #4)
+## Team Contributions (Milestone #5)
 
 ### Edward Savin (101239342)
-- Implemented serialization and deserialization functionality
-- Assisted with debugging
+- Helped test the background flipping and button updates
 
 ### Magdi Hajjaj (101299841)
-- Implemented undo/redo functionality
-- Implemented replay functionality
-- Fixed major issues in the game
+- Implemented dynamic background switching
+- Integrated background flipping into the view and controller flow
 
 ### Mohammed Osman (101312104)
-- Added Javadoc documentation across classes
+- Added image to the Draw Card button.
 
 ### Hamza Mohammed Salih (101311021)
-- Created and updated sequence diagrams to reflect the final game flow
-- Created UML diagrams
-- Updated unit tests to verify undo/redo functionality and serialization/deserialization functionality (JUnit)
+- Added image to the Next player button.
 ## Setup Instructions
 open a terminal in the parent folder, run java -jar UNO_Project.jar
 

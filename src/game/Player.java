@@ -10,7 +10,7 @@ import java.util.Collections;
  *
  * @author Hamza Mohammed Salih
  * @id 101311021
- * @version M1
+ * @version M5
  */
 public class Player implements Cloneable, Serializable {
 

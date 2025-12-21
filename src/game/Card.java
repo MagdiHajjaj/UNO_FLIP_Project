@@ -9,7 +9,7 @@ import java.util.Map;
  *
  * @author Magdi Hajjaj
  * @id 101299841
- * @version M3
+ * @version M5
  * @see CardType
  * @see CardColor
  */
