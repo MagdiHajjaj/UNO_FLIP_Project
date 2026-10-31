@@ -122,9 +122,3 @@ including:
 | Magdi Hajjaj | 101299841 | Game integration, model/controller/view work, flip behavior, and background switching |
 | Mohammed Osman | 101312104 | Game features, testing, and Draw Card button integration |
 | Hamza Mohammed Salih | 101311021 | Player-related work and Next Player button integration |
-
-## Repository
-
-The source code and project history are available on GitHub:
-
-<https://github.com/MagdiHajjaj/UNO_FLIP_Project>
