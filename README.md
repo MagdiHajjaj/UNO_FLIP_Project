@@ -1,52 +1,130 @@
-# Group #25 — UNO Flip Project — Milestone #5
+# UNO Flip 🎴
 
-**UNO_PROJECT.jar** contains a fully functional playable version of our UNO game for **Milestone #5**.  
-Running this file starts the full game with turn handling, scoring, round transitions, and wild card logic.
+> A Java Swing implementation of the UNO Flip card game, developed as a
+> collaborative software-engineering project for SYSC 3110.
 
----
+UNO Flip is a complete desktop game with a graphical interface, computer
+players, game-state management, card effects, scoring, persistence, and
+automated tests. The project demonstrates object-oriented design, MVC
+separation, event-driven UI development, and collaborative Git workflows.
 
-**Feature Selected — Background Images for UNO Flip (Feature 1)** For this milestone, we added custom images to the game interface. The background now switches when a flip card is played, and the Draw Card and Next Player buttons have custom images applied to give the UI a cleaner look. The background changes between the light and dark side depending on the current game mode, making the flip mechanic easier to see during gameplay.
+## Why This Project Stands Out
 
----
+- **Complete playable application:** Implements the core game loop, turns,
+  scoring, round transitions, and win-state handling.
+- **Non-trivial game rules:** Supports two card sides, flip behavior, special
+  cards, legal-move validation, and computer-player decisions.
+- **Maintainable architecture:** Separates model, view, controller, domain
+  objects, and tests rather than placing all behavior in the UI.
+- **Persistent state:** Includes save/load and undo support through game-history
+  management.
+- **Tested behavior:** Includes focused JUnit tests for the model, cards,
+  players, piles, AI, flip behavior, and game history.
 
-## Where the Feature Was Implemented
+## Features
 
-- A new class BackgroundPanel handles loading and drawing the light and dark background images.
+- Playable UNO Flip game with light-side and dark-side cards
+- Flip mechanic that changes the active side of every card
+- Number, skip, reverse, draw, and flip cards
+- Player turns, legal-move validation, and round transitions
+- Human and computer players
+- Score tracking and win-state handling
+- Undo and game-history support
+- Save and load support for game state
+- Card images, custom backgrounds, and image-based game controls
+- Unit tests for cards, players, piles, game history, the model, AI, and flip
+  behavior
 
-- The panel switches backgrounds using the flip() method when a flip card is played.
+## Technical Highlights
 
-- UNOView creates and manages the BackgroundPanel and triggers flips from the controller.
+- **Language:** Java
+- **UI:** Java Swing
+- **Testing:** JUnit
+- **Design:** MVC-style separation, object-oriented domain model, event-driven
+  controller
+- **Tools:** IntelliJ IDEA, Git, GitHub
 
-- Custom images were added to the Draw Card button and Next Player button inside UNOView to improve appearance.
+## Project Structure
 
-- New image files were added to the images folder for both backgrounds and button icons.
----
-## Included Files
+| Path | Description |
+| --- | --- |
+| `src/game/` | Game model, controller, view, cards, players, and game logic |
+| `src/tests/` | Automated unit tests |
+| `resources/images/` | Card artwork, backgrounds, and button images |
+| [`UNO_Project.jar`](./UNO_Project.jar) | Executable final project build |
+| [`UML Modeling and Data Structures/`](./UML%20Modeling%20and%20Data%20Structures/) | UML diagrams, sequence diagrams, data-structure documentation, and user manual |
 
-| File / Folder | Description                                    |
-|--------------|------------------------------------------------|
-| `UNO_PROJECT.jar` | Executable JAR game build                      |
-| `UML Diagram` | Updated class diagram reflecting MVC structure |
-| `Sequence Diagrams` | Visual models of gameplay flow events          |
-| `Data Structure Explanation` | Explanation of chosen structures and reasoning |
-| `User Manual` | Explanation of How to run, play, and use features|
+## Architecture
 
----
-## Team Contributions (Milestone #5)
+The application separates responsibilities using an MVC-style structure:
 
-### Edward Savin (101239342)
-- Helped test the background flipping and button updates
+- **Model:** `UNOModel`, `Card`, `PileSystem`, `Player`, and related game-state
+  classes manage rules and data.
+- **View:** `UNOView`, `TopPanel`, and `BackgroundPanel` provide the graphical
+  interface and visual game state.
+- **Controller:** `UNOController` and `UNOEvent` coordinate user actions and
+  updates between the view and model.
 
-### Magdi Hajjaj (101299841)
-- Implemented dynamic background switching
-- Integrated background flipping into the view and controller flow
+## Running the Game
 
-### Mohammed Osman (101312104)
-- Added image to the Draw Card button.
+### Prerequisites
 
-### Hamza Mohammed Salih (101311021)
-- Added image to the Next player button.
-## Setup Instructions
-open a terminal in the parent folder, run java -jar UNO_Project.jar
+- Java installed and available on your `PATH`
+- Java version compatible with the provided JAR
 
-### Mark Resources Folder (if card images do not appear)
+### Run the executable JAR
+
+From the project directory, run:
+
+```bash
+java -jar UNO_Project.jar
+```
+
+The JAR expects the project resources to be available in the project directory.
+If card images or other visual resources do not load in IntelliJ, mark the
+`resources` folder as **Resources Root** and run the application again.
+
+### Run from IntelliJ IDEA
+
+1. Open the project in IntelliJ IDEA.
+2. Mark `resources` as a **Resources Root** if it is not already configured.
+3. Run `game.Main`.
+
+## Testing
+
+The test suite is located in `src/tests/` and covers:
+
+- Card creation and card behavior
+- Player behavior
+- Pile and deck operations
+- UNO model rules and game state
+- UNO Flip side changes
+- Computer-player behavior
+- Save/load history management
+
+Run the tests through IntelliJ IDEA using the JUnit test configuration.
+
+## Documentation
+
+Additional project documentation is available in
+[`UML Modeling and Data Structures/`](./UML%20Modeling%20and%20Data%20Structures/),
+including:
+
+- [UML and sequence diagrams](./UML%20Modeling%20and%20Data%20Structures/)
+- [Data structure explanation](./UML%20Modeling%20and%20Data%20Structures/Data%20Structure%20Explanation%20.pdf)
+- [UNO user manual](./UML%20Modeling%20and%20Data%20Structures/UNO%20Game%20User%20Manual.pdf)
+
+## Team
+
+| Member | Student number | Selected contributions |
+| --- | --- | --- |
+| Edward Savin | 101239342 | Card and game features, testing, save/load, and UI support |
+| Magdi Hajjaj | 101299841 | Game integration, model/controller/view work, flip behavior, and background switching |
+| Mohammed Osman | 101312104 | Game features, testing, and Draw Card button integration |
+| Hamza Mohammed Salih | 101311021 | Player-related work and Next Player button integration |
+
+## Repository
+
+The source code and project history are available on GitHub:
+
+<https://github.com/MagdiHajjaj/UNO_FLIP_Project>
